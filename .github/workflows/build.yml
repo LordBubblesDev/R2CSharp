@@ -1,0 +1,31 @@
+name: Build and Release R2CSharp
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build and publish
+      run: dotnet publish -r linux-arm64 -c Release -p:PublishSingleFile=true --sc false -o ./publish
+        
+    - name: Upload Release Asset
+      uses: softprops/action-gh-release@v2
+      with:
+        files: ./publish/r2csharp
+        token: ${{ secrets.GITHUB_TOKEN }} 

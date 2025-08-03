@@ -9,6 +9,7 @@
     <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
     <Version>1.0.0</Version>
     <NoWarn>CS0657,CA1822</NoWarn>
+    <AssemblyName>r2csharp</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(RuntimeIdentifier)' != ''">
