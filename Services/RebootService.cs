@@ -15,16 +15,15 @@ public class RebootService
             
             Console.WriteLine($"Reboot command: action={action}, param1={param1}, param2={param2}");
             
-            // Execute reboot command
             var startInfo = new ProcessStartInfo
             {
-                FileName = "reboot",
+                FileName = "sh",
+                Arguments = "-c \"reboot\"",
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
 
             using var process = Process.Start(startInfo);
-            // Don't wait for exit since we're rebooting
         }
         catch (Exception ex)
         {
@@ -45,7 +44,6 @@ public class RebootService
             };
 
             using var process = Process.Start(startInfo);
-            // Don't wait for exit since we're shutting down
         }
         catch (Exception ex)
         {
