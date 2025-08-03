@@ -57,7 +57,7 @@ public partial class PageViewModel : ObservableObject
         Console.WriteLine("Mounting boot disk...");
         if (MountBootDisk())
         {
-            _bootDiskPath = "/opt/switchroot";
+            // _bootDiskPath is already set in MountBootDisk() method
             _isDiskMounted = true;
         }
         else
@@ -83,31 +83,51 @@ public partial class PageViewModel : ObservableObject
                 devMmc = "mmcblk1";
             }
 
+            var devicePath = $"/dev/{devMmc}p{mmcPart}";
+            Console.WriteLine($"Mounting boot disk {devicePath}");
+
+            if (!File.Exists(devicePath))
+            {
+                Console.WriteLine($"Device {devicePath} not found");
+                return false;
+            }
+
+            // Check if the device is already mounted
+            var mountInfo = ExecuteCommandWithOutput("mount");
+            if (mountInfo.Contains(devicePath))
+            {
+                // Device is already mounted, find the mount point
+                var lines = mountInfo.Split('\n');
+                foreach (var line in lines)
+                {
+                    if (line.Contains(devicePath))
+                    {
+                        var parts = line.Split(new[] { " on ", " type " }, StringSplitOptions.RemoveEmptyEntries);
+                        if (parts.Length >= 2)
+                        {
+                            var existingMountPoint = parts[1].Trim();
+                            Console.WriteLine($"Boot disk already mounted at {existingMountPoint}");
+                            _bootDiskPath = existingMountPoint;
+                            return true;
+                        }
+                    }
+                }
+            }
+
             // Create mount point
             var mountPoint = "/opt/switchroot/boot_disk";
             Directory.CreateDirectory(mountPoint);
 
-            // Mount the boot disk
-            var devicePath = $"/dev/{devMmc}p{mmcPart}";
-            Console.WriteLine($"Mounting boot disk {devicePath}");
-
-            if (File.Exists(devicePath))
+            var result = ExecuteCommand("mount", $"{devicePath} {mountPoint}");
+            if (result == 0)
             {
-                var result = ExecuteCommand("mount", $"{devicePath} {mountPoint}");
-                if (result == 0)
-                {
-                    Console.WriteLine("Boot disk mounted successfully");
-                    return true;
-                }
-                else
-                {
-                    Console.WriteLine($"Failed to mount boot disk, exit code: {result}");
-                    return false;
-                }
+                Console.WriteLine("Boot disk mounted successfully");
+                _bootDiskPath = mountPoint;
+                return true;
             }
             else
             {
-                Console.WriteLine($"Device {devicePath} not found");
+                Console.WriteLine($"Failed to mount boot disk, exit code: {result}");
                 return false;
             }
         }
@@ -151,6 +171,36 @@ public partial class PageViewModel : ObservableObject
         {
             Console.WriteLine($"Error executing command {command}: {ex.Message}");
             return -1;
+        }
+    }
+
+    private string ExecuteCommandWithOutput(string command, string? arguments = null)
+    {
+        try
+        {
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = "sh",
+                Arguments = arguments != null ? $"-c \"{command} {arguments}\"" : $"-c \"{command}\"",
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+
+            using var process = Process.Start(startInfo);
+            if (process != null)
+            {
+                var output = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+                return output;
+            }
+            return string.Empty;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error executing command {command}: {ex.Message}");
+            return string.Empty;
         }
     }
 
@@ -293,31 +343,31 @@ public partial class PageViewModel : ObservableObject
     [RelayCommand]
     private void SelectLaunchOption(RebootOption option)
     {
-        ExecuteR2CCommand("launch", option.Index.ToString());
+        ExecuteReboot("self", option.Index.ToString(), "0");
     }
 
     [RelayCommand]
     private void SelectConfigOption(RebootOption option)
     {
-        ExecuteR2CCommand("config", option.Index.ToString());
+        ExecuteReboot("self", option.Index.ToString(), "1");
     }
 
     [RelayCommand]
     private void SelectUmsOption(RebootOption option)
     {
-        ExecuteR2CCommand("ums", option.Index.ToString());
+        ExecuteReboot("ums", option.Index.ToString(), "0");
     }
 
     [RelayCommand]
     private void RebootToBootloader()
     {
-        ExecuteR2CCommand("bootloader");
+        ExecuteReboot("bootloader", "0", "0");
     }
 
     [RelayCommand]
     private void NormalReboot()
     {
-        ExecuteR2CCommand("normal");
+        ExecuteReboot("normal", "0", "0");
     }
 
     [RelayCommand]
@@ -327,23 +377,31 @@ public partial class PageViewModel : ObservableObject
         Console.WriteLine("Shutdown command executed");
     }
 
-    private void ExecuteR2CCommand(string action, string? param = null)
+    private void ExecuteReboot(string action, string param1, string param2)
     {
-        try {
+        try
+        {
+            // Write to sysfs files like r2c does
+            File.WriteAllText("/sys/devices/r2p/action", action);
+            File.WriteAllText("/sys/devices/r2p/param1", param1);
+            File.WriteAllText("/sys/devices/r2p/param2", param2);
+            
+            Console.WriteLine($"Reboot command: action={action}, param1={param1}, param2={param2}");
+            
+            // Execute reboot command
             var startInfo = new ProcessStartInfo
             {
-                FileName = "r2c",
-                Arguments = param != null ? $"{action} {param}" : action,
+                FileName = "reboot",
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
 
             using var process = Process.Start(startInfo);
-            process?.WaitForExit();
+            // Don't wait for exit since we're rebooting
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Failed to execute R2C command: {ex.Message}");
+            Console.WriteLine($"Failed to execute reboot command: {ex.Message}");
         }
     }
 
