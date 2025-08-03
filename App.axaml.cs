@@ -17,16 +17,7 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var viewModel = new PageViewModel();
-            desktop.MainWindow = new MainWindow
-            {
-                DataContext = viewModel
-            };
-            
-            desktop.Exit += (sender, e) =>
-            {
-                viewModel.Cleanup();
-            };
+            desktop.MainWindow = new MainWindow();
         }
 
         base.OnFrameworkInitializationCompleted();

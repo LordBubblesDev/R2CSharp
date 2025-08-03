@@ -13,7 +13,6 @@ public class BootDiskService
 
     public void InitializeBootDisk()
     {
-#if DEBUG
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             Console.WriteLine("Debug mode on Windows - using test path");
@@ -21,7 +20,6 @@ public class BootDiskService
             _isDiskMounted = false;
             return;
         }
-#endif
 
         // Check if /flash already exists
         if (Directory.Exists("/flash/bootloader"))
