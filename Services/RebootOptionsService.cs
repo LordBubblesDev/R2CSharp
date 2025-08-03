@@ -44,21 +44,29 @@ public class RebootOptionsService
         var iniDirectory = Path.Combine(_bootDiskPath, "bootloader", "ini");
         
         if (Directory.Exists(iniDirectory)) {
-            var iniFiles = Directory.GetFiles(iniDirectory, "*.ini");
-            int globalIndex = 1;
+            var iniFiles = Directory.GetFiles(iniDirectory, "*.ini")
+                                   .OrderBy(f => Path.GetFileName(f), StringComparer.Ordinal)
+                                   .ToArray();
+            
+            var allSections = new List<(string Name, string? IconPath, string FileName)>();
             
             foreach (var iniFile in iniFiles) {
                 var sections = _iniParser.ParseIniSections(iniFile);
                 foreach (var section in sections) {
-                    var icon = _iconService.ConvertBmpToBitmap(section.IconPath) ?? _iconService.FallbackIcon;
-                    options.Add(new RebootOption {
-                        Name = section.Name,
-                        Type = RebootType.Config,
-                        Index = globalIndex,
-                        Icon = icon
-                    });
-                    globalIndex++;
+                    allSections.Add((section.Name, section.IconPath, Path.GetFileName(iniFile)));
                 }
+            }
+            
+            int globalIndex = 1;
+            foreach (var section in allSections) {
+                var icon = _iconService.ConvertBmpToBitmap(section.IconPath) ?? _iconService.FallbackIcon;
+                options.Add(new RebootOption {
+                    Name = section.Name,
+                    Type = RebootType.Config,
+                    Index = globalIndex,
+                    Icon = icon
+                });
+                globalIndex++;
             }
         }
         

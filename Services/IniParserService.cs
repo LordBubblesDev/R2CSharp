@@ -22,7 +22,7 @@ public class IniParserService
                     currentSection = trimmedLine.Substring(1, trimmedLine.Length - 2);
                     currentIcon = null;
                 }
-                else if (currentSection != null && trimmedLine.StartsWith("icon=", StringComparison.OrdinalIgnoreCase)) {
+                else if (currentSection != null && currentSection != "config" && trimmedLine.StartsWith("icon=", StringComparison.OrdinalIgnoreCase)) {
                     currentIcon = trimmedLine.Substring(5).Trim();
                 }
             }
