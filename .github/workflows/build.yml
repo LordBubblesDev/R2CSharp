@@ -23,7 +23,7 @@ jobs:
       run: dotnet restore
       
     - name: Build and publish
-      run: dotnet publish -r linux-arm64 -c Release -p:PublishSingleFile=true --sc false -o ./publish
+      run: dotnet publish -r linux-arm64 -c Release -o ./publish
       
     - name: Upload Release Asset
       uses: softprops/action-gh-release@v2
