@@ -9,6 +9,6 @@
         Title="Reboot2Config"
         Width="580" Height="600"
         MinWidth="580" MinHeight="400"
-        Background="Black">
+        Background="#1E1E1E">
     <local:PageView />
 </Window> 
