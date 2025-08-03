@@ -1,0 +1,33 @@
+<Application x:Class="R2CSharp.App"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:sty="using:FluentAvalonia.Styling"
+             RequestedThemeVariant="Default">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary>
+                    <FontFamily x:Key="UbuntuMono">avares://R2CSharp/Assets/Fonts/UbuntuMono/#Ubuntu Mono</FontFamily>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <Color x:Key="SystemChromeHighColor">#FFACACAC</Color>
+                    <Color x:Key="SystemChromeLowColor">Transparent</Color>
+                    <Color x:Key="SystemChromeMediumColor">#FFF2F2F2</Color>
+                    <Color x:Key="SystemChromeMediumLowColor">#FFE6E6E6</Color>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <Color x:Key="SystemChromeHighColor">#FF737373</Color>
+                    <Color x:Key="SystemChromeLowColor">Transparent</Color>
+                    <Color x:Key="SystemChromeMediumColor">#FF2B2B2B</Color>
+                    <Color x:Key="SystemChromeMediumLowColor">#FF1F1F1F</Color>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+
+    <Application.Styles>
+        <sty:FluentAvaloniaTheme PreferUserAccentColor="True" />
+    </Application.Styles>
+</Application> 
