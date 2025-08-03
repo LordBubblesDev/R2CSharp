@@ -35,7 +35,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <AvaloniaResource Include="Assets\**" />
+    <AvaloniaResource Include="Assets\icon.ico" />
+    <AvaloniaResource Include="Assets\fa-icons.json" />
   </ItemGroup>
   
   <ItemGroup>
