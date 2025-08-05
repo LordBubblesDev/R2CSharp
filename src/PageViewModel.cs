@@ -8,29 +8,41 @@ namespace R2CSharp;
 
 public partial class PageViewModel : ObservableObject
 {
-    [ObservableProperty] private ObservableCollection<RebootOption> _launchOptions = new();
+    [ObservableProperty] private ObservableCollection<RebootOption> _launchOptions = [];
 
-    [ObservableProperty] private ObservableCollection<RebootOption> _configOptions = new();
+    [ObservableProperty] private ObservableCollection<RebootOption> _configOptions = [];
 
-    [ObservableProperty] private ObservableCollection<RebootOption> _umsOptions = new();
+    [ObservableProperty] private ObservableCollection<RebootOption> _umsOptions = [];
+    [ObservableProperty] private bool _isLoading = true;
 
     private readonly BootDiskService _bootDiskService;
-    private readonly RebootOptionsService _rebootOptionsService;
-    private readonly RebootService _rebootService;
+    private RebootOptionsService? _rebootOptionsService;
 
     public PageViewModel()
     {
         _bootDiskService = new BootDiskService();
-        _bootDiskService.InitializeBootDisk();
-
-        var iniParser = new IniParserService();
-        var iconService = new IconService(_bootDiskService.BootDiskPath);
-        _rebootOptionsService = new RebootOptionsService(_bootDiskService.BootDiskPath, iniParser, iconService);
-        _rebootService = new RebootService();
-
-        LoadRebootOptions();
+        _ = InitializeAsync();
     }
 
+    private async Task InitializeAsync()
+    {
+        try {
+            await _bootDiskService.InitializeBootDiskAsync();
+            
+            var iconService = new IconService(_bootDiskService.BootDiskPath);
+            _rebootOptionsService = new RebootOptionsService(_bootDiskService.BootDiskPath, iconService);
+            
+            await LoadRebootOptionsAsync();
+        }
+        finally {
+            IsLoading = false;
+        }
+    }
+
+    private async Task LoadRebootOptionsAsync()
+    {
+        await Task.Run(LoadRebootOptions);
+    }
 
     private void LoadRebootOptions()
     {
@@ -38,7 +50,7 @@ public partial class PageViewModel : ObservableObject
         ConfigOptions.Clear();
         UmsOptions.Clear();
 
-        var launchOptions = _rebootOptionsService.LoadLaunchOptions();
+        var launchOptions = _rebootOptionsService!.LoadLaunchOptions();
         var configOptions = _rebootOptionsService.LoadConfigOptions();
         var umsOptions = RebootOptionsService.LoadUmsOptions();
 

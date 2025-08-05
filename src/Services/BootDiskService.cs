@@ -10,7 +10,7 @@ public class BootDiskService
 
     public string BootDiskPath => _bootDiskPath;
 
-    public void InitializeBootDisk()
+    public async Task InitializeBootDiskAsync()
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
             Console.WriteLine("Debug mode on Windows - using test path");
@@ -28,8 +28,7 @@ public class BootDiskService
         }
 
         Console.WriteLine("Mounting boot disk...");
-        if (MountBootDisk()) {
-            // _bootDiskPath is already set in MountBootDisk() method
+        if (await MountBootDiskAsync()) {
             _isDiskMounted = true;
         }
         else {
@@ -39,7 +38,7 @@ public class BootDiskService
         }
     }
 
-    private bool MountBootDisk()
+    private async Task<bool> MountBootDiskAsync()
     {
         try {
             var cmdline = File.ReadAllText("/proc/cmdline");

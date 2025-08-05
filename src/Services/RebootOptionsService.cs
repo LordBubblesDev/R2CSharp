@@ -2,7 +2,7 @@ using R2CSharp.Models;
 
 namespace R2CSharp.Services;
 
-public class RebootOptionsService(string bootDiskPath, IniParserService iniParser, IconService iconService)
+public class RebootOptionsService(string bootDiskPath, IconService iconService)
 {
     public List<RebootOption> LoadLaunchOptions()
     {
