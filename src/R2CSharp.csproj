@@ -56,4 +56,9 @@
             <SubType>Code</SubType>
         </Compile>
     </ItemGroup>
+    
+    <PropertyGroup Condition="'$(Configuration)' == 'ColorTest'">
+        <DefineConstants>$(DefineConstants);COLORTEST</DefineConstants>
+    </PropertyGroup>
+    
 </Project> 
