@@ -9,34 +9,34 @@
              x:DataType="pages:PageViewModel">
     <UserControl.Styles>
         <Style Selector="Button">
-            <Setter Property="Background" Value="#1E1E1E"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#3E3E3E"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Background" Value="#1E1E1E" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderBrush" Value="#3E3E3E" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="4" />
         </Style>
         <Style Selector="Button:pointerover">
-            <Setter Property="Background" Value="#2A2A2A"/>
-            <Setter Property="BorderBrush" Value="#4A4A4A"/>
+            <Setter Property="Background" Value="#2A2A2A" />
+            <Setter Property="BorderBrush" Value="#4A4A4A" />
         </Style>
         <Style Selector="Button:pressed">
-            <Setter Property="Background" Value="#151515"/>
-            <Setter Property="BorderBrush" Value="#5A5A5A"/>
+            <Setter Property="Background" Value="#151515" />
+            <Setter Property="BorderBrush" Value="#5A5A5A" />
         </Style>
     </UserControl.Styles>
     <Grid>
         <ScrollViewer>
             <StackPanel Margin="20" Spacing="10">
                 <!-- ReSharper disable Xaml.PossibleNullReferenceException -->
-                
+
                 <!-- Launch Section -->
                 <Border Background="#2D2D30" CornerRadius="8" Padding="10" Margin="0,0,0,5">
                     <StackPanel HorizontalAlignment="Stretch">
-                        <TextBlock Text="Launch" 
-                                   FontSize="18" 
-                                   FontWeight="SemiBold" 
+                        <TextBlock Text="Launch"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
                                    Foreground="#4EC9B0"
-                                   Margin="0,0,0,10"/>
+                                   Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding LaunchOptions}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -45,24 +45,24 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Button Margin="5" 
+                                    <Button Margin="5"
                                             Width="120" Height="120"
                                             Command="{Binding $parent[UserControl].((pages:PageViewModel)DataContext).SelectLaunchOptionCommand}"
                                             CommandParameter="{Binding}">
                                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                                            <Image Source="{Binding Icon}" 
-                                                   Width="64" Height="64" 
+                                            <Image Source="{Binding Icon}"
+                                                   Width="64" Height="64"
                                                    Margin="0,0,0,8"
-                                                   IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNotNull}}"/>
-                                            <avalonia:Icon Value="fa-solid fa-rocket" 
-                                                          Width="64" Height="64"
-                                                          Margin="0,0,0,8"
-                                                          IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNull}}"/>
-                                            <TextBlock Text="{Binding Name}" 
-                                                      HorizontalAlignment="Center"
-                                                      TextWrapping="Wrap"
-                                                      FontSize="12"
-                                                      MaxWidth="97"/>
+                                                   IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                                            <avalonia:Icon Value="fa-solid fa-rocket"
+                                                           Width="64" Height="64"
+                                                           Margin="0,0,0,8"
+                                                           IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNull}}" />
+                                            <TextBlock Text="{Binding Name}"
+                                                       HorizontalAlignment="Center"
+                                                       TextWrapping="Wrap"
+                                                       FontSize="12"
+                                                       MaxWidth="97" />
                                         </StackPanel>
                                     </Button>
                                 </DataTemplate>
@@ -71,11 +71,11 @@
                                 <Style Selector="ItemsControl:empty">
                                     <Setter Property="Template">
                                         <ControlTemplate>
-                                            <TextBlock Text="No launch options found" 
-                                                       Foreground="Gray" 
+                                            <TextBlock Text="No launch options found"
+                                                       Foreground="Gray"
                                                        FontStyle="Italic"
                                                        HorizontalAlignment="Center"
-                                                       Margin="10"/>
+                                                       Margin="10" />
                                         </ControlTemplate>
                                     </Setter>
                                 </Style>
@@ -83,15 +83,15 @@
                         </ItemsControl>
                     </StackPanel>
                 </Border>
-                
+
                 <!-- More Configs Section -->
                 <Border Background="#2D2D30" CornerRadius="8" Padding="10" Margin="0,0,0,5">
                     <StackPanel HorizontalAlignment="Stretch">
-                        <TextBlock Text="More Configs" 
-                                   FontSize="18" 
-                                   FontWeight="SemiBold" 
+                        <TextBlock Text="More Configs"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
                                    Foreground="#4EC9B0"
-                                   Margin="0,0,0,10"/>
+                                   Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding ConfigOptions}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -100,24 +100,24 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Button Margin="5" 
+                                    <Button Margin="5"
                                             Width="120" Height="120"
                                             Command="{Binding $parent[UserControl].((pages:PageViewModel)DataContext).SelectConfigOptionCommand}"
                                             CommandParameter="{Binding}">
                                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                                            <Image Source="{Binding Icon}" 
-                                                   Width="64" Height="64" 
+                                            <Image Source="{Binding Icon}"
+                                                   Width="64" Height="64"
                                                    Margin="0,0,0,8"
-                                                   IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNotNull}}"/>
-                                            <avalonia:Icon Value="fa-solid fa-cog" 
-                                                          Width="64" Height="64"
-                                                          Margin="0,0,0,8"
-                                                          IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNull}}"/>
-                                            <TextBlock Text="{Binding Name}" 
-                                                      HorizontalAlignment="Center"
-                                                      TextWrapping="Wrap"
-                                                      FontSize="12"
-                                                      MaxWidth="97"/>
+                                                   IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                                            <avalonia:Icon Value="fa-solid fa-cog"
+                                                           Width="64" Height="64"
+                                                           Margin="0,0,0,8"
+                                                           IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNull}}" />
+                                            <TextBlock Text="{Binding Name}"
+                                                       HorizontalAlignment="Center"
+                                                       TextWrapping="Wrap"
+                                                       FontSize="12"
+                                                       MaxWidth="97" />
                                         </StackPanel>
                                     </Button>
                                 </DataTemplate>
@@ -126,11 +126,11 @@
                                 <Style Selector="ItemsControl:empty">
                                     <Setter Property="Template">
                                         <ControlTemplate>
-                                            <TextBlock Text="No config options found" 
-                                                       Foreground="Gray" 
+                                            <TextBlock Text="No config options found"
+                                                       Foreground="Gray"
                                                        FontStyle="Italic"
                                                        HorizontalAlignment="Center"
-                                                       Margin="10"/>
+                                                       Margin="10" />
                                         </ControlTemplate>
                                     </Setter>
                                 </Style>
@@ -138,15 +138,15 @@
                         </ItemsControl>
                     </StackPanel>
                 </Border>
-                
+
                 <!-- UMS Section -->
                 <Border Background="#2D2D30" CornerRadius="8" Padding="10" Margin="0,0,0,5">
                     <StackPanel HorizontalAlignment="Stretch">
-                        <TextBlock Text="UMS (USB Mass Storage)" 
-                                   FontSize="18" 
-                                   FontWeight="SemiBold" 
+                        <TextBlock Text="UMS (USB Mass Storage)"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
                                    Foreground="#4EC9B0"
-                                   Margin="0,0,0,10"/>
+                                   Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding UmsOptions}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -155,24 +155,24 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Button Margin="5" 
+                                    <Button Margin="5"
                                             Width="120" Height="120"
                                             Command="{Binding $parent[UserControl].((pages:PageViewModel)DataContext).SelectUmsOptionCommand}"
                                             CommandParameter="{Binding}">
                                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                                            <Image Source="{Binding Icon}" 
-                                                   Width="64" Height="64" 
+                                            <Image Source="{Binding Icon}"
+                                                   Width="64" Height="64"
                                                    Margin="0,0,0,8"
-                                                   IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNotNull}}"/>
-                                            <avalonia:Icon Value="fa-solid fa-hdd" 
-                                                          Width="64" Height="64"
-                                                          Margin="0,0,0,8"
-                                                          IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNull}}"/>
-                                            <TextBlock Text="{Binding Name}" 
-                                                      HorizontalAlignment="Center"
-                                                      TextWrapping="Wrap"
-                                                      FontSize="12"
-                                                      MaxWidth="97"/>
+                                                   IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                                            <avalonia:Icon Value="fa-solid fa-hdd"
+                                                           Width="64" Height="64"
+                                                           Margin="0,0,0,8"
+                                                           IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNull}}" />
+                                            <TextBlock Text="{Binding Name}"
+                                                       HorizontalAlignment="Center"
+                                                       TextWrapping="Wrap"
+                                                       FontSize="12"
+                                                       MaxWidth="97" />
                                         </StackPanel>
                                     </Button>
                                 </DataTemplate>
@@ -181,11 +181,11 @@
                                 <Style Selector="ItemsControl:empty">
                                     <Setter Property="Template">
                                         <ControlTemplate>
-                                            <TextBlock Text="No UMS options found" 
-                                                       Foreground="Gray" 
+                                            <TextBlock Text="No UMS options found"
+                                                       Foreground="Gray"
                                                        FontStyle="Italic"
                                                        HorizontalAlignment="Center"
-                                                       Margin="10"/>
+                                                       Margin="10" />
                                         </ControlTemplate>
                                     </Setter>
                                 </Style>
@@ -193,40 +193,40 @@
                         </ItemsControl>
                     </StackPanel>
                 </Border>
-                
+
                 <!-- System Options -->
                 <Border Background="#2D2D30" CornerRadius="8" Padding="15" Margin="0,0,0,10">
                     <StackPanel HorizontalAlignment="Stretch">
-                        <TextBlock Text="System Options" 
-                                   FontSize="18" 
-                                   FontWeight="SemiBold" 
+                        <TextBlock Text="System Options"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
                                    Foreground="#4EC9B0"
-                                   Margin="0,0,0,10"/>
-                        <Button Margin="5,2" 
+                                   Margin="0,0,0,10" />
+                        <Button Margin="5,2"
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Left"
                                 Command="{Binding RebootToBootloaderCommand}">
                             <StackPanel Orientation="Horizontal">
-                                <avalonia:Icon Value="fa-solid fa-boot" Margin="0,0,10,0"/>
-                                <TextBlock Text="Hekate Bootloader" VerticalAlignment="Center"/>
+                                <avalonia:Icon Value="fa-solid fa-boot" Margin="0,0,10,0" />
+                                <TextBlock Text="Hekate Bootloader" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
-                        <Button Margin="5,2" 
+                        <Button Margin="5,2"
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Left"
                                 Command="{Binding NormalRebootCommand}">
                             <StackPanel Orientation="Horizontal">
-                                <avalonia:Icon Value="fa-solid fa-rotate" Margin="0,0,10,0"/>
-                                <TextBlock Text="Reboot" VerticalAlignment="Center"/>
+                                <avalonia:Icon Value="fa-solid fa-rotate" Margin="0,0,10,0" />
+                                <TextBlock Text="Reboot" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
-                        <Button Margin="5,2" 
+                        <Button Margin="5,2"
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Left"
                                 Command="{Binding ShutdownCommand}">
                             <StackPanel Orientation="Horizontal">
-                                <avalonia:Icon Value="fa-solid fa-power-off" Margin="0,0,10,0"/>
-                                <TextBlock Text="Shutdown" VerticalAlignment="Center"/>
+                                <avalonia:Icon Value="fa-solid fa-power-off" Margin="0,0,10,0" />
+                                <TextBlock Text="Shutdown" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
                     </StackPanel>
@@ -234,4 +234,4 @@
             </StackPanel>
         </ScrollViewer>
     </Grid>
-</UserControl> 
+</UserControl>

@@ -11,4 +11,4 @@
         MinWidth="580" MinHeight="400"
         Background="#1E1E1E">
     <local:PageView />
-</Window> 
+</Window>

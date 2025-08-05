@@ -14,9 +14,6 @@ public partial class PageView : UserControl
     protected override void OnUnloaded(RoutedEventArgs e)
     {
         base.OnUnloaded(e);
-        if (DataContext is PageViewModel viewModel)
-        {
-            viewModel.Cleanup();
-        }
+        if (DataContext is PageViewModel viewModel) viewModel.Cleanup();
     }
-} 
+}

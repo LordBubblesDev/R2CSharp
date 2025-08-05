@@ -13,4 +13,4 @@ public sealed class FontAwesomeJsonStreamProvider : IFontAwesomeUtf8JsonStreamPr
         Uri iconsResourceUri = new(iconsResourcePath);
         return AssetLoader.Open(iconsResourceUri);
     }
-} 
+}
