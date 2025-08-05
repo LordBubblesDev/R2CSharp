@@ -38,7 +38,7 @@ public class BootDiskService
         }
     }
 
-    private async Task<bool> MountBootDiskAsync()
+    private Task<bool> MountBootDiskAsync()
     {
         try {
             var cmdline = File.ReadAllText("/proc/cmdline");
@@ -54,7 +54,7 @@ public class BootDiskService
 
             if (!File.Exists(devicePath)) {
                 Console.WriteLine($"Device {devicePath} not found");
-                return false;
+                return Task.FromResult(false);
             }
 
             // Check if the device is already mounted
@@ -71,7 +71,7 @@ public class BootDiskService
                         var existingMountPoint = parts[1].Trim();
                         Console.WriteLine($"Boot disk already mounted at {existingMountPoint}");
                         _bootDiskPath = existingMountPoint;
-                        return true;
+                        return Task.FromResult(true);
                     }
             }
 
@@ -83,16 +83,16 @@ public class BootDiskService
             if (result == 0) {
                 Console.WriteLine("Boot disk mounted successfully");
                 _bootDiskPath = mountPoint;
-                return true;
+                return Task.FromResult(true);
             }
             else {
                 Console.WriteLine($"Failed to mount boot disk, exit code: {result}");
-                return false;
+                return Task.FromResult(false);
             }
         }
         catch (Exception ex) {
             Console.WriteLine($"Error mounting boot disk: {ex.Message}");
-            return false;
+            return Task.FromResult(false);
         }
     }
 
