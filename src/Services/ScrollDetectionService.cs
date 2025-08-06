@@ -1,13 +1,16 @@
 using Avalonia.Input;
+using System;
 
 namespace R2CSharp.Services;
 
 public class ScrollDetectionService
 {
-    private const double ScrollThreshold = 4.0;
+    private const double ScrollThreshold = 5.0; // 5px scroll threshold
+    private const int TimeThresholdMs = 500; // 500ms time window
     private double _accumulatedScrollX;
     private bool _isTracking;
     private bool _isProcessing;
+    private DateTime _trackingStartTime;
     
     public event Action<int>? PageChangeRequested;
     
@@ -19,9 +22,18 @@ public class ScrollDetectionService
         if (!_isTracking) {
             _isTracking = true;
             _accumulatedScrollX = 0.0;
+            _trackingStartTime = DateTime.Now;
         }
             
         _accumulatedScrollX += e.Delta.X + e.Delta.Y;
+
+        var elapsedTime = (DateTime.Now - _trackingStartTime).TotalMilliseconds;
+        
+        if (elapsedTime > TimeThresholdMs)  {
+            _accumulatedScrollX = 0.0;
+            _isTracking = false;
+            return;
+        }
 
         if (!(Math.Abs(_accumulatedScrollX) >= ScrollThreshold) || _isProcessing) return;
         _isProcessing = true;
