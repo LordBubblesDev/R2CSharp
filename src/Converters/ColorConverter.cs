@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-
 namespace R2CSharp.Converters;
 
 public static class ColorConverter
@@ -13,7 +10,7 @@ public static class ColorConverter
     /// <param name="saturation">Saturation value [0-100]</param>
     /// <param name="value">Value/Brightness [0-100]</param>
     /// <returns>Hex color string in format "#RRGGBB"</returns>
-    private static string HsvToHex(int hue, int saturation, int value)
+    public static string HsvToHex(int hue, int saturation, int value)
     {
         double h = hue;
         double s = saturation / 100.0;

@@ -1,20 +1,31 @@
 using Avalonia.Media.Imaging;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Drawing.Processing;
+using R2CSharp.Converters;
 
 namespace R2CSharp.Services;
 
 public class IconService
 {
     private readonly string _bootDiskPath;
+    private readonly string _themeColor;
 
     public IconService(string bootDiskPath)
     {
         _bootDiskPath = bootDiskPath;
-        FallbackIcon = ConvertBmpToBitmap("bootloader/res/icon_switch.bmp");
+        
+        var nyxIniPath = Path.Combine(_bootDiskPath, "bootloader", "nyx.ini");
+        var themeColorValue = IniParserService.GetConfigProperty(nyxIniPath, "themecolor");
+
+        _themeColor = themeColorValue != null && int.TryParse(themeColorValue, out var hue) && hue is >= 0 and <= 359
+            ? ColorConverter.HsvToHex(hue, 100, 100)
+            : ColorConverter.HsvToHex(167, 100, 100); // default nyx theme color
     }
 
-    public Bitmap? FallbackIcon { get; }
+    public Bitmap? FallbackIcon => ConvertBmpToBitmap("bootloader/res/icon_switch.bmp");
 
     public Bitmap? ConvertBmpToBitmap(string? bmpPath)
     {
@@ -26,6 +37,38 @@ public class IconService
 
         try {
             using var image = Image.Load(fullBmpPath);
+            if (_themeColor.StartsWith("#") && _themeColor.Length == 7)
+            {
+                var r = Convert.ToInt32(_themeColor.Substring(1, 2), 16);
+                var g = Convert.ToInt32(_themeColor.Substring(3, 2), 16);
+                var b = Convert.ToInt32(_themeColor.Substring(5, 2), 16);
+                
+                // Create a new image with the theme color
+                using var coloredImage = new Image<Rgba32>(image.Width, image.Height);
+                coloredImage.Mutate(x => x
+                    .Fill(new Color(new Rgba32((byte)r, (byte)g, (byte)b)))
+                );
+                
+                // Apply the colored image using the original's alpha channel as a mask
+                coloredImage.Mutate(x => x
+                    .DrawImage(image, new Point(0, 0), new GraphicsOptions
+                    {
+                        ColorBlendingMode = PixelColorBlendingMode.Normal,
+                        AlphaCompositionMode = PixelAlphaCompositionMode.DestIn
+                    })
+                );
+                
+                // Clear the original image and draw the colored result
+                image.Mutate(x => x
+                    .Fill(Color.Transparent)
+                    .DrawImage(coloredImage, new Point(0, 0), new GraphicsOptions
+                    {
+                        ColorBlendingMode = PixelColorBlendingMode.Normal,
+                        AlphaCompositionMode = PixelAlphaCompositionMode.SrcOver
+                    })
+                );
+            }
+            
             using var stream = new MemoryStream();
             image.Save(stream, new PngEncoder());
             stream.Seek(0, SeekOrigin.Begin);

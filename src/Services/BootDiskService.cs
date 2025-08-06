@@ -14,7 +14,7 @@ public class BootDiskService
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
             Console.WriteLine("Debug mode on Windows - using test path");
-            _bootDiskPath = "V:\\";
+            _bootDiskPath = "F:\\DebugSD";
             _isDiskMounted = false;
             return;
         }
@@ -32,9 +32,7 @@ public class BootDiskService
             _isDiskMounted = true;
         }
         else {
-            Console.WriteLine("Failed to mount boot disk, using fallback path");
-            _bootDiskPath = "/flash";
-            _isDiskMounted = false;
+            throw new Exception("Failed to mount boot disk, using fallback path");
         }
     }
 
