@@ -42,7 +42,7 @@
                         <StackPanel Margin="10" Spacing="5">
                             
                             <!-- Launch Section -->
-                            <Border Background="#2D2D2D" CornerRadius="8" Padding="5" Margin="5,0,5,5">
+                            <Border Background="#2D2D2D" CornerRadius="8" Padding="5" Margin="5,5,5,10">
                                 <StackPanel HorizontalAlignment="Stretch">
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                         <avalonia:Icon Value="fa-solid fa-location-arrow" 
@@ -105,7 +105,7 @@
                             </Border>
 
                             <!-- More Configs Section -->
-                            <Border Background="#2D2D2D" CornerRadius="8" Padding="5" Margin="5,0,5,5">
+                            <Border Background="#2D2D2D" CornerRadius="8" Padding="5" Margin="5,5,5,10">
                                 <StackPanel HorizontalAlignment="Stretch">
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                         <avalonia:Icon Value="fa-solid fa-location-arrow" 
@@ -168,9 +168,9 @@
                             </Border>
 
                             <!-- UMS Section -->
-                            <Border Background="#2D2D2D" CornerRadius="8" Padding="5" Margin="5,0,5,5">
+                            <Border Background="#2D2D2D" CornerRadius="8" Padding="5" Margin="5,5,5,10">
                                 <StackPanel HorizontalAlignment="Stretch">
-                                    <StackPanel Orientation="Horizontal" Margin="5,0,0,5">
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                         <avalonia:Icon Value="fa-solid fa-location-arrow" 
                                                        Margin="5,0,8,0" 
                                                        Foreground="White" />
@@ -213,7 +213,7 @@
                             </Border>
 
                             <!-- System Options -->
-                            <Border Background="#2D2D2D" CornerRadius="8" Padding="5" Margin="5,0,5,5">
+                            <Border Background="#2D2D2D" CornerRadius="8" Padding="5" Margin="5,5,5,10">
                                 <StackPanel HorizontalAlignment="Stretch">
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                         <avalonia:Icon Value="fa-solid fa-location-arrow" 
