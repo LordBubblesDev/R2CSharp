@@ -9,16 +9,16 @@
              x:Class="R2CSharp.PageView"
              x:DataType="pages:PageViewModel">
             <UserControl.Resources>
+        <!-- ReSharper disable Xaml.PossibleNullReferenceException -->
         <DataTemplate x:Key="OptionButtonTemplate" x:DataType="models:RebootOption">
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="12, 5">
-                <Button Width="80" Height="80"
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="{Binding $parent[UserControl].((pages:PageViewModel)DataContext).ButtonsMargin}">
+                <Button Width="75" Height="75"
                         Command="{Binding Command}"
                         CommandParameter="{Binding}">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                         <Image Source="{Binding Icon}"
                                Width="50" Height="50"
                                IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNotNull}}" />
-                        <!-- ReSharper disable Xaml.PossibleNullReferenceException -->
                         <avalonia:Icon Value="{Binding FallbackIcon}"
                                        FontSize="25"
                                        IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNull}}"
@@ -31,7 +31,7 @@
                            TextWrapping="Wrap"
                            FontSize="11"
                            MaxWidth="80"
-                           Margin="0,5,0,0"
+                           Margin="0,3,0,0"
                            Foreground="White"/>
             </StackPanel>
         </DataTemplate>

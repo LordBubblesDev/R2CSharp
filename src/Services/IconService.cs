@@ -5,6 +5,8 @@ using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Drawing.Processing;
 using R2CSharp.Converters;
+using Avalonia;
+using Point = SixLabors.ImageSharp.Point;
 
 namespace R2CSharp.Services;
 
@@ -12,6 +14,7 @@ public class IconService
 {
     private readonly string _bootDiskPath;
     public readonly string ThemeColor;
+    public readonly Thickness ButtonsMargin;
 
     public IconService(string bootDiskPath)
     {
@@ -23,6 +26,9 @@ public class IconService
         ThemeColor = themeColorValue != null && int.TryParse(themeColorValue, out var hue) && hue is >= 0 and <= 359
             ? ColorConverter.HsvToHex(hue, 100, 100)
             : ColorConverter.HsvToHex(167, 100, 100); // default nyx theme color
+
+        // Set the buttons' margin based on Nyx settings
+        ButtonsMargin = IniParserService.GetConfigProperty(nyxIniPath, "entries5col") == "1" ? new Thickness(14, 7, 14, 7) : new Thickness(27, 4, 27, 4);
     }
 
     public Bitmap? FallbackIcon => ConvertBmpToBitmap("bootloader/res/icon_switch.bmp");

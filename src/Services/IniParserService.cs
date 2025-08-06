@@ -1,6 +1,6 @@
 namespace R2CSharp.Services;
 
-public class IniParserService
+public static class IniParserService
 {
     /// <summary>
     /// Gets a property value from the config section of an INI file
@@ -33,7 +33,7 @@ public class IniParserService
                 else if (currentSection == "config" && 
                          trimmedLine.StartsWith($"{propertyName}=", StringComparison.OrdinalIgnoreCase))
                 {
-                    propertyValue = trimmedLine.Substring(propertyName.Length + 1).Trim();
+                    propertyValue = trimmedLine[(propertyName.Length + 1)..].Trim();
                 }
             }
 
