@@ -24,25 +24,14 @@ public partial class PageViewModel : ObservableObject
 
     private async Task InitializeAsync()
     {
-        Console.WriteLine("[PageViewModel] InitializeAsync started");
         try {
-            Console.WriteLine("[PageViewModel] Initializing boot disk...");
             await _bootDiskService.InitializeBootDiskAsync();
-            Console.WriteLine($"[PageViewModel] Boot disk initialized: {_bootDiskService.BootDiskPath}");
-            
-            Console.WriteLine("[PageViewModel] Creating services...");
             var iconService = new IconService(_bootDiskService.BootDiskPath);
             _rebootOptionsService = new RebootOptionsService(_bootDiskService.BootDiskPath, iconService);
             _pageFactoryService = new PageFactoryService(iconService);
-            Console.WriteLine("[PageViewModel] Services created");
             
-                    Console.WriteLine("[PageViewModel] Loading reboot options...");
-        await LoadRebootOptionsAsync();
-        Console.WriteLine($"[PageViewModel] Reboot options loaded, pages count: {Pages.Count}");
-        
-        // Force property change notification for Pages
-        OnPropertyChanged(nameof(Pages));
-        Console.WriteLine("[PageViewModel] Pages property change notification sent");
+            await LoadRebootOptionsAsync();
+            OnPropertyChanged(nameof(Pages));
         }
         catch (Exception ex)
         {
@@ -50,7 +39,6 @@ public partial class PageViewModel : ObservableObject
         }
         finally {
             IsLoading = false;
-            Console.WriteLine("[PageViewModel] InitializeAsync completed, IsLoading = false");
         }
     }
 
@@ -61,41 +49,34 @@ public partial class PageViewModel : ObservableObject
 
     private void LoadRebootOptions()
     {
-        Console.WriteLine("[PageViewModel] LoadRebootOptions started");
         Pages.Clear();
 
         // Create Launch page
         var launchOptions = _rebootOptionsService!.LoadLaunchOptions();
-        Console.WriteLine($"[PageViewModel] Launch options loaded: {launchOptions.Count}");
         foreach (var option in launchOptions)
         {
             option.Command = SelectLaunchOptionCommand;
         }
         var launchPage = _pageFactoryService!.CreateLaunchPage(launchOptions);
         Pages.Add(launchPage);
-        Console.WriteLine($"[PageViewModel] Launch page added, total pages: {Pages.Count}");
 
         // Create Config page
         var configOptions = _rebootOptionsService.LoadConfigOptions();
-        Console.WriteLine($"[PageViewModel] Config options loaded: {configOptions.Count}");
         foreach (var option in configOptions)
         {
             option.Command = SelectConfigOptionCommand;
         }
         var configPage = _pageFactoryService.CreateConfigPage(configOptions);
         Pages.Add(configPage);
-        Console.WriteLine($"[PageViewModel] Config page added, total pages: {Pages.Count}");
 
         // Create UMS page
         var umsOptions = RebootOptionsService.LoadUmsOptions();
-        Console.WriteLine($"[PageViewModel] UMS options loaded: {umsOptions.Count}");
         foreach (var option in umsOptions)
         {
             option.Command = SelectUmsOptionCommand;
         }
         var umsPage = _pageFactoryService.CreateUmsPage(umsOptions);
         Pages.Add(umsPage);
-        Console.WriteLine($"[PageViewModel] UMS page added, total pages: {Pages.Count}");
 
         // Create System Options page
         var systemOptions = new List<RebootOption>
@@ -106,8 +87,6 @@ public partial class PageViewModel : ObservableObject
         };
         var systemPage = _pageFactoryService.CreateSystemPage(systemOptions);
         Pages.Add(systemPage);
-        Console.WriteLine($"[PageViewModel] System page added, total pages: {Pages.Count}");
-        Console.WriteLine($"[PageViewModel] LoadRebootOptions completed");
     }
 
 

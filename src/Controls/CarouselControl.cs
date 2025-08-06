@@ -1,8 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
 using R2CSharp.Services;
-using System;
-using System.Collections.Generic;
 
 namespace R2CSharp.Controls;
 
@@ -76,9 +74,9 @@ public class CarouselControl : Panel
         _currentIndex = index;
         _currentPage = _pages[index];
         
-        this.Children.Clear();
+        Children.Clear();
         if (_currentPage != null) {
-            this.Children.Add(_currentPage);
+            Children.Add(_currentPage);
         }
             
         System.Diagnostics.Debug.WriteLine($"[CarouselControl] CurrentIndex set to {index}");
@@ -98,7 +96,7 @@ public class CarouselControl : Panel
                     var containerHeight = Bounds.Height;
                     Children.Add(_nextPage);
             
-                    await AnimationService.AnimatePageTransition(_nextPage, goingForward, containerHeight);
+                    await AnimationService.AnimatePageTransition(_currentPage, _nextPage, goingForward, containerHeight);
             
                     System.Diagnostics.Debug.WriteLine($"[CarouselControl] Animation completed");
             
