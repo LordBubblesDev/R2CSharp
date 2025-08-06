@@ -3,6 +3,7 @@
              xmlns:avalonia="https://github.com/projektanker/icons.avalonia"
              xmlns:pages="clr-namespace:R2CSharp"
              xmlns:views="clr-namespace:R2CSharp.Views"
+             xmlns:controls="clr-namespace:R2CSharp.Controls"
              x:Class="R2CSharp.PageView"
              x:DataType="pages:PageViewModel">
     
@@ -35,17 +36,14 @@
         </Grid>
         
         <Grid IsVisible="{Binding !IsLoading}">
-            <Carousel Name="MainCarousel" Background="Transparent">
-                <Carousel.PageTransition>
-                    <PageSlide Duration="0:0:0.3" />
-                </Carousel.PageTransition>
-                
-                <!-- Individual Carousel Pages -->
-                <views:StandardPageView DataContext="{Binding Pages[0]}" />
-                <views:StandardPageView DataContext="{Binding Pages[1]}" />
-                <views:StandardPageView DataContext="{Binding Pages[2]}" />
-                <views:StandardPageView DataContext="{Binding Pages[3]}" />
-            </Carousel>
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
+                <controls:CustomCarousel Name="MainCarousel" 
+                          IsEnabled="True"
+                          IsHitTestVisible="True"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          Focusable="False" />
+            </ScrollViewer>
             
             <!-- Navigation Controls -->
             <StackPanel Orientation="Horizontal" 
@@ -54,14 +52,16 @@
                         Margin="0,0,0,15"
                         Background="Transparent">
                 <Button Content="◀" 
-                        Command="{Binding #MainCarousel.Previous}" 
+                        Name="PreviousButton"
+                        Click="OnPreviousButtonClick"
                         Margin="0,0"
                         Width="40" Height="30"
                         Background="#4E4E4E"
                         Foreground="White"
                         BorderBrush="#3E3E3E" />
                 <Button Content="▶" 
-                        Command="{Binding #MainCarousel.Next}" 
+                        Name="NextButton"
+                        Click="OnNextButtonClick"
                         Margin="5,0"
                         Width="40" Height="30"
                         Background="#4E4E4E"

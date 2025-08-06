@@ -69,7 +69,7 @@
                                 Foreground="White"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Left"
-                                Margin="80,0,0,20"/>
+                                Margin="100,0,0,20"/>
                  </Grid>
                  
                  <!-- Divider -->
