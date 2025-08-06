@@ -8,11 +8,7 @@ namespace R2CSharp;
 
 public partial class PageViewModel : ObservableObject
 {
-    [ObservableProperty] private ObservableCollection<RebootOption> _launchOptions = [];
-
-    [ObservableProperty] private ObservableCollection<RebootOption> _configOptions = [];
-
-    [ObservableProperty] private ObservableCollection<RebootOption> _umsOptions = [];
+    [ObservableProperty] private ObservableCollection<SectionData> _sections = [];
     [ObservableProperty] private bool _isLoading = true;
     [ObservableProperty] private string _themeColor = "#00FF6E";
 
@@ -48,22 +44,49 @@ public partial class PageViewModel : ObservableObject
 
     private void LoadRebootOptions()
     {
-        LaunchOptions.Clear();
-        ConfigOptions.Clear();
-        UmsOptions.Clear();
+        Sections.Clear();
 
-        var launchOptions = _rebootOptionsService!.LoadLaunchOptions();
-        var configOptions = _rebootOptionsService.LoadConfigOptions();
-        var umsOptions = RebootOptionsService.LoadUmsOptions();
+        var sectionConfigs = new[]
+        {
+            new
+            {
+                Title = "Launch",
+                EmptyMessage = "No launch options found",
+                Options = _rebootOptionsService!.LoadLaunchOptions(),
+                Command = SelectLaunchOptionCommand
+            },
+            new
+            {
+                Title = "More Configurations",
+                EmptyMessage = "No config options found",
+                Options = _rebootOptionsService.LoadConfigOptions(),
+                Command = SelectConfigOptionCommand
+            },
+            new
+            {
+                Title = "UMS (USB Mass Storage)",
+                EmptyMessage = "",
+                Options = RebootOptionsService.LoadUmsOptions(),
+                Command = SelectUmsOptionCommand
+            }
+        };
 
-        foreach (var option in launchOptions)
-            LaunchOptions.Add(option);
+        foreach (var config in sectionConfigs)
+        {
+            var section = new SectionData
+            {
+                Title = config.Title,
+                EmptyMessage = config.EmptyMessage
+            };
 
-        foreach (var option in configOptions)
-            ConfigOptions.Add(option);
+            foreach (var option in config.Options)
+            {
+                option.Command = config.Command;
+                section.Items.Add(option);
+            }
 
-        foreach (var option in umsOptions)
-            UmsOptions.Add(option);
+            Sections.Add(section);
+        }
     }
 
 

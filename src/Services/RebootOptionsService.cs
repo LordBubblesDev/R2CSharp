@@ -16,9 +16,9 @@ public class RebootOptionsService(string bootDiskPath, IconService iconService)
                 var icon = iconService.ConvertBmpToBitmap(section.IconPath) ?? iconService.FallbackIcon;
                 options.Add(new RebootOption {
                     Name = section.Name,
-                    Type = RebootType.Launch,
                     Index = index,
-                    Icon = icon
+                    Icon = icon,
+                    FallbackIcon = "fa-solid fa-rocket"
                 });
                 index++;
             }
@@ -49,9 +49,9 @@ public class RebootOptionsService(string bootDiskPath, IconService iconService)
             var icon = iconService.ConvertBmpToBitmap(section.IconPath) ?? iconService.FallbackIcon;
             options.Add(new RebootOption {
                 Name = section.Name,
-                Type = RebootType.Config,
                 Index = globalIndex,
-                Icon = icon
+                Icon = icon,
+                FallbackIcon = "fa-solid fa-cog"
             });
             globalIndex++;
         }
@@ -73,8 +73,8 @@ public class RebootOptionsService(string bootDiskPath, IconService iconService)
 
         return umsOptions.Select((t, i) => new RebootOption {
             Name = t,
-            Type = RebootType.Ums,
-            Index = i
+            Index = i,
+            FallbackIcon = "fa-solid fa-hdd"
         }).ToList();
     }
 }
