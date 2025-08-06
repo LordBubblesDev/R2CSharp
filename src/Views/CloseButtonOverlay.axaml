@@ -3,7 +3,7 @@
              xmlns:avalonia="https://github.com/projektanker/icons.avalonia"
              x:Class="R2CSharp.Views.CloseButtonOverlay">
     
-    <Button Width="80" Height="80"
+    <Button Width="70" Height="70"
             Background="Transparent"
             BorderThickness="0"
             Click="CloseButton_Click"
@@ -12,7 +12,7 @@
             Margin="0">
         <avalonia:Icon Value="fa-solid fa-xmark"
                        Foreground="White" 
-                       FontSize="40"/>
+                       FontSize="36"/>
     </Button>
     
 </UserControl> 

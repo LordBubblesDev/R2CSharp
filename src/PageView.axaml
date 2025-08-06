@@ -2,7 +2,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:avalonia="https://github.com/projektanker/icons.avalonia"
              xmlns:pages="clr-namespace:R2CSharp"
-             xmlns:models="clr-namespace:R2CSharp.Models"
              xmlns:views="clr-namespace:R2CSharp.Views"
              x:Class="R2CSharp.PageView"
              x:DataType="pages:PageViewModel">

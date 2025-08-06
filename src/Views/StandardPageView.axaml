@@ -7,31 +7,34 @@
     
     <UserControl.Resources>
         <DataTemplate x:Key="OptionButtonTemplate" x:DataType="models:RebootOption">
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
-                <Button Width="300" Height="300"
-                        Command="{Binding Command}"
-                        CommandParameter="{Binding}">
-                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Image Source="{Binding Icon}"
-                               Width="250" Height="250"
-                               IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNotNull}}" />
-                        <avalonia:Icon Value="{Binding FallbackIcon}"
-                                       FontSize="130"
-                                       IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNull}}"
-                                       Foreground="{Binding $parent[UserControl].((models:PageConfiguration)DataContext).ThemeColor}" />
-                    </StackPanel>
-                </Button>
-                <TextBlock Text="{Binding Name}"
-                           HorizontalAlignment="Center"
-                           TextAlignment="Center"
-                           TextWrapping="Wrap"
-                           FontSize="35"
-                           MaxWidth="300"
-                           Margin="0,5,0,0"
-                           Foreground="White"
-                           MaxHeight="150" />
-            </StackPanel>
-        </DataTemplate>
+             <Border CornerRadius="150" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5">
+                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                     <Button Width="250" Height="250"
+                             Command="{Binding Command}"
+                             CommandParameter="{Binding}">
+                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                             <Image Source="{Binding Icon}"
+                                    Width="200" Height="200"
+                                    IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                             <avalonia:Icon Value="{Binding FallbackIcon}"
+                                            FontSize="130"
+                                            IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNull}}"
+                                            Foreground="{Binding $parent[UserControl].((models:PageConfiguration)DataContext).ThemeColor}" />
+                         </StackPanel>
+                     </Button>
+                     <TextBlock Text="{Binding Name}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                TextAlignment="Center"
+                                TextWrapping="Wrap"
+                                FontSize="30"
+                                MaxWidth="250"
+                                Margin="0,15,0,0"
+                                Foreground="White"
+                                Height="100" />
+                 </StackPanel>
+             </Border>
+         </DataTemplate>
     </UserControl.Resources>
 
     <UserControl.Styles>
@@ -48,54 +51,77 @@
         </Style>
     </UserControl.Styles>
     
-    <Viewbox Stretch="Uniform">
-        <Border Background="#2D2D2D" CornerRadius="8" Padding="20" Margin="10"  MinWidth="1600" MinHeight="900">
-            <StackPanel>
-                <!-- Header -->
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
-                    <avalonia:Icon Value="fa-solid fa-location-arrow" 
-                                   Margin="5,0,8,0" 
-                                   Foreground="White" />
-                    <TextBlock Text="{Binding SectionName}"
-                               FontSize="18"
-                               FontWeight="SemiBold"
-                               Foreground="White"
-                               VerticalAlignment="Center" />
-                </StackPanel>
-                
-                <!-- Divider -->
-                <Border Height="1" Background="White" Margin="0,0,0,20" />
-                
-                <!-- Content Area -->
-                <Grid>
-                    <ItemsControl ItemsSource="{Binding Options}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <UniformGrid Columns="{Binding ActualColumns}" 
-                                            Rows="{Binding ActualRows}" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <StaticResource ResourceKey="OptionButtonTemplate" />
-                        </ItemsControl.ItemTemplate>
-                        <ItemsControl.Styles>
-                            <Style Selector="ItemsControl:empty">
-                                <Setter Property="Template">
-                                    <ControlTemplate>
-                                        <TextBlock Text="{Binding EmptyMessage}"
-                                                   Foreground="Gray"
-                                                   FontStyle="Italic"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center"
-                                                   TextAlignment="Center"
-                                                   FontSize="16" />
-                                    </ControlTemplate>
-                                </Setter>
-                            </Style>
-                        </ItemsControl.Styles>
-                    </ItemsControl>
-                </Grid>
-            </StackPanel>
-        </Border>
-    </Viewbox>
+         <Viewbox Stretch="Uniform">
+         <Border Background="#2D2D2D" CornerRadius="25" Padding="20" Margin="10"  MinWidth="1650" MinHeight="850">
+             <Grid RowDefinitions="Auto,*">
+                 
+                 <!-- Header -->
+                 <Grid Margin="0,0,0,15">
+                     <avalonia:Icon Value="fa-solid fa-location-arrow" 
+                                    Margin="20,0,15,15" 
+                                    Foreground="White"
+                                    FontSize="50"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Bottom"/>
+                     <TextBlock Text="{Binding SectionName}"
+                                FontSize="35"
+                                FontWeight="SemiBold"
+                                Foreground="White"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Left"
+                                Margin="80,0,0,20"/>
+                 </Grid>
+                 
+                 <!-- Divider -->
+                 <Border Height="1" Background="White" Margin="0,0,0,20" Grid.Row="0" VerticalAlignment="Bottom" />
+                 
+                 <!-- Content Area -->
+                 <Grid Grid.Row="1" RowDefinitions="*,*">
+                     
+                      <!-- Single Row Layout (3 buttons) - Centered -->
+                      <Grid Grid.Row="0" Grid.RowSpan="2" 
+                            IsVisible="{Binding IsSingleRow}" RowDefinitions="*,Auto,*">
+                          <ItemsControl ItemsSource="{Binding Options}"
+                                        Grid.Row="1"
+                                        HorizontalAlignment="Stretch">
+                               <ItemsControl.ItemsPanel>
+                                   <ItemsPanelTemplate>
+                                       <UniformGrid Columns="{Binding ActualColumns}" Rows="1" />
+                                   </ItemsPanelTemplate>
+                               </ItemsControl.ItemsPanel>
+                               <ItemsControl.ItemTemplate>
+                                   <StaticResource ResourceKey="OptionButtonTemplate" />
+                               </ItemsControl.ItemTemplate>
+                           </ItemsControl>
+                        </Grid>
+                      
+                      <!-- Multi Row Layout (4+ buttons) - Top Aligned -->
+                      <ItemsControl ItemsSource="{Binding Options}"
+                                    Grid.Row="0" Grid.RowSpan="2"
+                                   VerticalAlignment="Top"
+                                   IsVisible="{Binding !IsSingleRow}">
+                          <ItemsControl.ItemsPanel>
+                              <ItemsPanelTemplate>
+                                  <UniformGrid Columns="{Binding ActualColumns}" 
+                                               Rows="{Binding ActualRows}" />
+                              </ItemsPanelTemplate>
+                          </ItemsControl.ItemsPanel>
+                          <ItemsControl.ItemTemplate>
+                              <StaticResource ResourceKey="OptionButtonTemplate" />
+                          </ItemsControl.ItemTemplate>
+                      </ItemsControl>
+                     
+                     <!-- Empty State -->
+                     <TextBlock Grid.Row="0" Text="{Binding EmptyMessage}"
+                                Foreground="Gray"
+                                FontStyle="Italic"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                TextAlignment="Center"
+                                FontSize="16"
+                                IsVisible="{Binding Options.Count, Converter={x:Static ObjectConverters.IsNull}}" />
+                 </Grid>
+             </Grid>
+         </Border>
+     </Viewbox>
 </UserControl> 
