@@ -27,6 +27,7 @@
                            Text="Reboot2Config" 
                            Foreground="White" 
                            VerticalAlignment="Center" 
+                           TextAlignment="Center"
                            Margin="10,0,0,0"
                            FontWeight="SemiBold"
                            FontSize="14"/>
