@@ -6,77 +6,7 @@
              xmlns:views="clr-namespace:R2CSharp.Views"
              x:Class="R2CSharp.PageView"
              x:DataType="pages:PageViewModel">
-            <UserControl.Resources>
-        <!-- ReSharper disable Xaml.PossibleNullReferenceException -->
-        <DataTemplate x:Key="OptionButtonTemplate" x:DataType="models:RebootOption">
-            <StackPanel HorizontalAlignment="Center" Margin="{Binding CustomMargin}">
-                <Button Width="75" Height="75"
-                        Command="{Binding Command}"
-                        CommandParameter="{Binding}">
-                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                        <Image Source="{Binding Icon}"
-                               Width="50" Height="50"
-                               IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNotNull}}" />
-                        <avalonia:Icon Value="{Binding FallbackIcon}"
-                                       FontSize="25"
-                                       IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNull}}"
-                                       Foreground="{Binding $parent[UserControl].((pages:PageViewModel)DataContext).ThemeColor}" />
-                    </StackPanel>
-                </Button>
-                <TextBlock Text="{Binding Name}"
-                           HorizontalAlignment="Center"
-                           TextAlignment="Center"
-                           TextWrapping="Wrap"
-                           FontSize="11"
-                           MaxWidth="80"
-                           Margin="0,3,0,0"
-                           Foreground="White"
-                           MaxHeight="32" />
-            </StackPanel>
-        </DataTemplate>
-        
-        <DataTemplate x:Key="SectionTemplate" x:DataType="models:SectionData">
-            <Border Background="#2D2D2D" CornerRadius="8" Padding="10" Margin="5,5,5,10">
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                        <avalonia:Icon Value="fa-solid fa-location-arrow" 
-                                       Margin="5,0,8,0" 
-                                       Foreground="White" />
-                        <TextBlock Text="{Binding Title}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="White"
-                                   VerticalAlignment="Center" />
-                    </StackPanel>
-                    <Border Height="1" Background="White" Margin="0,0,0,10" />
-                    <ItemsControl ItemsSource="{Binding Items}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel MaxWidth="520" MaxHeight="235" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <StaticResource ResourceKey="OptionButtonTemplate" />
-                        </ItemsControl.ItemTemplate>
-                        <ItemsControl.Styles>
-                            <Style Selector="ItemsControl:empty">
-                                <Setter Property="Template">
-                                    <ControlTemplate>
-                                        <TextBlock Text="{Binding EmptyMessage}"
-                                                   Foreground="Gray"
-                                                   FontStyle="Italic"
-                                                   HorizontalAlignment="Center"
-                                                   Margin="10" />
-                                    </ControlTemplate>
-                                </Setter>
-                            </Style>
-                        </ItemsControl.Styles>
-                    </ItemsControl>
-                </StackPanel>
-            </Border>
-        </DataTemplate>
-    </UserControl.Resources>
-
+    
     <UserControl.Styles>
         <Style Selector="Button">
             <Setter Property="Background" Value="#4E4E4E" />
@@ -97,7 +27,7 @@
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <avalonia:Icon Value="fa-solid fa-spinner" 
                               Width="48" Height="48"
-                              Foreground="{Binding $parent[UserControl].((pages:PageViewModel)DataContext).ThemeColor}" />
+                              Foreground="#4EC9B0" />
                 <TextBlock Text="Loading boot options..." 
                           HorizontalAlignment="Center" 
                           Margin="0,16,0,0"
@@ -110,17 +40,12 @@
                 <Carousel.PageTransition>
                     <PageSlide Duration="0:0:0.3" />
                 </Carousel.PageTransition>
-                <!-- Page 1: Launch -->
-                <views:LaunchPageView DataContext="{Binding}" />
                 
-                <!-- Page 2: More Configurations -->
-                <views:ConfigPageView DataContext="{Binding}" />
-                
-                <!-- Page 3: UMS -->
-                <views:UmsPageView DataContext="{Binding}" />
-                
-                <!-- Page 4: System Options -->
-                <views:SystemOptionsPageView DataContext="{Binding}" />
+                <!-- Individual Carousel Pages -->
+                <views:StandardPageView DataContext="{Binding Pages[0]}" />
+                <views:StandardPageView DataContext="{Binding Pages[1]}" />
+                <views:StandardPageView DataContext="{Binding Pages[2]}" />
+                <views:StandardPageView DataContext="{Binding Pages[3]}" />
             </Carousel>
             
             <!-- Navigation Controls -->

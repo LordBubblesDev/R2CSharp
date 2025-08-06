@@ -15,6 +15,7 @@ public class IconService
     private readonly string _bootDiskPath;
     public readonly string ThemeColor;
     public readonly Thickness ButtonsMargin;
+    public readonly bool UseFiveColumns;
 
     public IconService(string bootDiskPath)
     {
@@ -27,8 +28,10 @@ public class IconService
             ? ColorConverter.HsvToHex(hue, 100, 100)
             : ColorConverter.HsvToHex(167, 100, 100); // default nyx theme color
 
-        // Set the buttons' margin based on Nyx settings
-        ButtonsMargin = IniParserService.GetConfigProperty(nyxIniPath, "entries5col") == "1" ? new Thickness(14, 7, 14, 7) : new Thickness(27, 4, 27, 4);
+        // Set the buttons' margin and column settings based on Nyx settings
+        var entries5col = IniParserService.GetConfigProperty(nyxIniPath, "entries5col") == "1";
+        UseFiveColumns = entries5col;
+        ButtonsMargin = entries5col ? new Thickness(14, 7, 14, 7) : new Thickness(27, 4, 27, 4);
     }
 
     public Bitmap? FallbackIcon => ConvertBmpToBitmap("bootloader/res/icon_switch.bmp");

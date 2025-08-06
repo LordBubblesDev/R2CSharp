@@ -9,13 +9,12 @@ namespace R2CSharp;
 
 public partial class PageViewModel : ObservableObject
 {
-    [ObservableProperty] private ObservableCollection<SectionData> _sections = [];
+    [ObservableProperty] private ObservableCollection<PageConfiguration> _pages = [];
     [ObservableProperty] private bool _isLoading = true;
-    [ObservableProperty] private string _themeColor = "#00FF6E";
-    [ObservableProperty] private Thickness _buttonsMargin = new(27, 4, 27, 4);
 
     private readonly BootDiskService _bootDiskService;
     private RebootOptionsService? _rebootOptionsService;
+    private PageFactoryService? _pageFactoryService;
 
     public PageViewModel()
     {
@@ -30,8 +29,7 @@ public partial class PageViewModel : ObservableObject
             
             var iconService = new IconService(_bootDiskService.BootDiskPath);
             _rebootOptionsService = new RebootOptionsService(_bootDiskService.BootDiskPath, iconService);
-            ThemeColor = iconService.ThemeColor;
-            ButtonsMargin = iconService.ButtonsMargin;
+            _pageFactoryService = new PageFactoryService(iconService);
             
             await LoadRebootOptionsAsync();
         }
@@ -47,51 +45,44 @@ public partial class PageViewModel : ObservableObject
 
     private void LoadRebootOptions()
     {
-        Sections.Clear();
+        Pages.Clear();
 
-        var sectionConfigs = new[]
+        // Create Launch page
+        var launchOptions = _rebootOptionsService!.LoadLaunchOptions();
+        foreach (var option in launchOptions)
         {
-            new
-            {
-                Title = "Launch",
-                EmptyMessage = "No launch options found",
-                Options = _rebootOptionsService!.LoadLaunchOptions(),
-                Command = SelectLaunchOptionCommand
-            },
-            new
-            {
-                Title = "More Configurations",
-                EmptyMessage = "No config options found",
-                Options = _rebootOptionsService.LoadConfigOptions(),
-                Command = SelectConfigOptionCommand
-            },
-            new
-            {
-                Title = "UMS (USB Mass Storage)",
-                EmptyMessage = "If you ever see this, it means I messed up somewhere...",
-                Options = RebootOptionsService.LoadUmsOptions(),
-                Command = SelectUmsOptionCommand
-            }
-        };
-
-        foreach (var config in sectionConfigs)
-        {
-            var section = new SectionData
-            {
-                Title = config.Title,
-                EmptyMessage = config.EmptyMessage
-            };
-
-            foreach (var option in config.Options)
-            {
-                option.Command = config.Command;
-                option.IsUmsOption = config.Title == "UMS (USB Mass Storage)";
-                option.CustomMargin = option.IsUmsOption ? new Thickness(27, 10, 27, 10) : ButtonsMargin;
-                section.Items.Add(option);
-            }
-
-            Sections.Add(section);
+            option.Command = SelectLaunchOptionCommand;
         }
+        var launchPage = _pageFactoryService!.CreateLaunchPage(launchOptions);
+        Pages.Add(launchPage);
+
+        // Create Config page
+        var configOptions = _rebootOptionsService.LoadConfigOptions();
+        foreach (var option in configOptions)
+        {
+            option.Command = SelectConfigOptionCommand;
+        }
+        var configPage = _pageFactoryService.CreateConfigPage(configOptions);
+        Pages.Add(configPage);
+
+        // Create UMS page
+        var umsOptions = RebootOptionsService.LoadUmsOptions();
+        foreach (var option in umsOptions)
+        {
+            option.Command = SelectUmsOptionCommand;
+        }
+        var umsPage = _pageFactoryService.CreateUmsPage(umsOptions);
+        Pages.Add(umsPage);
+
+        // Create System Options page
+        var systemOptions = new List<RebootOption>
+        {
+            new() { Name = "Hekate Bootloader", Command = RebootToBootloaderCommand, FallbackIcon = "fa-solid fa-boot" },
+            new() { Name = "Reboot", Command = NormalRebootCommand, FallbackIcon = "fa-solid fa-rotate" },
+            new() { Name = "Shutdown", Command = ShutdownCommand, FallbackIcon = "fa-solid fa-power-off" }
+        };
+        var systemPage = _pageFactoryService.CreateSystemPage(systemOptions);
+        Pages.Add(systemPage);
     }
 
 
