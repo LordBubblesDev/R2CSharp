@@ -68,7 +68,7 @@ public partial class PageViewModel : ObservableObject
             new
             {
                 Title = "UMS (USB Mass Storage)",
-                EmptyMessage = "",
+                EmptyMessage = "If you ever see this, it means I messed up somewhere...",
                 Options = RebootOptionsService.LoadUmsOptions(),
                 Command = SelectUmsOptionCommand
             }
@@ -86,7 +86,7 @@ public partial class PageViewModel : ObservableObject
             {
                 option.Command = config.Command;
                 option.IsUmsOption = config.Title == "UMS (USB Mass Storage)";
-                option.CustomMargin = option.IsUmsOption ? new Thickness(27, 4, 27, 4) : ButtonsMargin;
+                option.CustomMargin = option.IsUmsOption ? new Thickness(27, 10, 27, 10) : ButtonsMargin;
                 section.Items.Add(option);
             }
 

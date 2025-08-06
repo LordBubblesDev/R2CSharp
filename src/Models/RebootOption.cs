@@ -12,6 +12,5 @@ public class RebootOption
     public string FallbackIcon { get; set; } = "fa-solid fa-rocket";
     public ICommand? Command { get; set; }
     public bool IsUmsOption { get; set; }
-    public Thickness? CustomMargin { get; set; }
-    public Thickness EffectiveMargin => CustomMargin ?? new Thickness(27, 4, 27, 4);
+    public Thickness CustomMargin { get; set; }
 }

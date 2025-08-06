@@ -11,7 +11,7 @@
             <UserControl.Resources>
         <!-- ReSharper disable Xaml.PossibleNullReferenceException -->
         <DataTemplate x:Key="OptionButtonTemplate" x:DataType="models:RebootOption">
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="{Binding EffectiveMargin}">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="{Binding CustomMargin}">
                 <Button Width="75" Height="75"
                         Command="{Binding Command}"
                         CommandParameter="{Binding}">
@@ -32,7 +32,8 @@
                            FontSize="11"
                            MaxWidth="80"
                            Margin="0,3,0,0"
-                           Foreground="White"/>
+                           Foreground="White"
+                           MaxHeight="32" />
             </StackPanel>
         </DataTemplate>
         
@@ -53,7 +54,7 @@
                     <ItemsControl ItemsSource="{Binding Items}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <WrapPanel MaxWidth="520" MaxHeight="230" />
+                                <WrapPanel MaxWidth="520" MaxHeight="235" />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
