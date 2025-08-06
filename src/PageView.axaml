@@ -37,7 +37,7 @@
         </Grid>
         
         <Grid IsVisible="{Binding !IsLoading}">
-            <ScrollViewer>
+            <ScrollViewer VerticalScrollBarVisibility="Hidden">
                 <StackPanel Margin="20" Spacing="10">
                     
                     <!-- Launch Section -->
@@ -193,14 +193,9 @@
                                                 Command="{Binding $parent[UserControl].((pages:PageViewModel)DataContext).SelectUmsOptionCommand}"
                                                 CommandParameter="{Binding}">
                                             <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                                                <Image Source="{Binding Icon}"
-                                                       Width="64" Height="64"
-                                                       Margin="0,0,0,8"
-                                                       IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNotNull}}" />
                                                 <avalonia:Icon Value="fa-solid fa-hdd"
-                                                               Width="64" Height="64"
+                                                               FontSize="30"
                                                                Margin="0,0,0,8"
-                                                               IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNull}}"
                                                                Foreground="{Binding $parent[UserControl].((pages:PageViewModel)DataContext).ThemeColor}" />
                                                 <TextBlock Text="{Binding Name}"
                                                            HorizontalAlignment="Center"
