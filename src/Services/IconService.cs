@@ -27,6 +27,14 @@ public class IconService
 
     public Bitmap? FallbackIcon => ConvertBmpToBitmap("bootloader/res/icon_switch.bmp");
 
+    private bool ShouldApplyColor(string bmpPath)
+    {
+        return bmpPath.EndsWith("icon_switch.bmp", StringComparison.OrdinalIgnoreCase)
+            || bmpPath.EndsWith("icon_payload.bmp", StringComparison.OrdinalIgnoreCase)
+            || bmpPath.EndsWith("_hue_nobox.bmp", StringComparison.OrdinalIgnoreCase)
+            || bmpPath.EndsWith("_hue.bmp", StringComparison.OrdinalIgnoreCase);
+    }
+
     public Bitmap? ConvertBmpToBitmap(string? bmpPath)
     {
         if (string.IsNullOrEmpty(bmpPath)) return null;
@@ -37,7 +45,7 @@ public class IconService
 
         try {
             using var image = Image.Load(fullBmpPath);
-            if (ThemeColor.StartsWith("#") && ThemeColor.Length == 7)
+            if (ShouldApplyColor(bmpPath) && ThemeColor.StartsWith("#") && ThemeColor.Length == 7)
             {
                 var r = Convert.ToInt32(ThemeColor.Substring(1, 2), 16);
                 var g = Convert.ToInt32(ThemeColor.Substring(3, 2), 16);
