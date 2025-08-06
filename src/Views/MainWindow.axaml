@@ -7,8 +7,9 @@
         x:Class="R2CSharp.Views.MainWindow"
         Icon="/Assets/icon.ico"
         Title="Reboot2Config"
-        Width="580" Height="600"
+        Width="580" Height="690"
         MinWidth="580" MinHeight="400"
+        MaxWidth="580" MaxHeight="720"
         Background="#1E1E1E">
     <local:PageView />
 </Window>
