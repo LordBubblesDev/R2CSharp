@@ -11,7 +11,7 @@ namespace R2CSharp.Services;
 public class IconService
 {
     private readonly string _bootDiskPath;
-    private readonly string _themeColor;
+    public readonly string ThemeColor;
 
     public IconService(string bootDiskPath)
     {
@@ -20,7 +20,7 @@ public class IconService
         var nyxIniPath = Path.Combine(_bootDiskPath, "bootloader", "nyx.ini");
         var themeColorValue = IniParserService.GetConfigProperty(nyxIniPath, "themecolor");
 
-        _themeColor = themeColorValue != null && int.TryParse(themeColorValue, out var hue) && hue is >= 0 and <= 359
+        ThemeColor = themeColorValue != null && int.TryParse(themeColorValue, out var hue) && hue is >= 0 and <= 359
             ? ColorConverter.HsvToHex(hue, 100, 100)
             : ColorConverter.HsvToHex(167, 100, 100); // default nyx theme color
     }
@@ -37,11 +37,11 @@ public class IconService
 
         try {
             using var image = Image.Load(fullBmpPath);
-            if (_themeColor.StartsWith("#") && _themeColor.Length == 7)
+            if (ThemeColor.StartsWith("#") && ThemeColor.Length == 7)
             {
-                var r = Convert.ToInt32(_themeColor.Substring(1, 2), 16);
-                var g = Convert.ToInt32(_themeColor.Substring(3, 2), 16);
-                var b = Convert.ToInt32(_themeColor.Substring(5, 2), 16);
+                var r = Convert.ToInt32(ThemeColor.Substring(1, 2), 16);
+                var g = Convert.ToInt32(ThemeColor.Substring(3, 2), 16);
+                var b = Convert.ToInt32(ThemeColor.Substring(5, 2), 16);
                 
                 // Create a new image with the theme color
                 using var coloredImage = new Image<Rgba32>(image.Width, image.Height);
