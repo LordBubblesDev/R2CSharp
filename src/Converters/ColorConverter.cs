@@ -22,8 +22,7 @@ public static class ColorConverter
             return $"#{gray:X2}{gray:X2}{gray:X2}";
         }
 
-        // Convert hue to 0-6 range
-        h = h / 60.0;
+        h /= 60.0;
         var i = (int)Math.Floor(h);
         var f = h - i;
         var p = v * (1 - s);
@@ -53,7 +52,6 @@ public static class ColorConverter
                 break;
         }
 
-        // Convert to 0-255 range and create hex string
         var red = (int)Math.Round(r * 255);
         var green = (int)Math.Round(g * 255);
         var blue = (int)Math.Round(b * 255);
