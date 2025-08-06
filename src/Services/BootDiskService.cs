@@ -32,7 +32,7 @@ public class BootDiskService
             _isDiskMounted = true;
         }
         else {
-            throw new Exception("Failed to mount boot disk, using fallback path");
+            throw new Exception("Failed to mount boot disk");
         }
     }
 

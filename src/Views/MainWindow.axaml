@@ -1,15 +1,49 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:avalonia="https://github.com/projektanker/icons.avalonia"
         xmlns:local="clr-namespace:R2CSharp"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
         x:Class="R2CSharp.Views.MainWindow"
         Icon="/Assets/icon.ico"
         Title="Reboot2Config"
-        Width="580" Height="690"
-        MinWidth="580" MinHeight="400"
-        MaxWidth="580" MaxHeight="720"
-        Background="#1E1E1E">
-    <local:PageView />
+        Background="#1E1E1E"
+        CanResize="True"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Custom Title Bar -->
+        <Border Grid.Row="0" Background="#1E1E1E" Height="25" Name="TitleBar">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <TextBlock Grid.Column="0" 
+                           Text="Reboot2Config" 
+                           Foreground="White" 
+                           VerticalAlignment="Center" 
+                           Margin="10,0,0,0"
+                           FontWeight="SemiBold"
+                           FontSize="14"/>
+                
+                <Button Grid.Column="1" 
+                        Width="30" Height="30"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Click="CloseButton_Click">
+                    <avalonia:Icon Value="fa-solid fa-xmark" 
+                                   Foreground="White" 
+                                   FontSize="12"/>
+                </Button>
+            </Grid>
+        </Border>
+        
+        <!-- Main Content -->
+        <local:PageView Grid.Row="1" />
+    </Grid>
 </Window>
