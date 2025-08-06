@@ -10,27 +10,12 @@
         CanResize="True"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="35"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        
-        <!-- Custom Title Bar -->
-        <Border Grid.Row="0" Background="#1E1E1E" Name="TitleBar">
-            <TextBlock Text="Reboot2Config" 
-                       Foreground="White" 
-                       VerticalAlignment="Center" 
-                       TextAlignment="Center"
-                       Margin="0,3,0,0"
-                       FontWeight="SemiBold"
-                       FontSize="18"/>
-        </Border>
-        
+    <Grid RowDefinitions="*">
+
         <!-- Main Content -->
-        <local:PageView Grid.Row="1" />
+        <local:PageView Grid.Row="0" />
         
         <!-- Close Button Overlay -->
-        <views:CloseButtonOverlay Grid.Row="1" ZIndex="1000" />
+        <views:CloseButtonOverlay Grid.Row="0" ZIndex="1000" />
     </Grid>
 </Window>
