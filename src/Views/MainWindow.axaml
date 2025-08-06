@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:avalonia="https://github.com/projektanker/icons.avalonia"
         xmlns:local="clr-namespace:R2CSharp"
+        xmlns:views="clr-namespace:R2CSharp.Views"
         x:Class="R2CSharp.Views.MainWindow"
         Icon="/Assets/icon.ico"
         Title="Reboot2Config"
@@ -11,40 +12,25 @@
         ExtendClientAreaChromeHints="NoChrome">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="35"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         
         <!-- Custom Title Bar -->
-        <Border Grid.Row="0" Background="#1E1E1E" Height="25" Name="TitleBar">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                
-                <TextBlock Grid.Column="0" 
-                           Text="Reboot2Config" 
-                           Foreground="White" 
-                           VerticalAlignment="Center" 
-                           TextAlignment="Center"
-                           Margin="10,0,0,0"
-                           FontWeight="SemiBold"
-                           FontSize="14"/>
-                
-                <Button Grid.Column="1" 
-                        Width="30" Height="30"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Click="CloseButton_Click">
-                    <avalonia:Icon Value="fa-solid fa-xmark" 
-                                   Foreground="White" 
-                                   FontSize="12"/>
-                </Button>
-            </Grid>
+        <Border Grid.Row="0" Background="#1E1E1E" Name="TitleBar">
+            <TextBlock Text="Reboot2Config" 
+                       Foreground="White" 
+                       VerticalAlignment="Center" 
+                       TextAlignment="Center"
+                       Margin="0,3,0,0"
+                       FontWeight="SemiBold"
+                       FontSize="18"/>
         </Border>
         
         <!-- Main Content -->
         <local:PageView Grid.Row="1" />
+        
+        <!-- Close Button Overlay -->
+        <views:CloseButtonOverlay Grid.Row="1" ZIndex="1000" />
     </Grid>
 </Window>
