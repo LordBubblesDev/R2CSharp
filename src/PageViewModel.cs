@@ -14,6 +14,7 @@ public partial class PageViewModel : ObservableObject
 
     [ObservableProperty] private ObservableCollection<RebootOption> _umsOptions = [];
     [ObservableProperty] private bool _isLoading = true;
+    [ObservableProperty] private string _themeColor = "#00FF6E";
 
     private readonly BootDiskService _bootDiskService;
     private RebootOptionsService? _rebootOptionsService;
@@ -31,6 +32,7 @@ public partial class PageViewModel : ObservableObject
             
             var iconService = new IconService(_bootDiskService.BootDiskPath);
             _rebootOptionsService = new RebootOptionsService(_bootDiskService.BootDiskPath, iconService);
+            ThemeColor = iconService.ThemeColor;
             
             await LoadRebootOptionsAsync();
         }
