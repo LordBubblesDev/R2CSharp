@@ -42,11 +42,11 @@
                         <StackPanel Margin="10" Spacing="5">
                             
                             <!-- Launch Section -->
-                            <Border Background="#2D2D2D" CornerRadius="8" Padding="5" Margin="5,0,0,5">
+                            <Border Background="#2D2D2D" CornerRadius="8" Padding="5" Margin="5,0,5,5">
                                 <StackPanel HorizontalAlignment="Stretch">
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                         <avalonia:Icon Value="fa-solid fa-location-arrow" 
-                                                       Margin="0,0,8,0" 
+                                                       Margin="5,0,8,0" 
                                                        Foreground="White" />
                                         <TextBlock Text="Launch"
                                                    FontSize="14"
@@ -105,11 +105,11 @@
                             </Border>
 
                             <!-- More Configs Section -->
-                            <Border Background="#2D2D2D" CornerRadius="8" Padding="10" Margin="0,0,0,5">
+                            <Border Background="#2D2D2D" CornerRadius="8" Padding="5" Margin="5,0,5,5">
                                 <StackPanel HorizontalAlignment="Stretch">
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                         <avalonia:Icon Value="fa-solid fa-location-arrow" 
-                                                       Margin="0,0,8,0" 
+                                                       Margin="5,0,8,0" 
                                                        Foreground="White" />
                                         <TextBlock Text="More Configurations"
                                                    FontSize="14"
@@ -168,11 +168,11 @@
                             </Border>
 
                             <!-- UMS Section -->
-                            <Border Background="#2D2D2D" CornerRadius="8" Padding="10" Margin="0,0,0,5">
+                            <Border Background="#2D2D2D" CornerRadius="8" Padding="5" Margin="5,0,5,5">
                                 <StackPanel HorizontalAlignment="Stretch">
-                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <StackPanel Orientation="Horizontal" Margin="5,0,0,5">
                                         <avalonia:Icon Value="fa-solid fa-location-arrow" 
-                                                       Margin="0,0,8,0" 
+                                                       Margin="5,0,8,0" 
                                                        Foreground="White" />
                                         <TextBlock Text="UMS (USB Mass Storage)"
                                                    FontSize="14"
@@ -213,11 +213,11 @@
                             </Border>
 
                             <!-- System Options -->
-                            <Border Background="#2D2D2D" CornerRadius="8" Padding="15" Margin="0,0,0,10">
+                            <Border Background="#2D2D2D" CornerRadius="8" Padding="5" Margin="5,0,5,5">
                                 <StackPanel HorizontalAlignment="Stretch">
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                         <avalonia:Icon Value="fa-solid fa-location-arrow" 
-                                                       Margin="0,0,8,0" 
+                                                       Margin="5,0,8,0" 
                                                        Foreground="White" />
                                         <TextBlock Text="System Options"
                                                    FontSize="14"
