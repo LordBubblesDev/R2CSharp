@@ -192,19 +192,6 @@
                                         </Button>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
-                                <ItemsControl.Styles>
-                                    <Style Selector="ItemsControl:empty">
-                                        <Setter Property="Template">
-                                            <ControlTemplate>
-                                                <TextBlock Text="No UMS options found"
-                                                           Foreground="Gray"
-                                                           FontStyle="Italic"
-                                                           HorizontalAlignment="Center"
-                                                           Margin="10" />
-                                            </ControlTemplate>
-                                        </Setter>
-                                    </Style>
-                                </ItemsControl.Styles>
                             </ItemsControl>
                         </StackPanel>
                     </Border>
