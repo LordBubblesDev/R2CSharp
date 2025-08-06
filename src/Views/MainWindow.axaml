@@ -10,8 +10,7 @@
         CanResize="True"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome">
-    <Grid RowDefinitions="*">
-
+    <Grid Background="Transparent">
         <!-- Main Content -->
         <local:PageView Grid.Row="0" />
         
