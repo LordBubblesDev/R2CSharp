@@ -37,7 +37,7 @@
         
         <Grid IsVisible="{Binding !IsLoading}">
             <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
-                <controls:CustomCarousel Name="MainCarousel" 
+                <controls:CarouselControl Name="MainCarousel" 
                           IsEnabled="True"
                           IsHitTestVisible="True"
                           HorizontalAlignment="Stretch"

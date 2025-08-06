@@ -19,9 +19,7 @@ public class BootDiskService
             return;
         }
 
-        // Check if /flash already exists
         if (Directory.Exists("/flash/bootloader")) {
-            Console.WriteLine("Bootloader files already accessible at /flash/bootloader");
             _bootDiskPath = "/flash";
             _isDiskMounted = false;
             return;
@@ -48,7 +46,6 @@ public class BootDiskService
             if (File.Exists("/dev/mmcblk1") && mmcBlk == "1") devMmc = "mmcblk1";
 
             var devicePath = $"/dev/{devMmc}p{mmcPart}";
-            Console.WriteLine($"Mounting boot disk {devicePath}");
 
             if (!File.Exists(devicePath)) {
                 Console.WriteLine($"Device {devicePath} not found");
@@ -67,7 +64,7 @@ public class BootDiskService
                             continue;
                         }
                         var existingMountPoint = parts[1].Trim();
-                        Console.WriteLine($"Boot disk already mounted at {existingMountPoint}");
+                        Console.WriteLine($"Boot disk mounted at {existingMountPoint}");
                         _bootDiskPath = existingMountPoint;
                         return Task.FromResult(true);
                     }
