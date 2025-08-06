@@ -85,6 +85,8 @@ public partial class PageViewModel : ObservableObject
             foreach (var option in config.Options)
             {
                 option.Command = config.Command;
+                option.IsUmsOption = config.Title == "UMS (USB Mass Storage)";
+                option.CustomMargin = option.IsUmsOption ? new Thickness(27, 4, 27, 4) : ButtonsMargin;
                 section.Items.Add(option);
             }
 
