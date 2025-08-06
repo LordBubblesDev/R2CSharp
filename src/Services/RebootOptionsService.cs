@@ -34,7 +34,7 @@ public class RebootOptionsService(string bootDiskPath, IconService iconService)
 
         if (!Directory.Exists(iniDirectory)) return options;
         var iniFiles = Directory.GetFiles(iniDirectory, "*.ini")
-            .OrderBy(Path.GetFileName, StringComparer.Ordinal)
+            .OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase)
             .ToArray();
 
         var allSections = (
