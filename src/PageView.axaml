@@ -141,13 +141,13 @@
                                             </ItemsPanelTemplate>
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.Items>
-                                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="30,10">
-                                                <Button Width="90" Height="90"
+                                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="35,10">
+                                                <Button Width="80" Height="80"
                                                         Command="{Binding RebootToBootloaderCommand}"
                                                         HorizontalContentAlignment="Center">
                                                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                                                         <avalonia:Icon Value="fa-solid fa-boot"
-                                                                       FontSize="45"
+                                                                       FontSize="35"
                                                                        Foreground="{Binding $parent[UserControl].((pages:PageViewModel)DataContext).ThemeColor}" />
                                                     </StackPanel>
                                                 </Button>
@@ -155,18 +155,18 @@
                                                            HorizontalAlignment="Center"
                                                            TextAlignment="Center"
                                                            TextWrapping="Wrap"
-                                                           FontSize="12"
+                                                           FontSize="11"
                                                            MaxWidth="90"
                                                            Margin="0,3,0,0"
                                                            Foreground="White"
                                                            MaxHeight="32" />
                                             </StackPanel>
-                                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="30,10">
-                                                <Button Width="90" Height="90"
+                                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="35,10">
+                                                <Button Width="80" Height="80"
                                                         Command="{Binding NormalRebootCommand}">
                                                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                                                         <avalonia:Icon Value="fa-solid fa-rotate"
-                                                                       FontSize="45"
+                                                                       FontSize="35"
                                                                        Foreground="{Binding $parent[UserControl].((pages:PageViewModel)DataContext).ThemeColor}" />
                                                     </StackPanel>
                                                 </Button>
@@ -174,18 +174,18 @@
                                                            HorizontalAlignment="Center"
                                                            TextAlignment="Center"
                                                            TextWrapping="Wrap"
-                                                           FontSize="12"
+                                                           FontSize="11"
                                                            MaxWidth="90"
                                                            Margin="0,3,0,0"
                                                            Foreground="White"
                                                            MaxHeight="32" />
                                             </StackPanel>
-                                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="30, 10">
-                                                <Button Width="90" Height="90"
+                                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="35, 10">
+                                                <Button Width="80" Height="80"
                                                         Command="{Binding ShutdownCommand}">
                                                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                                                         <avalonia:Icon Value="fa-solid fa-power-off"
-                                                                       FontSize="45"
+                                                                       FontSize="35"
                                                                        Foreground="{Binding $parent[UserControl].((pages:PageViewModel)DataContext).ThemeColor}" />
                                                     </StackPanel>
                                                 </Button>
@@ -193,7 +193,7 @@
                                                            HorizontalAlignment="Center"
                                                            TextAlignment="Center"
                                                            TextWrapping="Wrap"
-                                                           FontSize="12"
+                                                           FontSize="11"
                                                            MaxWidth="90"
                                                            Margin="0,3,0,0"
                                                            Foreground="White" />
