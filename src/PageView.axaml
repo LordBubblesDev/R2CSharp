@@ -60,7 +60,8 @@
                         BorderBrush="{Binding ThemeColor}"
                         BorderThickness="1"
                         CornerRadius="30"
-                        Cursor="Hand">
+                        Cursor="Hand"
+                        IsVisible="{Binding CanGoPrevious}">
                     <Button.Styles>
                         <Style Selector="Button:hover">
                             <Setter Property="Background" Value="#3A3A3A"/>
@@ -87,7 +88,8 @@
                         BorderBrush="{Binding ThemeColor}"
                         BorderThickness="1"
                         CornerRadius="30"
-                        Cursor="Hand">
+                        Cursor="Hand"
+                        IsVisible="{Binding CanGoNext}">
                     <Button.Styles>
                         <Style Selector="Button:hover">
                             <Setter Property="Background" Value="#3A3A3A"/>

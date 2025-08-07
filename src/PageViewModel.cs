@@ -11,6 +11,8 @@ public partial class PageViewModel : ObservableObject
     [ObservableProperty] private ObservableCollection<PageConfiguration> _pages = [];
     [ObservableProperty] private bool _isLoading = true;
     [ObservableProperty] private string _themeColor = "#00FFC8";
+    [ObservableProperty] private bool _canGoPrevious;
+    [ObservableProperty] private bool _canGoNext = true;
 
     private readonly BootDiskService _bootDiskService;
     private RebootOptionsService? _rebootOptionsService;

@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Input;
 using Avalonia.VisualTree;
+using R2CSharp.Controls;
 using R2CSharp.Services;
 
 namespace R2CSharp;
@@ -11,12 +12,14 @@ public partial class PageView : UserControl
 {
     private readonly ScrollDetectionService _scrollService;
     private readonly TouchDetectionService _touchService;
+    private readonly PageViewModel? _viewModel;
     
     public PageView()
     {
         InitializeComponent();
         
-        DataContext = new PageViewModel();
+        _viewModel = new PageViewModel();
+        DataContext = _viewModel;
         _scrollService = new ScrollDetectionService();
         _touchService = new TouchDetectionService();
         _scrollService.PageChangeRequested += OnPageChangeRequested;
@@ -46,6 +49,16 @@ public partial class PageView : UserControl
             var pageView = new Views.StandardPageView { DataContext = t };
             MainCarousel.AddPage(pageView);
         }
+        UpdateNavigationState();
+        MainCarousel.PropertyChanged += OnCarouselPropertyChanged;
+    }
+    
+    private void OnCarouselPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+    {
+        if (e.Property == CarouselControl.CurrentIndexProperty)
+        {
+            UpdateNavigationState();
+        }
     }
 
     private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
@@ -72,8 +85,6 @@ public partial class PageView : UserControl
     {
         if (MainCarousel == null) return;
             
-        MainCarousel.AllowNavigation = true;
-            
         if (direction > 0) {
             MainCarousel.Previous();
         }
@@ -81,23 +92,32 @@ public partial class PageView : UserControl
             MainCarousel.Next();
         }
             
-        MainCarousel.AllowNavigation = false;
+        UpdateNavigationState();
     }
     
     private void OnPreviousButtonClick(object? sender, RoutedEventArgs e)
     {
         if (MainCarousel == null) return;
-        MainCarousel.AllowNavigation = true;
         MainCarousel.Previous();
-        MainCarousel.AllowNavigation = false;
+        UpdateNavigationState();
     }
     
     private void OnNextButtonClick(object? sender, RoutedEventArgs e)
     {
         if (MainCarousel == null) return;
-        MainCarousel.AllowNavigation = true;
         MainCarousel.Next();
-        MainCarousel.AllowNavigation = false;
+        UpdateNavigationState();
+    }
+
+    private void UpdateNavigationState()
+    {
+        if (_viewModel == null || MainCarousel == null) return;
+        
+        var currentIndex = MainCarousel.CurrentIndex;
+        var totalPages = _viewModel.Pages.Count;
+        
+        _viewModel.CanGoPrevious = currentIndex > 0;
+        _viewModel.CanGoNext = currentIndex < totalPages - 1;
     }
 
     protected override void OnUnloaded(RoutedEventArgs e)
@@ -107,6 +127,11 @@ public partial class PageView : UserControl
         {
             viewModel.Cleanup();
             viewModel.PropertyChanged -= OnViewModelPropertyChanged;
+        }
+        
+        if (MainCarousel != null)
+        {
+            MainCarousel.PropertyChanged -= OnCarouselPropertyChanged;
         }
         
         if (this.GetVisualRoot() is Window window)

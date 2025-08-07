@@ -11,32 +11,19 @@ public class CarouselControl : Panel
     private Control? _currentPage;
     private Control? _nextPage;
     private bool _isAnimating;
-    private bool _allowNavigation;
-    
+
     public static readonly DirectProperty<CarouselControl, int> CurrentIndexProperty =
         AvaloniaProperty.RegisterDirect<CarouselControl, int>(
             nameof(CurrentIndex),
             o => o._currentIndex,
             (o, v) => o.SetCurrentIndex(v));
     
-    public static readonly DirectProperty<CarouselControl, bool> AllowNavigationProperty =
-        AvaloniaProperty.RegisterDirect<CarouselControl, bool>(
-            nameof(AllowNavigation),
-            o => o._allowNavigation,
-            (o, v) => o._allowNavigation = v);
-    
     public int CurrentIndex
     {
         get => _currentIndex;
         set => SetCurrentIndex(value);
     }
-    
-    public bool AllowNavigation
-    {
-        get => _allowNavigation;
-        set => _allowNavigation = value;
-    }
-    
+
     public void AddPage(Control page)
     {
         _pages.Add(page);
@@ -49,10 +36,6 @@ public class CarouselControl : Panel
     
     public void Next()
     {
-        if (!_allowNavigation) {
-            return;
-        }
-        
         if (_currentIndex < _pages.Count - 1 && !_isAnimating) {
             AnimateToPage(_currentIndex + 1, true);
         }
@@ -60,23 +43,25 @@ public class CarouselControl : Panel
     
     public void Previous()
     {
-        if (!_allowNavigation) {
-            return;
+        if (_currentIndex > 0 && !_isAnimating) {
+            AnimateToPage(_currentIndex - 1, false);
         }
-
-        if (_currentIndex <= 0 || _isAnimating) return;
-        AnimateToPage(_currentIndex - 1, false);
     }
     
     private void SetCurrentIndex(int index)
     {
         if (index < 0 || index >= _pages.Count || _isAnimating) return;
+        var oldIndex = _currentIndex;
         _currentIndex = index;
         _currentPage = _pages[index];
         
         Children.Clear();
         if (_currentPage != null) {
             Children.Add(_currentPage);
+        }
+        
+        if (oldIndex != _currentIndex) {
+            SetAndRaise(CurrentIndexProperty, ref oldIndex, _currentIndex);
         }
             
         System.Diagnostics.Debug.WriteLine($"[CarouselControl] CurrentIndex set to {index}");
@@ -95,20 +80,27 @@ public class CarouselControl : Panel
                 try {
                     var containerHeight = Bounds.Height;
                     Children.Add(_nextPage);
-            
-                    await AnimationService.AnimatePageTransition(_currentPage, _nextPage, goingForward, containerHeight);
-            
+
+                    if (_currentPage == null) return;
+                    
+                    await AnimationService.AnimatePageTransition(_currentPage, _nextPage, goingForward,
+                        containerHeight);
+
                     System.Diagnostics.Debug.WriteLine($"[CarouselControl] Animation completed");
-            
-                    if (_currentPage != null)
-                    {
+
+                    if (_currentPage != null) {
                         Children.Remove(_currentPage);
                     }
-            
+
+                    var oldIndex = _currentIndex;
                     _currentPage = _nextPage;
                     _currentIndex = targetIndex;
                     _nextPage = null;
                     _isAnimating = false;
+
+                    if (oldIndex != _currentIndex) {
+                        SetAndRaise(CurrentIndexProperty, ref oldIndex, _currentIndex);
+                    }
                 }
                 catch (Exception e)
                 {

@@ -5,31 +5,27 @@ namespace R2CSharp.Services;
 
 public class BootDiskService
 {
-    private string _bootDiskPath = string.Empty;
     private bool _isDiskMounted;
 
-    public string BootDiskPath => _bootDiskPath;
+    public string BootDiskPath { get; private set; } = string.Empty;
 
     public async Task InitializeBootDiskAsync()
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
             Console.WriteLine("Debug mode on Windows - using test path");
-            _bootDiskPath = "F:\\DebugSD";
+            BootDiskPath = "F:\\DebugSD";
             _isDiskMounted = false;
             return;
         }
 
         if (Directory.Exists("/flash/bootloader")) {
-            _bootDiskPath = "/flash";
+            BootDiskPath = "/flash";
             _isDiskMounted = false;
             return;
         }
 
         Console.WriteLine("Mounting boot disk...");
-        if (await MountBootDiskAsync()) {
-            _isDiskMounted = true;
-        }
-        else {
+        if (!await MountBootDiskAsync()) {
             throw new Exception("Failed to mount boot disk");
         }
     }
@@ -38,7 +34,6 @@ public class BootDiskService
     {
         try {
             var cmdline = File.ReadAllText("/proc/cmdline");
-            var swrDir = ParseCmdlineParameter(cmdline, "swr_dir") ?? "switchroot/ubuntu";
             var mmcBlk = ParseCmdlineParameter(cmdline, "boot_m") ?? "0";
             var mmcPart = ParseCmdlineParameter(cmdline, "boot_p") ?? "1";
 
@@ -64,26 +59,25 @@ public class BootDiskService
                             continue;
                         }
                         var existingMountPoint = parts[1].Trim();
-                        Console.WriteLine($"Boot disk mounted at {existingMountPoint}");
-                        _bootDiskPath = existingMountPoint;
+                        Console.WriteLine($"Boot disk already mounted at {existingMountPoint}");
+                        BootDiskPath = existingMountPoint;
                         return Task.FromResult(true);
                     }
             }
 
             // Create mount point
-            var mountPoint = "/opt/switchroot/boot_disk";
+            const string mountPoint = "/opt/switchroot/boot_disk";
             Directory.CreateDirectory(mountPoint);
 
             var result = ExecuteCommand("mount", $"{devicePath} {mountPoint}");
             if (result == 0) {
                 Console.WriteLine("Boot disk mounted successfully");
-                _bootDiskPath = mountPoint;
+                BootDiskPath = mountPoint;
+                _isDiskMounted = true;
                 return Task.FromResult(true);
             }
-            else {
-                Console.WriteLine($"Failed to mount boot disk, exit code: {result}");
-                return Task.FromResult(false);
-            }
+            Console.WriteLine($"Failed to mount boot disk, exit code: {result}");
+            return Task.FromResult(false);
         }
         catch (Exception ex) {
             Console.WriteLine($"Error mounting boot disk: {ex.Message}");
@@ -91,14 +85,14 @@ public class BootDiskService
         }
     }
 
-    private string? ParseCmdlineParameter(string cmdline, string parameter)
+    private static string? ParseCmdlineParameter(string cmdline, string parameter)
     {
         var pattern = $"{parameter}=([^\\s]+)";
         var match = System.Text.RegularExpressions.Regex.Match(cmdline, pattern);
         return match.Success ? match.Groups[1].Value : null;
     }
 
-    private int ExecuteCommand(string command, string arguments)
+    private static int ExecuteCommand(string command, string arguments)
     {
         try {
             var startInfo = new ProcessStartInfo {
@@ -111,12 +105,10 @@ public class BootDiskService
             };
 
             using var process = Process.Start(startInfo);
-            if (process != null) {
-                process.WaitForExit();
-                return process.ExitCode;
-            }
+            if (process == null) return -1;
+            process.WaitForExit();
+            return process.ExitCode;
 
-            return -1;
         }
         catch (Exception ex) {
             Console.WriteLine($"Error executing command {command}: {ex.Message}");
@@ -124,7 +116,7 @@ public class BootDiskService
         }
     }
 
-    private string ExecuteCommandWithOutput(string command, string? arguments = null)
+    private static string ExecuteCommandWithOutput(string command, string? arguments = null)
     {
         try {
             var startInfo = new ProcessStartInfo {
@@ -137,13 +129,11 @@ public class BootDiskService
             };
 
             using var process = Process.Start(startInfo);
-            if (process != null) {
-                var output = process.StandardOutput.ReadToEnd();
-                process.WaitForExit();
-                return output;
-            }
+            if (process == null) return string.Empty;
+            var output = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+            return output;
 
-            return string.Empty;
         }
         catch (Exception ex) {
             Console.WriteLine($"Error executing command {command}: {ex.Message}");
@@ -153,16 +143,16 @@ public class BootDiskService
 
     public void Cleanup()
     {
-        if (_isDiskMounted)
-            try {
-                Console.WriteLine("Cleaning up mounted disk...");
-                var result = ExecuteCommand("umount", "/opt/switchroot/boot_disk");
-                Console.WriteLine(result == 0
-                    ? "Boot disk unmounted successfully"
-                    : $"Failed to unmount boot disk, exit code: {result}");
-            }
-            catch (Exception ex) {
-                Console.WriteLine($"Error during cleanup: {ex.Message}");
-            }
+        if (!_isDiskMounted) return;
+        try {
+            Console.WriteLine("Cleaning up mounted disk...");
+            var result = ExecuteCommand("umount", "/opt/switchroot/boot_disk");
+            Console.WriteLine(result == 0
+                ? "Boot disk unmounted successfully"
+                : $"Failed to unmount boot disk, exit code: {result}");
+        }
+        catch (Exception ex) {
+            Console.WriteLine($"Error during cleanup: {ex.Message}");
+        }
     }
 }
