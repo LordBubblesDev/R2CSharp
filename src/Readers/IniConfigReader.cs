@@ -1,6 +1,6 @@
-namespace R2CSharp.Services;
+namespace R2CSharp.Readers;
 
-public static class IniParserService
+public static class IniConfigReader
 {
     /// <summary>
     /// Gets a property value from the config section of an INI file
@@ -10,10 +10,8 @@ public static class IniParserService
     /// <returns>The property value or null if not found</returns>
     public static string? GetConfigProperty(string iniFilePath, string propertyName)
     {
-        try
-        {
-            if (!File.Exists(iniFilePath))
-            {
+        try {
+            if (!File.Exists(iniFilePath)) {
                 Console.WriteLine($"INI file not found at: {iniFilePath}");
                 return null;
             }
@@ -39,8 +37,7 @@ public static class IniParserService
 
             return propertyValue;
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             Console.WriteLine($"Error reading property {propertyName} from {iniFilePath}: {ex.Message}");
             return null;
         }

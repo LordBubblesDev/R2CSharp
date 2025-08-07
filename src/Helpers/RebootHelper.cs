@@ -1,8 +1,8 @@
 using System.Diagnostics;
 
-namespace R2CSharp.Services;
+namespace R2CSharp.Helpers;
 
-public class RebootService
+public static class RebootHelper
 {
     public static void ExecuteReboot(string action, string param1, string param2)
     {

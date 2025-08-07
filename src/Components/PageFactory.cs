@@ -1,46 +1,46 @@
 using R2CSharp.Models;
 
-namespace R2CSharp.Services;
+namespace R2CSharp.Components;
 
-public class PageFactoryService(IconService iconService)
+public class PageFactory(NyxIcons nyxIcons)
 {
     public PageConfiguration CreateLaunchPage(List<RebootOption> options)
     {
-        return new PageConfiguration("Launch", options, iconService.UseFiveColumns)
+        return new PageConfiguration("Launch", options, nyxIcons.UseFiveColumns)
         {
             SectionIcon = "fa-solid fa-rocket",
             EmptyMessage = "No launch options found",
-            ThemeColor = iconService.ThemeColor
+            ThemeColor = nyxIcons.ThemeColor
         };
     }
     
     public PageConfiguration CreateConfigPage(List<RebootOption> options)
     {
-        return new PageConfiguration("More Configurations", options, iconService.UseFiveColumns)
+        return new PageConfiguration("More Configurations", options, nyxIcons.UseFiveColumns)
         {
             SectionIcon = "fa-solid fa-cog",
             EmptyMessage = "No config options found",
-            ThemeColor = iconService.ThemeColor
+            ThemeColor = nyxIcons.ThemeColor
         };
     }
     
     public PageConfiguration CreateUmsPage(List<RebootOption> options)
     {
-        return new PageConfiguration("UMS (USB Mass Storage)", options, iconService.UseFiveColumns)
+        return new PageConfiguration("UMS (USB Mass Storage)", options)
         {
             SectionIcon = "fa-solid fa-hdd",
             EmptyMessage = "No UMS options available",
-            ThemeColor = iconService.ThemeColor
+            ThemeColor = nyxIcons.ThemeColor
         };
     }
     
     public PageConfiguration CreateSystemPage(List<RebootOption> options)
     {
-        return new PageConfiguration("System Options", options, iconService.UseFiveColumns)
+        return new PageConfiguration("System Options", options)
         {
             SectionIcon = "fa-solid fa-tools",
             EmptyMessage = "No system options available",
-            ThemeColor = iconService.ThemeColor
+            ThemeColor = nyxIcons.ThemeColor
         };
     }
     
@@ -48,11 +48,11 @@ public class PageFactoryService(IconService iconService)
         string sectionIcon = "fa-solid fa-location-arrow", string emptyMessage = "No options found", 
         double iconFontSize = 35)
     {
-        return new PageConfiguration(sectionName, options, iconService.UseFiveColumns)
+        return new PageConfiguration(sectionName, options, nyxIcons.UseFiveColumns)
         {
             SectionIcon = sectionIcon,
             EmptyMessage = emptyMessage,
-            ThemeColor = iconService.ThemeColor
+            ThemeColor = nyxIcons.ThemeColor
         };
     }
 } 

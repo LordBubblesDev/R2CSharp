@@ -1,6 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
-using R2CSharp.Services;
+using R2CSharp.Handlers;
 
 namespace R2CSharp.Controls;
 
@@ -83,7 +83,7 @@ public class CarouselControl : Panel
 
                     if (_currentPage == null) return;
                     
-                    await AnimationService.AnimatePageTransition(_currentPage, _nextPage, goingForward,
+                    await AnimationHandler.AnimatePageTransition(_currentPage, _nextPage, goingForward,
                         containerHeight);
 
                     System.Diagnostics.Debug.WriteLine($"[CarouselControl] Animation completed");

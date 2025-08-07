@@ -1,37 +1,36 @@
 using Avalonia.Media.Imaging;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Png;
-using SixLabors.ImageSharp.Processing;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Drawing.Processing;
 using R2CSharp.Converters;
-using Avalonia;
+using R2CSharp.Readers;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 using Point = SixLabors.ImageSharp.Point;
 
-namespace R2CSharp.Services;
+namespace R2CSharp.Components;
 
-public class IconService
+public class NyxIcons
 {
     private readonly string _bootDiskPath;
     public readonly string ThemeColor;
-    public readonly Thickness ButtonsMargin;
     public readonly bool UseFiveColumns;
 
-    public IconService(string bootDiskPath)
+    public NyxIcons(string bootDiskPath)
     {
         _bootDiskPath = bootDiskPath;
         
         var nyxIniPath = Path.Combine(_bootDiskPath, "bootloader", "nyx.ini");
-        var themeColorValue = IniParserService.GetConfigProperty(nyxIniPath, "themecolor");
+        var themeColorValue = IniConfigReader.GetConfigProperty(nyxIniPath, "themecolor");
 
         ThemeColor = themeColorValue != null && int.TryParse(themeColorValue, out var hue) && hue is >= 0 and <= 359
             ? ColorConverter.HsvToHex(hue, 100, 100)
             : ColorConverter.HsvToHex(167, 100, 100); // default nyx theme color
 
-        // Set the buttons' margin and column settings based on Nyx settings
-        var entries5col = IniParserService.GetConfigProperty(nyxIniPath, "entries5col") == "1";
-        UseFiveColumns = entries5col;
-        ButtonsMargin = entries5col ? new Thickness(14, 7, 14, 7) : new Thickness(27, 4, 27, 4);
+        // Allow displaying 5 button columns if this setting is set to 1
+        // TODO: reimplement this for the new PageFactory
+        var entries5Col = IniConfigReader.GetConfigProperty(nyxIniPath, "entries5col") == "1";
+        UseFiveColumns = entries5Col;
     }
 
     public Bitmap? FallbackIcon => ConvertBmpToBitmap("bootloader/res/icon_switch.bmp");

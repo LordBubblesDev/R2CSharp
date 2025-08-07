@@ -2,6 +2,8 @@ using System.Collections.ObjectModel;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using R2CSharp.Components;
+using R2CSharp.Helpers;
 using R2CSharp.Models;
 using R2CSharp.Services;
 
@@ -16,9 +18,9 @@ public partial class PageViewModel : ObservableObject
     [ObservableProperty] private bool _canGoNext = true;
 
     private readonly BootDiskService _bootDiskService;
-    private RebootOptionsService? _rebootOptionsService;
-    private PageFactoryService? _pageFactoryService;
-    private IconService? _iconService;
+    private RebootOptionsProvider? _rebootOptionsService;
+    private PageFactory? _pageFactoryService;
+    private NyxIcons? _iconService;
 
     public PageViewModel()
     {
@@ -30,11 +32,11 @@ public partial class PageViewModel : ObservableObject
     {
         try {
             await _bootDiskService.InitializeBootDiskAsync();
-            _iconService = await Task.Run(() => new IconService(_bootDiskService.BootDiskPath));
+            _iconService = await Task.Run(() => new NyxIcons(_bootDiskService.BootDiskPath));
             await Dispatcher.UIThread.InvokeAsync(() => { ThemeColor = _iconService.ThemeColor; });
             
-            _rebootOptionsService = new RebootOptionsService(_bootDiskService.BootDiskPath, _iconService);
-            _pageFactoryService = new PageFactoryService(_iconService);
+            _rebootOptionsService = new RebootOptionsProvider(_bootDiskService.BootDiskPath, _iconService);
+            _pageFactoryService = new PageFactory(_iconService);
             
             await LoadRebootOptionsAsync();
             
@@ -63,28 +65,31 @@ public partial class PageViewModel : ObservableObject
 
         // Create Launch page
         var launchOptions = _rebootOptionsService!.LoadLaunchOptions();
-        foreach (var option in launchOptions)
-        {
+        
+        foreach (var option in launchOptions) {
             option.Command = SelectLaunchOptionCommand;
         }
+        
         var launchPage = _pageFactoryService!.CreateLaunchPage(launchOptions);
         Pages.Add(launchPage);
 
         // Create Config page
         var configOptions = _rebootOptionsService.LoadConfigOptions();
-        foreach (var option in configOptions)
-        {
+        
+        foreach (var option in configOptions) {
             option.Command = SelectConfigOptionCommand;
         }
+        
         var configPage = _pageFactoryService.CreateConfigPage(configOptions);
         Pages.Add(configPage);
 
         // Create UMS page
-        var umsOptions = RebootOptionsService.LoadUmsOptions();
-        foreach (var option in umsOptions)
-        {
+        var umsOptions = RebootOptionsProvider.LoadUmsOptions();
+        
+        foreach (var option in umsOptions) {
             option.Command = SelectUmsOptionCommand;
         }
+        
         var umsPage = _pageFactoryService.CreateUmsPage(umsOptions);
         Pages.Add(umsPage);
 
@@ -103,37 +108,37 @@ public partial class PageViewModel : ObservableObject
     [RelayCommand]
     private void SelectLaunchOption(RebootOption option)
     {
-        RebootService.ExecuteReboot("self", option.Index.ToString(), "0");
+        RebootHelper.ExecuteReboot("self", option.Index.ToString(), "0");
     }
 
     [RelayCommand]
     private void SelectConfigOption(RebootOption option)
     {
-        RebootService.ExecuteReboot("self", option.Index.ToString(), "1");
+        RebootHelper.ExecuteReboot("self", option.Index.ToString(), "1");
     }
 
     [RelayCommand]
     private void SelectUmsOption(RebootOption option)
     {
-        RebootService.ExecuteReboot("ums", option.Index.ToString(), "0");
+        RebootHelper.ExecuteReboot("ums", option.Index.ToString(), "0");
     }
 
     [RelayCommand]
     private void RebootToBootloader()
     {
-        RebootService.ExecuteReboot("bootloader", "0", "0");
+        RebootHelper.ExecuteReboot("bootloader", "0", "0");
     }
 
     [RelayCommand]
     private void NormalReboot()
     {
-        RebootService.ExecuteReboot("normal", "0", "0");
+        RebootHelper.ExecuteReboot("normal", "0", "0");
     }
 
     [RelayCommand]
     private void Shutdown()
     {
-        RebootService.Shutdown();
+        RebootHelper.Shutdown();
     }
 
     public void Cleanup()

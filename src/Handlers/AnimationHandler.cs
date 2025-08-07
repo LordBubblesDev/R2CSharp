@@ -2,9 +2,9 @@ using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Media;
 
-namespace R2CSharp.Services;
+namespace R2CSharp.Handlers;
 
-public abstract class AnimationService
+public abstract class AnimationHandler
 {
     public static async Task AnimatePageTransition(Control currentPage, Control nextPage, bool goingForward, double containerHeight)
     {
@@ -55,7 +55,7 @@ public abstract class AnimationService
                     });
                 }
                 catch (Exception ex) {
-                    System.Diagnostics.Debug.WriteLine($"[AnimationService] Timer error: {ex.Message}");
+                    System.Diagnostics.Debug.WriteLine($"[AnimationHandler] Timer error: {ex.Message}");
                     if (!isCompleted) {
                         isCompleted = true;
                         tcs.TrySetException(ex);
@@ -68,8 +68,8 @@ public abstract class AnimationService
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"[AnimationService] Animation error: {ex.Message}");
-            System.Diagnostics.Debug.WriteLine($"[AnimationService] Stack trace: {ex.StackTrace}");
+            System.Diagnostics.Debug.WriteLine($"[AnimationHandler] Animation error: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"[AnimationHandler] Stack trace: {ex.StackTrace}");
             throw;
         }
     }

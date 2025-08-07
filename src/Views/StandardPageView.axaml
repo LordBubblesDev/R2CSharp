@@ -23,6 +23,11 @@
                                   <Setter Property="BorderThickness" Value="0" />
                                   <Setter Property="CornerRadius" Value="4" />
                               </Style>
+                              <Style Selector="Button:hover">
+                                  <Setter Property="Background" Value="#5A5A5A" />
+                                  <Setter Property="BorderBrush" Value="#6A6A6A" />
+                                  <Setter Property="BorderThickness" Value="2" />
+                              </Style>
                               <Style Selector="Button.selected">
                                   <Setter Property="BorderThickness" Value="4" />
                                   <Setter Property="BorderBrush" Value="{Binding $parent[UserControl].((models:PageConfiguration)DataContext).ThemeColor}" />

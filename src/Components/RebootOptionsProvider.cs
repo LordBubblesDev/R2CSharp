@@ -1,8 +1,9 @@
 using R2CSharp.Models;
+using R2CSharp.Readers;
 
-namespace R2CSharp.Services;
+namespace R2CSharp.Components;
 
-public class RebootOptionsService(string bootDiskPath, IconService iconService)
+public class RebootOptionsProvider(string bootDiskPath, NyxIcons nyxIcons)
 {
     public List<RebootOption> LoadLaunchOptions()
     {
@@ -10,10 +11,10 @@ public class RebootOptionsService(string bootDiskPath, IconService iconService)
         var hekateIplPath = Path.Combine(bootDiskPath, "bootloader", "hekate_ipl.ini");
 
         if (File.Exists(hekateIplPath)) {
-            var sections = IniParserService.ParseIniSections(hekateIplPath);
+            var sections = IniConfigReader.ParseIniSections(hekateIplPath);
             var index = 1;
             foreach (var section in sections) {
-                var icon = iconService.ConvertBmpToBitmap(section.IconPath) ?? iconService.FallbackIcon;
+                var icon = nyxIcons.ConvertBmpToBitmap(section.IconPath) ?? nyxIcons.FallbackIcon;
                 options.Add(new RebootOption {
                     Name = section.Name,
                     Index = index,
@@ -39,14 +40,14 @@ public class RebootOptionsService(string bootDiskPath, IconService iconService)
 
         var allSections = (
             from iniFile in iniFiles let sections = 
-                IniParserService.ParseIniSections(iniFile) from section in sections select (
+                IniConfigReader.ParseIniSections(iniFile) from section in sections select (
                     section.Name,
                     section.IconPath,
                     Path.GetFileName(iniFile))).ToList();
 
         var globalIndex = 1;
         foreach (var section in allSections) {
-            var icon = iconService.ConvertBmpToBitmap(section.IconPath) ?? iconService.FallbackIcon;
+            var icon = nyxIcons.ConvertBmpToBitmap(section.IconPath) ?? nyxIcons.FallbackIcon;
             options.Add(new RebootOption {
                 Name = section.Name,
                 Index = globalIndex,
