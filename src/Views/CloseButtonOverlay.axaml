@@ -8,6 +8,8 @@
             Click="CloseButton_Click"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
+            Focusable="False"
+            IsTabStop="False"
             Margin="5">
             <TextBlock Text="✕" 
                        Foreground="White" 

@@ -61,6 +61,8 @@
                         BorderThickness="1"
                         CornerRadius="30"
                         Cursor="Hand"
+                        Focusable="False"
+                        IsTabStop="False"
                         IsVisible="{Binding CanGoPrevious}">
                     <Button.Styles>
                         <Style Selector="Button:hover">
@@ -89,6 +91,8 @@
                         BorderThickness="1"
                         CornerRadius="30"
                         Cursor="Hand"
+                        Focusable="False"
+                        IsTabStop="False"
                         IsVisible="{Binding CanGoNext}">
                     <Button.Styles>
                         <Style Selector="Button:hover">
