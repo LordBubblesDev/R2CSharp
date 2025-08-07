@@ -3,8 +3,8 @@ name: Publish NuGet Package
 on:
   push:
     tags:
-      - 'lib-v*'  # Trigger on tags like lib-v1.0.0, lib-v1.1.0, etc.
-  workflow_dispatch:  # Allow manual triggering (uses version from latest lib-v tag)
+      - 'lib-v*' 
+  workflow_dispatch:
 
 jobs:
   publish-nuget:
