@@ -5,7 +5,7 @@ namespace R2CSharp.Services;
 
 public class TouchDetectionService
 {
-    private const double DragThreshold = 50.0; // Minimum drag distance to trigger page change
+    private const double DragThreshold = 42.0; // Minimum drag distance to trigger page change
     private Point? _startPoint;
     private bool _isTracking;
     private bool _isProcessing;
@@ -53,16 +53,9 @@ public class TouchDetectionService
         if (!_isTracking || _isProcessing) return;
         
         var currentPoint = e.GetPosition(null);
-        var dragDistance = _startPoint.HasValue ? CalculateDistance(_startPoint.Value, currentPoint) : 0.0;
+        _ = _startPoint.HasValue ? CalculateDistance(_startPoint.Value, currentPoint) : 0.0;
     }
-    
-    public void Reset()
-    {
-        _startPoint = null;
-        _isTracking = false;
-        _isProcessing = false;
-    }
-    
+
     private static double CalculateDistance(Point start, Point end)
     {
         var deltaX = end.X - start.X;
