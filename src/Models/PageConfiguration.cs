@@ -16,6 +16,7 @@ public class PageConfiguration
     public int ActualColumns { get; set; }
     public int ActualRows { get; set; }
     public bool IsSingleRow { get; set; }
+    public int SelectedIndex { get; set; } = -1; // -1 means no selection
     
     public PageConfiguration(string sectionName, List<RebootOption> options, bool useFiveColumns = false)
     {
