@@ -6,6 +6,7 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageId>R2CSharp.Lib</PackageId>
         <Authors>LordBubblesDev</Authors>
+        <Version>1.0.0</Version>
         <Description>Core Avalonia UI components and functionality for R2CSharp</Description>
         <PackageTags>Avalonia;UI;Components</PackageTags>
         <RepositoryUrl>https://github.com/LordBubblesDev/R2CSharp</RepositoryUrl>
