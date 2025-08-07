@@ -30,30 +30,22 @@ public partial class PageViewModel : ObservableObject
     {
         try {
             await _bootDiskService.InitializeBootDiskAsync();
-            _iconService = new IconService(_bootDiskService.BootDiskPath);
-            
-            // Ensure UI updates happen on UI thread
-            await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() => {
-                ThemeColor = _iconService.ThemeColor;
-            });
+            _iconService = await Task.Run(() => new IconService(_bootDiskService.BootDiskPath));
+            await Dispatcher.UIThread.InvokeAsync(() => { ThemeColor = _iconService.ThemeColor; });
             
             _rebootOptionsService = new RebootOptionsService(_bootDiskService.BootDiskPath, _iconService);
             _pageFactoryService = new PageFactoryService(_iconService);
             
             await LoadRebootOptionsAsync();
             
-            await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() => {
-                OnPropertyChanged(nameof(Pages));
-            });
+            await Dispatcher.UIThread.InvokeAsync(() => { OnPropertyChanged(nameof(Pages)); });
         }
         catch (Exception ex)
         {
             Console.WriteLine($"[PageViewModel] Error during initialization: {ex.Message}");
         }
         finally {
-            await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() => {
-                IsLoading = false;
-            });
+            await Dispatcher.UIThread.InvokeAsync(() => { IsLoading = false; });
         }
     }
 
@@ -62,9 +54,7 @@ public partial class PageViewModel : ObservableObject
         await Task.Run(LoadRebootOptions);
         
         // Ensure UI updates happen on UI thread
-        await Dispatcher.UIThread.InvokeAsync(() => {
-            OnPropertyChanged(nameof(Pages));
-        });
+        await Dispatcher.UIThread.InvokeAsync(() => { OnPropertyChanged(nameof(Pages)); });
     }
 
     private void LoadRebootOptions()

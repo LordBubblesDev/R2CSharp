@@ -20,10 +20,11 @@ public class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
 #if COLORTEST
-            desktop.MainWindow = new MainWindow { Content = new ColorTestView() };
+            var window = new MainWindow { Content = new ColorTestView() };
 #else
-            desktop.MainWindow = new MainWindow();
+            var window = new MainWindow();
 #endif
+            desktop.MainWindow = window;
         }
 
         base.OnFrameworkInitializationCompleted();
