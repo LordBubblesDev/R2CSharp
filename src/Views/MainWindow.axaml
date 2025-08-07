@@ -1,6 +1,5 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:avalonia="https://github.com/projektanker/icons.avalonia"
         xmlns:local="clr-namespace:R2CSharp"
         xmlns:views="clr-namespace:R2CSharp.Views"
         x:Class="R2CSharp.Views.MainWindow"
