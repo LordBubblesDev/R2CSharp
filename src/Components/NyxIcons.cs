@@ -28,7 +28,6 @@ public class NyxIcons
             : ColorConverter.HsvToHex(167, 100, 100); // default nyx theme color
 
         // Allow displaying 5 button columns if this setting is set to 1
-        // TODO: reimplement this for the new PageFactory
         var entries5Col = IniConfigReader.GetConfigProperty(nyxIniPath, "entries5col") == "1";
         UseFiveColumns = entries5Col;
     }
