@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageId>R2CSharp.Lib</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>YourName</Authors>
+        <Description>Core Avalonia UI components and functionality for R2CSharp</Description>
+        <PackageTags>Avalonia;UI;Components</PackageTags>
+        <RepositoryUrl>https://github.com/yourusername/R2CSharp</RepositoryUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <NoWarn>CS0657,CA1822</NoWarn>
+        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <AvaloniaResource Include="Assets\icon.ico"/>
+        <AvaloniaResource Include="Assets\fa-icons.json"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Avalonia" Version="11.3.2" TreatAsUsed="True"/>
+        <PackageReference Include="Avalonia.Themes.Simple" Version="11.3.2"/>
+        <PackageReference Include="FluentAvaloniaUI" Version="2.4.0"/>
+        <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="9.6.2" TreatAsUsed="True"/>
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2"/>
+        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11"/>
+        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="App.axaml.cs">
+            <DependentUpon>App.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+    </ItemGroup>
+    
+    <PropertyGroup Condition="'$(Configuration)' == 'ColorTest'">
+        <DefineConstants>$(DefineConstants);COLORTEST</DefineConstants>
+    </PropertyGroup>
+</Project>

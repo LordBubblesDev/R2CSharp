@@ -3,7 +3,7 @@ name: Build and Release R2CSharp
 on:
   push:
     tags:
-      - '*'
+      - 'v*'
 
 jobs:
   build-and-release:
@@ -23,7 +23,7 @@ jobs:
       run: dotnet restore
       
     - name: Build and publish
-      run: dotnet publish -r linux-arm64 -c Release -o ./publish
+      run: dotnet publish src/R2CSharp.App/R2CSharp.App.csproj -r linux-arm64 -c Release -o ./publish
       
     - name: Upload Release Asset
       uses: softprops/action-gh-release@v2

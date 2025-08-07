@@ -1,0 +1,60 @@
+name: Publish NuGet Package
+
+on:
+  push:
+    tags:
+      - 'lib-v*'  # Trigger on tags like lib-v1.0.0, lib-v1.1.0, etc.
+  workflow_dispatch:  # Allow manual triggering (uses version from latest lib-v tag)
+
+jobs:
+  publish-nuget:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Restore dependencies
+      run: dotnet restore src/R2CSharp.Lib/R2CSharp.Lib.csproj
+      
+    - name: Extract version from tag
+      id: get_version
+      run: |
+        if [[ "${{ github.ref }}" == refs/tags/lib-v* ]]; then
+          VERSION=${GITHUB_REF#refs/tags/lib-v}
+        else
+          LATEST_TAG=$(git describe --tags --match "lib-v*" --abbrev=0 2>/dev/null || echo "lib-v1.0.0")
+          VERSION=${LATEST_TAG#lib-v}
+        fi
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        echo "Package version: $VERSION"
+      
+    - name: Update package version
+      run: |
+        sed -i "s/<Version>.*<\/Version>/<Version>${{ steps.get_version.outputs.VERSION }}<\/Version>/" src/R2CSharp.Lib/R2CSharp.Lib.csproj
+        
+    - name: Build library
+      run: dotnet build src/R2CSharp.Lib/R2CSharp.Lib.csproj -c Release --no-restore
+      
+    - name: Create NuGet package
+      run: dotnet pack src/R2CSharp.Lib/R2CSharp.Lib.csproj -c Release --no-build -o ./packages
+      
+    - name: Publish to NuGet.org
+      run: dotnet nuget push ./packages/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        
+    - name: Upload package as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-package
+        path: ./packages/*.nupkg
+        retention-days: 30

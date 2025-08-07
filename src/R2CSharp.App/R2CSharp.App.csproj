@@ -1,0 +1,53 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+        <ApplicationIcon>icon.ico</ApplicationIcon>
+        <Version>1.0.0</Version>
+        <NoWarn>CS0657,CA1822</NoWarn>
+        <AssemblyName>r2csharp</AssemblyName>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(RuntimeIdentifier)' != ''">
+        <PublishSingleFile>true</PublishSingleFile>
+        <DebugType>Embedded</DebugType>
+        <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+        <PublishTrimmed>true</PublishTrimmed>
+        <TrimMode>link</TrimMode>
+        <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
+        <SelfContained>true</SelfContained>
+        <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+        <InvariantGlobalization>true</InvariantGlobalization>
+        <EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
+        <EnableUnsafeUTF7Encoding>false</EnableUnsafeUTF7Encoding>
+        <EventSourceSupport>false</EventSourceSupport>
+        <HttpActivityPropagationSupport>false</HttpActivityPropagationSupport>
+        <DebuggerSupport>false</DebuggerSupport>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Content Include="icon.ico" CopyToOutputDirectory="PreserveNewest" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Avalonia.Desktop" Version="11.3.2"/>
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.2"/>
+        <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="9.6.2" TreatAsUsed="True"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\R2CSharp.Lib\R2CSharp.Lib.csproj" />
+    </ItemGroup>
+    
+    <PropertyGroup Condition="'$(Configuration)' == 'ColorTest'">
+        <DefineConstants>$(DefineConstants);COLORTEST</DefineConstants>
+    </PropertyGroup>
+</Project>

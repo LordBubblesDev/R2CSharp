@@ -2,7 +2,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "R2CSharp", "src\R2CSharp.csproj", "{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "R2CSharp.Lib", "src\R2CSharp.Lib\R2CSharp.Lib.csproj", "{A7A22697-43E2-4F09-A654-3630F079CC86}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "R2CSharp.App", "src\R2CSharp.App\R2CSharp.App.csproj", "{BC8D0598-B2A6-493F-B1D7-8678156709B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,12 +13,18 @@ Global
 		ColorTest|Any CPU = ColorTest|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.ColorTest|Any CPU.ActiveCfg = ColorTest|Any CPU
-		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.ColorTest|Any CPU.Build.0 = ColorTest|Any CPU
+		{A7A22697-43E2-4F09-A654-3630F079CC86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7A22697-43E2-4F09-A654-3630F079CC86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7A22697-43E2-4F09-A654-3630F079CC86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7A22697-43E2-4F09-A654-3630F079CC86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7A22697-43E2-4F09-A654-3630F079CC86}.ColorTest|Any CPU.ActiveCfg = ColorTest|Any CPU
+		{A7A22697-43E2-4F09-A654-3630F079CC86}.ColorTest|Any CPU.Build.0 = ColorTest|Any CPU
+		{BC8D0598-B2A6-493F-B1D7-8678156709B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC8D0598-B2A6-493F-B1D7-8678156709B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC8D0598-B2A6-493F-B1D7-8678156709B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC8D0598-B2A6-493F-B1D7-8678156709B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC8D0598-B2A6-493F-B1D7-8678156709B7}.ColorTest|Any CPU.ActiveCfg = ColorTest|Any CPU
+		{BC8D0598-B2A6-493F-B1D7-8678156709B7}.ColorTest|Any CPU.Build.0 = ColorTest|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
