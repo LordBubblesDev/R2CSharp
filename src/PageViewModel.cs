@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using R2CSharp.Models;
 using R2CSharp.Services;
-using Avalonia;
 
 namespace R2CSharp;
 
@@ -11,10 +10,12 @@ public partial class PageViewModel : ObservableObject
 {
     [ObservableProperty] private ObservableCollection<PageConfiguration> _pages = [];
     [ObservableProperty] private bool _isLoading = true;
+    [ObservableProperty] private string _themeColor = "#00FFC8";
 
     private readonly BootDiskService _bootDiskService;
     private RebootOptionsService? _rebootOptionsService;
     private PageFactoryService? _pageFactoryService;
+    private IconService? _iconService;
 
     public PageViewModel()
     {
@@ -26,9 +27,10 @@ public partial class PageViewModel : ObservableObject
     {
         try {
             await _bootDiskService.InitializeBootDiskAsync();
-            var iconService = new IconService(_bootDiskService.BootDiskPath);
-            _rebootOptionsService = new RebootOptionsService(_bootDiskService.BootDiskPath, iconService);
-            _pageFactoryService = new PageFactoryService(iconService);
+            _iconService = new IconService(_bootDiskService.BootDiskPath);
+            ThemeColor = _iconService.ThemeColor;
+            _rebootOptionsService = new RebootOptionsService(_bootDiskService.BootDiskPath, _iconService);
+            _pageFactoryService = new PageFactoryService(_iconService);
             
             await LoadRebootOptionsAsync();
             OnPropertyChanged(nameof(Pages));
