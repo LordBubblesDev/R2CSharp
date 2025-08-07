@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using R2CSharp.Models;
@@ -30,25 +31,40 @@ public partial class PageViewModel : ObservableObject
         try {
             await _bootDiskService.InitializeBootDiskAsync();
             _iconService = new IconService(_bootDiskService.BootDiskPath);
-            ThemeColor = _iconService.ThemeColor;
+            
+            // Ensure UI updates happen on UI thread
+            await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() => {
+                ThemeColor = _iconService.ThemeColor;
+            });
+            
             _rebootOptionsService = new RebootOptionsService(_bootDiskService.BootDiskPath, _iconService);
             _pageFactoryService = new PageFactoryService(_iconService);
             
             await LoadRebootOptionsAsync();
-            OnPropertyChanged(nameof(Pages));
+            
+            await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() => {
+                OnPropertyChanged(nameof(Pages));
+            });
         }
         catch (Exception ex)
         {
             Console.WriteLine($"[PageViewModel] Error during initialization: {ex.Message}");
         }
         finally {
-            IsLoading = false;
+            await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() => {
+                IsLoading = false;
+            });
         }
     }
 
     private async Task LoadRebootOptionsAsync()
     {
         await Task.Run(LoadRebootOptions);
+        
+        // Ensure UI updates happen on UI thread
+        await Dispatcher.UIThread.InvokeAsync(() => {
+            OnPropertyChanged(nameof(Pages));
+        });
     }
 
     private void LoadRebootOptions()
