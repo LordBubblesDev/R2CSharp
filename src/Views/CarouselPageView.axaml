@@ -1,48 +1,46 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:avalonia="https://github.com/projektanker/icons.avalonia"
-             xmlns:pages="clr-namespace:R2CSharp"
              xmlns:controls="clr-namespace:R2CSharp.Controls"
-             x:Class="R2CSharp.PageView"
-             x:DataType="pages:PageViewModel">
+             xmlns:viewModels="clr-namespace:R2CSharp.ViewModels"
+             x:Class="R2CSharp.Views.CarouselPageView"
+             x:DataType="viewModels:CarouselPageViewModel">
     
     <UserControl.Styles>
         <Style Selector="Button">
-            <Setter Property="Background" Value="#4E4E4E" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="BorderBrush" Value="#3E3E3E" />
+            <Setter Property="Background" Value="{StaticResource ButtonDefaultBackground}" />
+            <Setter Property="Foreground" Value="{StaticResource PrimaryText}" />
+            <Setter Property="BorderBrush" Value="{StaticResource NavigationButtonBorder}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="4" />
         </Style>
         <Style Selector="Button:pressed">
-            <Setter Property="Background" Value="#151515" />
-            <Setter Property="BorderBrush" Value="#5A5A5A" />
+            <Setter Property="Background" Value="{StaticResource ButtonPressedBackground}" />
+            <Setter Property="BorderBrush" Value="{StaticResource ButtonPressedBorder}" />
         </Style>
     </UserControl.Styles>
     
     <Grid>
         <Grid IsVisible="{Binding IsLoading}">
-            <Border Background="#80000000" />
+            <Border Background="{StaticResource OverlayBackground}" />
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <avalonia:Icon Value="fa-solid fa-spinner" 
                               Width="48" Height="48"
-                              Foreground="#4EC9B0" />
+                              Foreground="{StaticResource DefaultThemeColor}" />
                 <TextBlock Text="Loading boot options..." 
                           HorizontalAlignment="Center" 
                           Margin="0,16,0,0"
-                          Foreground="White" />
+                          Foreground="{StaticResource PrimaryText}" />
             </StackPanel>
         </Grid>
         
         <Grid IsVisible="{Binding !IsLoading}">
-            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
-                <controls:CarouselControl Name="MainCarousel" 
-                          IsEnabled="True"
-                          IsHitTestVisible="True"
-                          HorizontalAlignment="Stretch"
-                          VerticalAlignment="Stretch"
-                          Focusable="False" />
-            </ScrollViewer>
+            <controls:CarouselControl Name="MainCarousel" 
+                      IsEnabled="True"
+                      IsHitTestVisible="True"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      Focusable="False" />
             
             <!-- Navigation Controls -->
             <StackPanel Orientation="Vertical" 
@@ -54,7 +52,7 @@
                 <Button Name="PreviousButton"
                         Click="OnPreviousButtonClick"
                         Width="40" Height="40"
-                        Background="#2A2A2A"
+                        Background="{StaticResource NavigationButtonBackground}"
                         Foreground="{Binding ThemeColor}"
                         BorderBrush="{Binding ThemeColor}"
                         BorderThickness="1"
@@ -65,13 +63,13 @@
                         IsVisible="{Binding CanGoPrevious}">
                     <Button.Styles>
                         <Style Selector="Button:hover">
-                            <Setter Property="Background" Value="#3A3A3A"/>
+                            <Setter Property="Background" Value="{StaticResource ButtonSelectedBackground}"/>
                             <Setter Property="BorderBrush" Value="{Binding ThemeColor}"/>
                             <Setter Property="Foreground" Value="{Binding ThemeColor}"/>
                             <Setter Property="RenderTransform" Value="scale(1.1)"/>
                         </Style>
                         <Style Selector="Button:pressed">
-                            <Setter Property="Background" Value="#1A1A1A"/>
+                            <Setter Property="Background" Value="{StaticResource NavigationButtonPressedBackground}"/>
                             <Setter Property="BorderBrush" Value="{Binding ThemeColor}"/>
                             <Setter Property="Foreground" Value="{Binding ThemeColor}"/>
                             <Setter Property="RenderTransform" Value="scale(0.95)"/>
@@ -84,7 +82,7 @@
                 <Button Name="NextButton"
                         Click="OnNextButtonClick"
                         Width="40" Height="40"
-                        Background="#2A2A2A"
+                        Background="{StaticResource NavigationButtonBackground}"
                         Foreground="{Binding ThemeColor}"
                         BorderBrush="{Binding ThemeColor}"
                         BorderThickness="1"
@@ -95,13 +93,13 @@
                         IsVisible="{Binding CanGoNext}">
                     <Button.Styles>
                         <Style Selector="Button:hover">
-                            <Setter Property="Background" Value="#3A3A3A"/>
+                            <Setter Property="Background" Value="{StaticResource ButtonSelectedBackground}"/>
                             <Setter Property="BorderBrush" Value="{Binding ThemeColor}"/>
                             <Setter Property="Foreground" Value="{Binding ThemeColor}"/>
                             <Setter Property="RenderTransform" Value="scale(1.1)"/>
                         </Style>
                         <Style Selector="Button:pressed">
-                            <Setter Property="Background" Value="#1A1A1A"/>
+                            <Setter Property="Background" Value="{StaticResource NavigationButtonPressedBackground}"/>
                             <Setter Property="BorderBrush" Value="{Binding ThemeColor}"/>
                             <Setter Property="Foreground" Value="{Binding ThemeColor}"/>
                             <Setter Property="RenderTransform" Value="scale(0.95)"/>

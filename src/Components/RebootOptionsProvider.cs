@@ -10,19 +10,19 @@ public class RebootOptionsProvider(string bootDiskPath, NyxIcons nyxIcons)
         var options = new List<RebootOption>();
         var hekateIplPath = Path.Combine(bootDiskPath, "bootloader", "hekate_ipl.ini");
 
-        if (File.Exists(hekateIplPath)) {
-            var sections = IniConfigReader.ParseIniSections(hekateIplPath);
-            var index = 1;
-            foreach (var section in sections) {
-                var icon = nyxIcons.ConvertBmpToBitmap(section.IconPath) ?? nyxIcons.FallbackIcon;
-                options.Add(new RebootOption {
-                    Name = section.Name,
-                    Index = index,
-                    Icon = icon,
-                    FallbackIcon = "fa-solid fa-rocket"
-                });
-                index++;
-            }
+        if (!File.Exists(hekateIplPath)) return options;
+        
+        var sections = IniConfigReader.ParseIniSections(hekateIplPath);
+        var index = 1;
+        foreach (var section in sections) {
+            var icon = nyxIcons.ConvertBmpToBitmap(section.IconPath) ?? nyxIcons.FallbackIcon;
+            options.Add(new RebootOption {
+                Name = section.Name,
+                Index = index,
+                Icon = icon,
+                FallbackIcon = "fa-solid fa-rocket"
+            });
+            index++;
         }
 
         return options;

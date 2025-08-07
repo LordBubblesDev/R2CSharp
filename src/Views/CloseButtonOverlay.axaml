@@ -12,7 +12,7 @@
             IsTabStop="False"
             Margin="5">
             <TextBlock Text="✕" 
-                       Foreground="White" 
+                       Foreground="{StaticResource PrimaryText}" 
                        FontSize="30"
                        TextAlignment="Center" />
     </Button>

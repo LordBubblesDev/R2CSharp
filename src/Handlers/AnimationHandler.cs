@@ -15,10 +15,10 @@ public abstract class AnimationHandler
             var isCompleted = false;
             
             // Calculate animation directions
-            var currentPageStartY = 0.0;
+            const double currentPageStartY = 0.0;
+            const double nextPageEndY = 0.0;
             var currentPageEndY = goingForward ? -containerHeight : containerHeight;
             var nextPageStartY = goingForward ? containerHeight : -containerHeight;
-            var nextPageEndY = 0.0;
             
             // Set up initial transforms
             currentPage.RenderTransform ??= new TranslateTransform();

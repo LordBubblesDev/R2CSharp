@@ -1,27 +1,27 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Interactivity;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 using R2CSharp.Controls;
-using R2CSharp.Services;
 using R2CSharp.Helpers;
 using R2CSharp.Models;
-using R2CSharp.Views;
+using R2CSharp.Services;
+using R2CSharp.ViewModels;
 
-namespace R2CSharp;
+namespace R2CSharp.Views;
 
-public partial class PageView : UserControl
+public partial class CarouselPageView : UserControl
 {
     private readonly EventService _eventService;
     private readonly PageStateHelper _pageStateHelper;
     private readonly KeyNavService _keyboardService;
 
-    public PageView()
+    public CarouselPageView()
     {
         InitializeComponent();
         
-        var viewModel = new PageViewModel();
+        var viewModel = new CarouselPageViewModel();
         DataContext = viewModel;
         
         // Initialize services
@@ -29,10 +29,9 @@ public partial class PageView : UserControl
         var touchService = new TouchDetectionService();
         _keyboardService = new KeyNavService();
         var buttonSelectionService = new ButtonHelper();
-        var pageTransitionService = new PageTransitionHelper();
         
         // Create state and event services
-        _pageStateHelper = new PageStateHelper(viewModel, MainCarousel, buttonSelectionService, pageTransitionService, _keyboardService);
+        _pageStateHelper = new PageStateHelper(viewModel, MainCarousel, buttonSelectionService, _keyboardService);
         _eventService = new EventService(scrollService, touchService, _keyboardService, viewModel, MainCarousel);
         
         // Subscribe to events
@@ -56,7 +55,7 @@ public partial class PageView : UserControl
         }
     }
     
-    private void OnViewModelPropertyChanged(PageViewModel viewModel)
+    private void OnViewModelPropertyChanged(CarouselPageViewModel viewModel)
     {
         if (MainCarousel == null) return;
         _pageStateHelper.InitializePages();
@@ -72,15 +71,15 @@ public partial class PageView : UserControl
 
     protected override void OnKeyDown(KeyEventArgs e)
     {
-        if (MainCarousel?.Children.FirstOrDefault() is not StandardPageView currentPageView) return;
+        if ((MainCarousel?.Children!).FirstOrDefault() is not RebootOptionPageView currentPageView) return;
         if (currentPageView.DataContext is not PageConfiguration currentPage) return;
-        if (DataContext is not PageViewModel viewModel) return;
+        if (DataContext is not CarouselPageViewModel viewModel) return;
         
         var currentSelection = GetCurrentSelection(currentPage);
-        _keyboardService.HandleKeyDown(e, currentPage, currentSelection, viewModel.CanGoPrevious, viewModel.CanGoNext);
+        _keyboardService.HandleKeyPressed(e, currentPage, currentSelection, viewModel.CanGoPrevious, viewModel.CanGoNext);
     }
     
-    private void OnSelectionChanged(int index) => _pageStateHelper.HandleSelectionChange(index);
+    private void OnSelectionChanged(int index) => _pageStateHelper.HandleSelectionChange();
     private void OnKeyboardPageChangeRequested(int direction) => _pageStateHelper.HandleKeyboardPageChange(direction);
     private void OnButtonPressed(int buttonIndex) => _pageStateHelper.HandleButtonPress(buttonIndex);
     private void OnPageChangeRequested(int direction) => _pageStateHelper.HandleScrollPageChange(direction);

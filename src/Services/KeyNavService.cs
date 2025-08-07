@@ -13,7 +13,7 @@ public class KeyNavService
     public event Action<int>? PageChangeRequested;
     public event Action<int>? ButtonPressed;
     
-    public void HandleKeyDown(KeyEventArgs e, PageConfiguration currentPage, int currentSelection, bool canGoPrevious, bool canGoNext)
+    public void HandleKeyPressed(KeyEventArgs e, PageConfiguration currentPage, int currentSelection, bool canGoPrevious, bool canGoNext)
     {
         var totalButtons = currentPage.Options.Count;
         var columns = currentPage.ActualColumns;
@@ -52,19 +52,25 @@ public class KeyNavService
     {
         if (currentSelection == -1) {
             SetCurrentSelection(currentPage, 0);
+            return;
+        }
+
+        var currentRow = currentSelection / columns;
+        var currentColumn = currentSelection % columns;
+
+        if (currentRow == 0) {
+            if (!canGoPrevious) return;
+            _lastSelectionColumn = currentColumn;
+            _previousPageIndex = GetCurrentPageIndex();
+            PageChangeRequested?.Invoke(-1);
         }
         else {
-            var currentRow = currentSelection / columns;
-            if (currentRow == 0) {
-                if (canGoPrevious) {
-                    _lastSelectionColumn = currentSelection % columns;
-                    _previousPageIndex = GetCurrentPageIndex();
-                    PageChangeRequested?.Invoke(-1);
-                }
-            }
-            else {
-                SetCurrentSelection(currentPage, currentSelection - columns);
-            }
+            var targetIndex = currentSelection - columns;
+            var previousRowStart = (currentRow - 1) * columns;
+            var previousRowEnd = Math.Min(previousRowStart + columns - 1, currentPage.Options.Count - 1);
+            targetIndex = Math.Min(previousRowEnd, targetIndex);
+
+            SetCurrentSelection(currentPage, targetIndex);
         }
     }
     
@@ -72,18 +78,28 @@ public class KeyNavService
     {
         if (currentSelection == -1) {
             SetCurrentSelection(currentPage, 0);
+            return;
+        }
+
+        var totalButtons = currentPage.Options.Count;
+        var currentRow = currentSelection / columns;
+        var currentColumn = currentSelection % columns;
+
+        if (currentRow == rows - 1) {
+            if (!canGoNext) return;
+            _lastSelectionColumn = currentColumn;
+            _previousPageIndex = GetCurrentPageIndex();
+            PageChangeRequested?.Invoke(1);
         }
         else {
-            var currentRow = currentSelection / columns;
-            if (currentRow == rows - 1) {
-                if (canGoNext) {
-                    _lastSelectionColumn = currentSelection % columns;
-                    _previousPageIndex = GetCurrentPageIndex();
-                    PageChangeRequested?.Invoke(1);
-                }
+            var targetIndex = currentSelection + columns;
+
+            if (targetIndex >= totalButtons) {
+                var lastIndexInRow = totalButtons - 1;
+                SetCurrentSelection(currentPage, lastIndexInRow);
             }
             else {
-                SetCurrentSelection(currentPage, currentSelection + columns);
+                SetCurrentSelection(currentPage, targetIndex);
             }
         }
     }

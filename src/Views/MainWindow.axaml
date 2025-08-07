@@ -1,17 +1,16 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:R2CSharp"
         xmlns:views="clr-namespace:R2CSharp.Views"
         x:Class="R2CSharp.Views.MainWindow"
         Icon="/Assets/icon.ico"
         Title="Reboot2Config"
-        Background="#1E1E1E"
+        Background="{StaticResource MainWindowBackground}"
         CanResize="True"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome">
     <Grid Background="Transparent">
         <!-- Main Content -->
-        <local:PageView Grid.Row="0" />
+        <views:CarouselPageView Grid.Row="0" />
         
         <!-- Close Button Overlay -->
         <views:CloseButtonOverlay Grid.Row="0" ZIndex="1000" />

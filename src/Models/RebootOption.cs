@@ -1,6 +1,5 @@
 using Avalonia.Media.Imaging;
 using System.Windows.Input;
-using Avalonia;
 
 namespace R2CSharp.Models;
 

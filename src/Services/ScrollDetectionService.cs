@@ -4,8 +4,8 @@ namespace R2CSharp.Services;
 
 public class ScrollDetectionService
 {
-    private const double ScrollThreshold = 2.0; // 2px scroll threshold
-    private const int TimeThresholdMs = 500; // 500ms time window
+    private const double ScrollThreshold = 2.0; // 2 px scroll threshold
+    private const int TimeThresholdMs = 500; // 500 ms time window
     private double _accumulatedScrollX;
     private bool _isTracking;
     private bool _isProcessing;

@@ -7,13 +7,13 @@ using R2CSharp.Helpers;
 using R2CSharp.Models;
 using R2CSharp.Services;
 
-namespace R2CSharp;
+namespace R2CSharp.ViewModels;
 
-public partial class PageViewModel : ObservableObject
+public partial class CarouselPageViewModel : ObservableObject
 {
     [ObservableProperty] private ObservableCollection<PageConfiguration> _pages = [];
     [ObservableProperty] private bool _isLoading = true;
-    [ObservableProperty] private string _themeColor = "#00FFC8";
+    [ObservableProperty] private string _themeColor = "#00FFC8"; // hekate's default theme color
     [ObservableProperty] private bool _canGoPrevious;
     [ObservableProperty] private bool _canGoNext = true;
 
@@ -22,7 +22,7 @@ public partial class PageViewModel : ObservableObject
     private PageFactory? _pageFactoryService;
     private NyxIcons? _iconService;
 
-    public PageViewModel()
+    public CarouselPageViewModel()
     {
         _bootDiskService = new BootDiskService();
         _ = InitializeAsync();
@@ -44,7 +44,7 @@ public partial class PageViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[PageViewModel] Error during initialization: {ex.Message}");
+            Console.WriteLine($"[CarouselPageViewModel] Error during initialization: {ex.Message}");
         }
         finally {
             await Dispatcher.UIThread.InvokeAsync(() => { IsLoading = false; });
@@ -54,8 +54,6 @@ public partial class PageViewModel : ObservableObject
     private async Task LoadRebootOptionsAsync()
     {
         await Task.Run(LoadRebootOptions);
-        
-        // Ensure UI updates happen on UI thread
         await Dispatcher.UIThread.InvokeAsync(() => { OnPropertyChanged(nameof(Pages)); });
     }
 

@@ -8,7 +8,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         DataContext = this;
-#if !DEBUG
+#if !DEBUG && !COLORTEST
         WindowState = WindowState.FullScreen;
 #endif
     }

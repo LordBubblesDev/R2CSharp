@@ -6,86 +6,78 @@ using R2CSharp.Views;
 namespace R2CSharp.Helpers;
 
 public class PageStateHelper(
-    PageViewModel? viewModel,
+    ViewModels.CarouselPageViewModel? viewModel,
     CarouselControl? carousel,
     ButtonHelper buttonHelper,
-    PageTransitionHelper pageTransitionHelper,
     KeyNavService keyboardService)
 {
     public void InitializePages()
     {
         if (viewModel == null || carousel == null) return;
         
-        foreach (var page in viewModel.Pages)
-        {
-            var pageView = new StandardPageView { DataContext = page };
+        foreach (var page in viewModel.Pages) {
+            var pageView = new RebootOptionPageView { DataContext = page };
             carousel.AddPage(pageView);
         }
         
         UpdateNavigationState();
         
-        if (carousel.Children.FirstOrDefault() is StandardPageView firstPageView &&
-            firstPageView.DataContext is PageConfiguration firstPage)
-        {
-            firstPage.SelectedIndex = -1;
-            buttonHelper.ClearAllSelections(firstPageView);
-        }
+        if (carousel.Children.FirstOrDefault() is not RebootOptionPageView { DataContext: PageConfiguration firstPage } firstPageView) return;
+        
+        firstPage.SelectedIndex = -1;
+        ButtonHelper.ClearAllSelections(firstPageView);
     }
     
     public void HandlePageChange()
     {
         UpdateNavigationState();
         
-        var currentPageView = carousel?.Children.FirstOrDefault() as StandardPageView;
+        var currentPageView = carousel?.Children.FirstOrDefault() as RebootOptionPageView;
         if (currentPageView?.DataContext is not PageConfiguration currentPage) return;
         
         currentPage.SelectedIndex = -1;
-        buttonHelper.ClearAllSelections(currentPageView);
+        ButtonHelper.ClearAllSelections(currentPageView);
         
         var lastColumn = keyboardService.GetLastSelectionColumn();
-        if (pageTransitionHelper.ShouldPreserveSelection(lastColumn))
-        {
-            var targetIndex = pageTransitionHelper.CalculateTargetSelection(
-                currentPage, lastColumn, carousel?.CurrentIndex ?? 0, keyboardService.GetPreviousPageIndex());
+        if (!ShouldPreserveSelection(lastColumn)) return;
+        
+        var targetIndex = CalculateTargetSelection(
+            currentPage, lastColumn, carousel?.CurrentIndex ?? 0, keyboardService.GetPreviousPageIndex());
             
-            if (targetIndex >= 0)
-            {
-                SetCurrentSelection(currentPage, targetIndex);
-            }
+        if (targetIndex >= 0) {
+            SetCurrentSelection(currentPage, targetIndex);
         }
     }
     
-    public void HandleSelectionChange(int index)
+    public void HandleSelectionChange()
     {
-        if (carousel?.Children.FirstOrDefault() is not StandardPageView currentPageView) return;
+        if (carousel?.Children.FirstOrDefault() is not RebootOptionPageView currentPageView) return;
         if (currentPageView.DataContext is not PageConfiguration currentPage) return;
         
-        buttonHelper.UpdateVisualSelection(currentPage, currentPageView);
+        ButtonHelper.UpdateVisualSelection(currentPage, currentPageView);
     }
     
     public void HandleButtonPress(int buttonIndex)
     {
-        if (carousel?.Children.FirstOrDefault() is not StandardPageView currentPageView) return;
+        if (carousel?.Children.FirstOrDefault() is not RebootOptionPageView currentPageView) return;
         if (currentPageView.DataContext is not PageConfiguration currentPage) return;
         
-        var buttons = buttonHelper.FindButtonsInPage(currentPageView);
-        
-        if (buttonIndex < buttons.Count)
-        {
-            var selectedButton = buttons[buttonIndex];
-            buttonHelper.ApplyPressedState(selectedButton);
-            var selectedOption = currentPage.Options[buttonIndex];
+        var buttons = ButtonHelper.FindButtonsInPage(currentPageView);
+
+        if (buttonIndex >= buttons.Count) return;
+        var selectedButton = buttons[buttonIndex];
+        buttonHelper.ApplyPressedState(selectedButton);
+        var selectedOption = currentPage.Options[buttonIndex];
             
-            if (selectedOption.Command?.CanExecute(selectedOption) == true) {
-                selectedOption.Command.Execute(selectedOption);
-            }
-            
-            Task.Delay(150).ContinueWith(_ => {
-                Avalonia.Threading.Dispatcher.UIThread.Post(() => {
-                    buttonHelper.RemovePressedState(selectedButton);
-                });
-            });
+        if (selectedOption.Command?.CanExecute(selectedOption) == true) {
+            selectedOption.Command.Execute(selectedOption);
         }
+            
+        Task.Delay(150).ContinueWith(_ => {
+            Avalonia.Threading.Dispatcher.UIThread.Post(() => {
+                ButtonHelper.RemovePressedState(selectedButton);
+            });
+        });
     }
     
     public void HandleKeyboardPageChange(int direction)
@@ -94,14 +86,13 @@ public class PageStateHelper(
         
         keyboardService.SetPageIndex(carousel.CurrentIndex);
         
-        // Check navigation boundaries before attempting to change pages
-        if (direction > 0 && viewModel.CanGoNext)
-        {
-            carousel.Next();
-        }
-        else if (direction < 0 && viewModel.CanGoPrevious)
-        {
-            carousel.Previous();
+        switch (direction) {
+            case > 0 when viewModel.CanGoNext:
+                carousel.Next();
+                break;
+            case < 0 when viewModel.CanGoPrevious:
+                carousel.Previous();
+                break;
         }
         
         UpdateNavigationState();
@@ -111,14 +102,13 @@ public class PageStateHelper(
     {
         if (carousel == null || viewModel == null) return;
         
-        // Check navigation boundaries before attempting to change pages
-        if (direction > 0 && viewModel.CanGoPrevious)
-        {
-            carousel.Previous();
-        }
-        else if (direction < 0 && viewModel.CanGoNext)
-        {
-            carousel.Next();
+        switch (direction) {
+            case > 0 when viewModel.CanGoPrevious:
+                carousel.Previous();
+                break;
+            case < 0 when viewModel.CanGoNext:
+                carousel.Next();
+                break;
         }
         
         UpdateNavigationState();
@@ -127,21 +117,17 @@ public class PageStateHelper(
     public void NavigatePrevious()
     {
         if (carousel == null || viewModel == null) return;
-        if (viewModel.CanGoPrevious)
-        {
-            carousel.Previous();
-            UpdateNavigationState();
-        }
+        if (!viewModel.CanGoPrevious) return;
+        carousel.Previous();
+        UpdateNavigationState();
     }
     
     public void NavigateNext()
     {
         if (carousel == null || viewModel == null) return;
-        if (viewModel.CanGoNext)
-        {
-            carousel.Next();
-            UpdateNavigationState();
-        }
+        if (!viewModel.CanGoNext) return;
+        carousel.Next();
+        UpdateNavigationState();
     }
     
     private void UpdateNavigationState()
@@ -160,9 +146,38 @@ public class PageStateHelper(
         if (page.SelectedIndex == index) return;
         page.SelectedIndex = index;
         
-        if (carousel?.Children.FirstOrDefault() is StandardPageView currentPageView)
+        if (carousel?.Children.FirstOrDefault() is RebootOptionPageView currentPageView)
         {
-            buttonHelper.UpdateVisualSelection(page, currentPageView);
+            ButtonHelper.UpdateVisualSelection(page, currentPageView);
         }
+    }
+    
+    public static int CalculateTargetSelection(PageConfiguration currentPage, int lastSelectionColumn, int currentPageIndex, int previousPageIndex)
+    {
+        if (lastSelectionColumn < 0) return -1;
+        
+        var columns = currentPage.ActualColumns;
+        var totalButtons = currentPage.Options.Count;
+        
+        if (columns == 0 || totalButtons == 0) return 0;
+
+        int targetRow;
+
+        if (currentPageIndex > previousPageIndex) {
+            targetRow = 0;
+        } else {
+            targetRow = (totalButtons - 1) / columns;
+        }
+
+        var startOfRow = targetRow * columns;
+        var endOfRow = Math.Min(startOfRow + columns, totalButtons);
+
+        var clampedColumn = Math.Min(lastSelectionColumn, endOfRow - startOfRow - 1);
+        return startOfRow + clampedColumn;
+    }
+    
+    public static bool ShouldPreserveSelection(int lastSelectionColumn)
+    {
+        return lastSelectionColumn >= 0;
     }
 } 

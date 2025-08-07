@@ -7,29 +7,26 @@ namespace R2CSharp.Helpers;
 
 public class ButtonHelper
 {
-    public void UpdateVisualSelection(PageConfiguration page, StandardPageView currentPageView)
+    public static void UpdateVisualSelection(PageConfiguration page, RebootOptionPageView currentPageView)
     {
         var buttons = new List<Button>();
         FindButtonsRecursively(currentPageView, buttons);
         
-        foreach (var button in buttons)
-        {
+        foreach (var button in buttons) {
             button.Classes.Remove("selected");
         }
         
-        if (page.SelectedIndex >= 0 && page.SelectedIndex < buttons.Count)
-        {
+        if (page.SelectedIndex >= 0 && page.SelectedIndex < buttons.Count) {
             buttons[page.SelectedIndex].Classes.Add("selected");
         }
     }
     
-    public void ClearAllSelections(StandardPageView currentPageView)
+    public static void ClearAllSelections(RebootOptionPageView currentPageView)
     {
         var buttons = new List<Button>();
         FindButtonsRecursively(currentPageView, buttons);
         
-        foreach (var button in buttons)
-        {
+        foreach (var button in buttons) {
             button.Classes.Remove("selected");
         }
     }
@@ -39,12 +36,12 @@ public class ButtonHelper
         button.Classes.Add("pressed");
     }
     
-    public void RemovePressedState(Button button)
+    public static void RemovePressedState(Button button)
     {
         button.Classes.Remove("pressed");
     }
     
-    public List<Button> FindButtonsInPage(StandardPageView currentPageView)
+    public static List<Button> FindButtonsInPage(RebootOptionPageView currentPageView)
     {
         var buttons = new List<Button>();
         FindButtonsRecursively(currentPageView, buttons);
@@ -53,15 +50,12 @@ public class ButtonHelper
     
     private static void FindButtonsRecursively(Control control, List<Button> buttons)
     {
-        if (control is Button button && button.Name == "OptionButton")
-        {
+        if (control is Button button && button.Name == "OptionButton") {
             buttons.Add(button);
         }
         
-        foreach (var child in control.GetVisualChildren())
-        {
-            if (child is Control childControl)
-            {
+        foreach (var child in control.GetVisualChildren()) {
+            if (child is Control childControl) {
                 FindButtonsRecursively(childControl, buttons);
             }
         }

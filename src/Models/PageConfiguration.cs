@@ -3,15 +3,10 @@ namespace R2CSharp.Models;
 public class PageConfiguration
 {
     public string SectionName { get; set; }
-    public string SectionIcon { get; set; } = "fa-solid fa-location-arrow";
     public List<RebootOption> Options { get; set; }
     public string EmptyMessage { get; set; } = "No options found";
     private bool UseFiveColumns { get; }
-    public string ThemeColor { get; set; } = "#4EC9B0";
-    
-    private int MaxColumns => UseFiveColumns ? 5 : 4;
-    private static int MaxRows => 2;
-    public int MaxItems => MaxColumns * MaxRows;
+    public string ThemeColor { get; set; } = "#00FFC8"; // Default hekate theme color
     public int ActualColumns { get; set; }
     public int ActualRows { get; set; }
     public bool IsSingleRow { get; set; }
@@ -33,6 +28,16 @@ public class PageConfiguration
         var maxItems = maxColumns * 2;
 
         switch (itemCount) {
+            case <= 1:
+                ActualColumns = 1;
+                ActualRows = 1;
+                IsSingleRow = true;
+                break;
+            case <= 2:
+                ActualColumns = 2;
+                ActualRows = 1;
+                IsSingleRow = true;
+                break;
             case <= 3:
                 ActualColumns = 3;
                 ActualRows = 1;
@@ -42,6 +47,11 @@ public class PageConfiguration
                 ActualColumns = 4;
                 ActualRows = 1;
                 IsSingleRow = true;
+                break;
+            case <= 6:
+                ActualColumns = 3;
+                ActualRows = 2;
+                IsSingleRow = false;
                 break;
             case <= 8:
                 ActualColumns = 4;

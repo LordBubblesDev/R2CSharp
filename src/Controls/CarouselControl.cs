@@ -83,10 +83,7 @@ public class CarouselControl : Panel
 
                     if (_currentPage == null) return;
                     
-                    await AnimationHandler.AnimatePageTransition(_currentPage, _nextPage, goingForward,
-                        containerHeight);
-
-                    System.Diagnostics.Debug.WriteLine($"[CarouselControl] Animation completed");
+                    await AnimationHandler.AnimatePageTransition(_currentPage, _nextPage, goingForward, containerHeight);
 
                     if (_currentPage != null) {
                         Children.Remove(_currentPage);
@@ -102,21 +99,20 @@ public class CarouselControl : Panel
                         SetAndRaise(CurrentIndexProperty, ref oldIndex, _currentIndex);
                     }
                 }
-                catch (Exception e)
-                {
+                catch (Exception) {
                     _isAnimating = false;
                     _nextPage = null;
                 }
             }
-            catch (Exception e) {
-                throw; // TODO handle exception
+            catch (Exception) {
+                _isAnimating = false;
+                _nextPage = null;
             }
         }
     
     protected override Size ArrangeOverride(Size finalSize)
     {
-        foreach (var child in this.Children)
-        {
+        foreach (var child in Children) {
             child.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
         }
         return finalSize;
@@ -125,7 +121,7 @@ public class CarouselControl : Panel
     protected override Size MeasureOverride(Size availableSize)
     {
         var maxSize = new Size();
-        foreach (var child in this.Children)
+        foreach (var child in Children)
         {
             child.Measure(availableSize);
             maxSize = new Size(

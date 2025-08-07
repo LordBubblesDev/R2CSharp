@@ -5,18 +5,30 @@
              RequestedThemeVariant="Default">
     <Application.Resources>
         <ResourceDictionary>
+            <!-- Color Definitions -->
+            <SolidColorBrush x:Key="MainWindowBackground" Color="#1E1E1E" />
+            <SolidColorBrush x:Key="PageContainerBackground" Color="#2D2D2D" />
+            <SolidColorBrush x:Key="NavigationButtonBackground" Color="#2A2A2A" />
+            <SolidColorBrush x:Key="ButtonDefaultBackground" Color="#4E4E4E" />
+            <SolidColorBrush x:Key="ButtonHoverBackground" Color="#5A5A5A" />
+            <SolidColorBrush x:Key="ButtonSelectedBackground" Color="#3A3A3A" />
+            <SolidColorBrush x:Key="ButtonPressedBackground" Color="#151515" />
+            <SolidColorBrush x:Key="NavigationButtonPressedBackground" Color="#1A1A1A" />
+            <SolidColorBrush x:Key="OverlayBackground" Color="#80000000" />
+            
+            <!-- Border Colors -->
+            <SolidColorBrush x:Key="NavigationButtonBorder" Color="#3E3E3E" />
+            <SolidColorBrush x:Key="ButtonPressedBorder" Color="#5A5A5A" />
+            <SolidColorBrush x:Key="ButtonHoverBorder" Color="#6A6A6A" />
+            
+            <!-- Foreground Colors -->
+            <SolidColorBrush x:Key="PrimaryText" Color="White" />
+            <SolidColorBrush x:Key="SecondaryText" Color="Gray" />
+            <SolidColorBrush x:Key="DefaultThemeColor" Color="#00FFC8" />
+            
             <ResourceDictionary.ThemeDictionaries>
-                <ResourceDictionary x:Key="Light">
-                    <Color x:Key="SystemChromeHighColor">#FFACACAC</Color>
-                    <Color x:Key="SystemChromeLowColor">Transparent</Color>
-                    <Color x:Key="SystemChromeMediumColor">#FFF2F2F2</Color>
-                    <Color x:Key="SystemChromeMediumLowColor">#FFE6E6E6</Color>
-                </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
-                    <Color x:Key="SystemChromeHighColor">#FF737373</Color>
-                    <Color x:Key="SystemChromeLowColor">Transparent</Color>
-                    <Color x:Key="SystemChromeMediumColor">#FF2B2B2B</Color>
-                    <Color x:Key="SystemChromeMediumLowColor">#FF1F1F1F</Color>
+                    
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>

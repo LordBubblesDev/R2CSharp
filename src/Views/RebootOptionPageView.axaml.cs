@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace R2CSharp.Views;
 
-public partial class StandardPageView : UserControl
+public partial class RebootOptionPageView : UserControl
 {
-    public StandardPageView()
+    public RebootOptionPageView()
     {
         InitializeComponent();
     }

@@ -4,11 +4,12 @@ namespace R2CSharp.Components;
 
 public class PageFactory(NyxIcons nyxIcons)
 {
+    private const string EmptyMessage = "No options found";
+
     public PageConfiguration CreateLaunchPage(List<RebootOption> options)
     {
         return new PageConfiguration("Launch", options, nyxIcons.UseFiveColumns)
         {
-            SectionIcon = "fa-solid fa-rocket",
             EmptyMessage = "No launch options found",
             ThemeColor = nyxIcons.ThemeColor
         };
@@ -18,7 +19,6 @@ public class PageFactory(NyxIcons nyxIcons)
     {
         return new PageConfiguration("More Configurations", options, nyxIcons.UseFiveColumns)
         {
-            SectionIcon = "fa-solid fa-cog",
             EmptyMessage = "No config options found",
             ThemeColor = nyxIcons.ThemeColor
         };
@@ -28,8 +28,7 @@ public class PageFactory(NyxIcons nyxIcons)
     {
         return new PageConfiguration("UMS (USB Mass Storage)", options)
         {
-            SectionIcon = "fa-solid fa-hdd",
-            EmptyMessage = "No UMS options available",
+            EmptyMessage = EmptyMessage,
             ThemeColor = nyxIcons.ThemeColor
         };
     }
@@ -38,8 +37,7 @@ public class PageFactory(NyxIcons nyxIcons)
     {
         return new PageConfiguration("System Options", options)
         {
-            SectionIcon = "fa-solid fa-tools",
-            EmptyMessage = "No system options available",
+            EmptyMessage = EmptyMessage,
             ThemeColor = nyxIcons.ThemeColor
         };
     }
@@ -50,9 +48,7 @@ public class PageFactory(NyxIcons nyxIcons)
     {
         return new PageConfiguration(sectionName, options, nyxIcons.UseFiveColumns)
         {
-            SectionIcon = sectionIcon,
-            EmptyMessage = emptyMessage,
-            ThemeColor = nyxIcons.ThemeColor
+            EmptyMessage = emptyMessage
         };
     }
 } 

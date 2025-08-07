@@ -12,12 +12,12 @@ public static class ColorConverter
     /// <returns>Hex color string in format "#RRGGBB"</returns>
     public static string HsvToHex(int hue, int saturation, int value)
     {
+        // ReSharper disable twice SuggestVarOrType_BuiltInTypes
         double h = hue;
         double s = saturation / 100.0;
         double v = value / 100.0;
 
-        if (s == 0)
-        {
+        if (s == 0) {
             int gray = (int)(v * 255);
             return $"#{gray:X2}{gray:X2}{gray:X2}";
         }

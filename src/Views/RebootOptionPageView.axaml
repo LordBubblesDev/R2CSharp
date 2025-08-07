@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:avalonia="https://github.com/projektanker/icons.avalonia"
              xmlns:models="clr-namespace:R2CSharp.Models"
-             x:Class="R2CSharp.Views.StandardPageView"
+             x:Class="R2CSharp.Views.RebootOptionPageView"
              x:DataType="models:PageConfiguration">
     
     <UserControl.Resources>
@@ -15,27 +15,28 @@
                               Name="OptionButton"
                               Focusable="False"
                               IsTabStop="False">
+                          <!-- ReSharper disable Xaml.PossibleNullReferenceException -->
                           <Button.Styles>
-                              <Style Selector="Button">
-                                  <Setter Property="Background" Value="#4E4E4E" />
-                                  <Setter Property="Foreground" Value="White" />
+                               <Style Selector="Button">
+                                  <Setter Property="Background" Value="{StaticResource ButtonDefaultBackground}" />
+                                  <Setter Property="Foreground" Value="{StaticResource PrimaryText}" />
                                   <Setter Property="BorderBrush" Value="Transparent" />
                                   <Setter Property="BorderThickness" Value="0" />
                                   <Setter Property="CornerRadius" Value="4" />
                               </Style>
                               <Style Selector="Button:hover">
-                                  <Setter Property="Background" Value="#5A5A5A" />
-                                  <Setter Property="BorderBrush" Value="#6A6A6A" />
+                                  <Setter Property="Background" Value="{StaticResource ButtonHoverBackground}" />
+                                  <Setter Property="BorderBrush" Value="{StaticResource ButtonHoverBorder}" />
                                   <Setter Property="BorderThickness" Value="2" />
                               </Style>
                               <Style Selector="Button.selected">
                                   <Setter Property="BorderThickness" Value="4" />
                                   <Setter Property="BorderBrush" Value="{Binding $parent[UserControl].((models:PageConfiguration)DataContext).ThemeColor}" />
-                                  <Setter Property="Background" Value="#3A3A3A" />
+                                  <Setter Property="Background" Value="{StaticResource ButtonSelectedBackground}" />
                               </Style>
                               <Style Selector="Button.pressed">
-                                  <Setter Property="Background" Value="#151515" />
-                                  <Setter Property="BorderBrush" Value="#5A5A5A" />
+                                  <Setter Property="Background" Value="{StaticResource ButtonPressedBackground}" />
+                                  <Setter Property="BorderBrush" Value="{StaticResource ButtonPressedBorder}" />
                               </Style>
                           </Button.Styles>
                           <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -47,6 +48,7 @@
                                              IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNull}}"
                                              Foreground="{Binding $parent[UserControl].((models:PageConfiguration)DataContext).ThemeColor}" />
                           </StackPanel>
+                          <!-- ReSharper restore Xaml.PossibleNullReferenceException -->
                       </Button>
                       <TextBlock Text="{Binding Name}"
                                  HorizontalAlignment="Center"
@@ -56,7 +58,7 @@
                                  FontSize="30"
                                  MaxWidth="250"
                                  Margin="0,15,0,0"
-                                 Foreground="White"
+                                 Foreground="{StaticResource PrimaryText}"
                                  Height="100" />
                   </StackPanel>
               </Border>
@@ -65,39 +67,39 @@
 
     <UserControl.Styles>
         <Style Selector="Button:pressed">
-            <Setter Property="Background" Value="#151515" />
-            <Setter Property="BorderBrush" Value="#5A5A5A" />
+            <Setter Property="Background" Value="{StaticResource ButtonPressedBackground}" />
+            <Setter Property="BorderBrush" Value="{StaticResource ButtonPressedBorder}" />
         </Style>
     </UserControl.Styles>
     
          <Viewbox Stretch="Uniform">
-         <Border Background="#2D2D2D" CornerRadius="25" Padding="20" Margin="30,10"  MinWidth="1650" MinHeight="850">
+         <Border Background="{StaticResource PageContainerBackground}" CornerRadius="25" Padding="20" Margin="30,10"  MinWidth="1650" MinHeight="850">
              <Grid RowDefinitions="Auto,*">
                  
                  <!-- Header -->
                  <Grid Margin="0,0,0,15">
                      <avalonia:Icon Value="fa-solid fa-location-arrow" 
                                     Margin="20,0,15,15" 
-                                    Foreground="White"
+                                    Foreground="{StaticResource PrimaryText}"
                                     FontSize="50"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Bottom"/>
                      <TextBlock Text="{Binding SectionName}"
                                 FontSize="35"
                                 FontWeight="SemiBold"
-                                Foreground="White"
+                                Foreground="{StaticResource PrimaryText}"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Left"
                                 Margin="100,0,0,20"/>
                  </Grid>
                  
                  <!-- Divider -->
-                 <Border Height="1" Background="White" Margin="0,0,0,20" Grid.Row="0" VerticalAlignment="Bottom" />
+                 <Border Height="1" Background="{StaticResource PrimaryText}" Margin="0,0,0,20" Grid.Row="0" VerticalAlignment="Bottom" />
                  
                  <!-- Content Area -->
                  <Grid Grid.Row="1" RowDefinitions="*,*">
                      
-                      <!-- Single Row Layout (3 buttons) - Centered -->
+                      <!-- Single Row Layout (<=4 buttons) - Centered -->
                       <Grid Grid.Row="0" Grid.RowSpan="2" 
                             IsVisible="{Binding IsSingleRow}" RowDefinitions="*,Auto,*">
                           <ItemsControl ItemsSource="{Binding Options}"
@@ -114,7 +116,7 @@
                            </ItemsControl>
                         </Grid>
                       
-                      <!-- Multi Row Layout (4+ buttons) - Top Aligned -->
+                      <!-- Multi Row Layout (>=5 buttons) - Top Aligned -->
                       <ItemsControl ItemsSource="{Binding Options}"
                                     Grid.Row="0" Grid.RowSpan="2"
                                     VerticalAlignment="Top"
@@ -133,7 +135,7 @@
                      
                      <!-- Empty State -->
                      <TextBlock Grid.Row="0" Text="{Binding EmptyMessage}"
-                                Foreground="Gray"
+                                Foreground="{StaticResource SecondaryText}"
                                 FontStyle="Italic"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"

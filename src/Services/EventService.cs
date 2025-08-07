@@ -9,7 +9,7 @@ public class EventService(
     ScrollDetectionService scrollService,
     TouchDetectionService touchService,
     KeyNavService keyboardService,
-    PageViewModel? viewModel,
+    ViewModels.CarouselPageViewModel? viewModel,
     CarouselControl? carousel)
 {
     private readonly KeyNavService _keyboardService = keyboardService;
@@ -48,7 +48,7 @@ public class EventService(
         }
     }
 
-    public event Action<PageViewModel>? ViewModelPropertyChanged;
+    public event Action<ViewModels.CarouselPageViewModel>? ViewModelPropertyChanged;
     public event Action<AvaloniaPropertyChangedEventArgs>? CarouselPropertyChanged;
     public event Action<KeyEventArgs>? KeyDown;
     
@@ -79,7 +79,7 @@ public class EventService(
     
     private void OnViewModelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        if (sender is PageViewModel model) {
+        if (sender is ViewModels.CarouselPageViewModel model) {
             ViewModelPropertyChanged?.Invoke(model);
         }
     }
