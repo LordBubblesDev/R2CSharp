@@ -13,7 +13,7 @@ public class KeyNavService
     public event Action<int>? PageChangeRequested;
     public event Action<int>? ButtonPressed;
     
-    public void HandleKeyDown(KeyEventArgs e, PageConfiguration currentPage, int currentSelection)
+    public void HandleKeyDown(KeyEventArgs e, PageConfiguration currentPage, int currentSelection, bool canGoPrevious, bool canGoNext)
     {
         var totalButtons = currentPage.Options.Count;
         var columns = currentPage.ActualColumns;
@@ -23,12 +23,12 @@ public class KeyNavService
         switch (e.Key) {
             case Key.Up:
                 e.Handled = true;
-                HandleUpKey(currentPage, currentSelection, columns, rows);
+                HandleUpKey(currentPage, currentSelection, columns, rows, canGoPrevious);
                 break;
                 
             case Key.Down:
                 e.Handled = true;
-                HandleDownKey(currentPage, currentSelection, columns, rows);
+                HandleDownKey(currentPage, currentSelection, columns, rows, canGoNext);
                 break;
                 
             case Key.Left:
@@ -48,7 +48,7 @@ public class KeyNavService
         }
     }
     
-    private void HandleUpKey(PageConfiguration currentPage, int currentSelection, int columns, int rows)
+    private void HandleUpKey(PageConfiguration currentPage, int currentSelection, int columns, int rows, bool canGoPrevious)
     {
         if (currentSelection == -1) {
             SetCurrentSelection(currentPage, 0);
@@ -56,9 +56,11 @@ public class KeyNavService
         else {
             var currentRow = currentSelection / columns;
             if (currentRow == 0) {
-                _lastSelectionColumn = currentSelection % columns;
-                _previousPageIndex = GetCurrentPageIndex();
-                PageChangeRequested?.Invoke(-1);
+                if (canGoPrevious) {
+                    _lastSelectionColumn = currentSelection % columns;
+                    _previousPageIndex = GetCurrentPageIndex();
+                    PageChangeRequested?.Invoke(-1);
+                }
             }
             else {
                 SetCurrentSelection(currentPage, currentSelection - columns);
@@ -66,7 +68,7 @@ public class KeyNavService
         }
     }
     
-    private void HandleDownKey(PageConfiguration currentPage, int currentSelection, int columns, int rows)
+    private void HandleDownKey(PageConfiguration currentPage, int currentSelection, int columns, int rows, bool canGoNext)
     {
         if (currentSelection == -1) {
             SetCurrentSelection(currentPage, 0);
@@ -74,9 +76,11 @@ public class KeyNavService
         else {
             var currentRow = currentSelection / columns;
             if (currentRow == rows - 1) {
-                _lastSelectionColumn = currentSelection % columns;
-                _previousPageIndex = GetCurrentPageIndex();
-                PageChangeRequested?.Invoke(1);
+                if (canGoNext) {
+                    _lastSelectionColumn = currentSelection % columns;
+                    _previousPageIndex = GetCurrentPageIndex();
+                    PageChangeRequested?.Invoke(1);
+                }
             }
             else {
                 SetCurrentSelection(currentPage, currentSelection + columns);

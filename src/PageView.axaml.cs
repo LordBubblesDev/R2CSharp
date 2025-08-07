@@ -74,9 +74,10 @@ public partial class PageView : UserControl
     {
         if (MainCarousel?.Children.FirstOrDefault() is not StandardPageView currentPageView) return;
         if (currentPageView.DataContext is not PageConfiguration currentPage) return;
+        if (DataContext is not PageViewModel viewModel) return;
         
         var currentSelection = GetCurrentSelection(currentPage);
-        _keyboardService.HandleKeyDown(e, currentPage, currentSelection);
+        _keyboardService.HandleKeyDown(e, currentPage, currentSelection, viewModel.CanGoPrevious, viewModel.CanGoNext);
     }
     
     private void OnSelectionChanged(int index) => _pageStateHelper.HandleSelectionChange(index);

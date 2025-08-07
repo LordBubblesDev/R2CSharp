@@ -90,15 +90,16 @@ public class PageStateHelper(
     
     public void HandleKeyboardPageChange(int direction)
     {
-        if (carousel == null) return;
+        if (carousel == null || viewModel == null) return;
         
         keyboardService.SetPageIndex(carousel.CurrentIndex);
         
-        if (direction > 0)
+        // Check navigation boundaries before attempting to change pages
+        if (direction > 0 && viewModel.CanGoNext)
         {
             carousel.Next();
         }
-        else
+        else if (direction < 0 && viewModel.CanGoPrevious)
         {
             carousel.Previous();
         }
@@ -108,13 +109,14 @@ public class PageStateHelper(
     
     public void HandleScrollPageChange(int direction)
     {
-        if (carousel == null) return;
+        if (carousel == null || viewModel == null) return;
         
-        if (direction > 0)
+        // Check navigation boundaries before attempting to change pages
+        if (direction > 0 && viewModel.CanGoPrevious)
         {
             carousel.Previous();
         }
-        else
+        else if (direction < 0 && viewModel.CanGoNext)
         {
             carousel.Next();
         }
@@ -124,16 +126,22 @@ public class PageStateHelper(
     
     public void NavigatePrevious()
     {
-        if (carousel == null) return;
-        carousel.Previous();
-        UpdateNavigationState();
+        if (carousel == null || viewModel == null) return;
+        if (viewModel.CanGoPrevious)
+        {
+            carousel.Previous();
+            UpdateNavigationState();
+        }
     }
     
     public void NavigateNext()
     {
-        if (carousel == null) return;
-        carousel.Next();
-        UpdateNavigationState();
+        if (carousel == null || viewModel == null) return;
+        if (viewModel.CanGoNext)
+        {
+            carousel.Next();
+            UpdateNavigationState();
+        }
     }
     
     private void UpdateNavigationState()
