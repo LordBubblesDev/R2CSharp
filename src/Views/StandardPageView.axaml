@@ -9,7 +9,7 @@
         <DataTemplate x:Key="OptionButtonTemplate" x:DataType="models:RebootOption">
              <Border CornerRadius="150" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5">
                  <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                     <Button Width="250" Height="250"
+                     <Button Width="250" Height="250" CornerRadius="30"
                              Command="{Binding Command}"
                              CommandParameter="{Binding}">
                          <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -52,7 +52,7 @@
     </UserControl.Styles>
     
          <Viewbox Stretch="Uniform">
-         <Border Background="#2D2D2D" CornerRadius="25" Padding="20" Margin="10"  MinWidth="1650" MinHeight="850">
+         <Border Background="#2D2D2D" CornerRadius="25" Padding="20" Margin="30,10"  MinWidth="1650" MinHeight="850">
              <Grid RowDefinitions="Auto,*">
                  
                  <!-- Header -->
@@ -98,8 +98,9 @@
                       <!-- Multi Row Layout (4+ buttons) - Top Aligned -->
                       <ItemsControl ItemsSource="{Binding Options}"
                                     Grid.Row="0" Grid.RowSpan="2"
-                                   VerticalAlignment="Top"
-                                   IsVisible="{Binding !IsSingleRow}">
+                                    VerticalAlignment="Top"
+                                    Margin="0,35,0,0"
+                                    IsVisible="{Binding !IsSingleRow}">
                           <ItemsControl.ItemsPanel>
                               <ItemsPanelTemplate>
                                   <UniformGrid Columns="{Binding ActualColumns}" 
