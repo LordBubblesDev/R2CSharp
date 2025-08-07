@@ -8,7 +8,6 @@ namespace R2CSharp.Helpers;
 public class PageStateHelper(
     ViewModels.CarouselPageViewModel? viewModel,
     CarouselControl? carousel,
-    ButtonHelper buttonHelper,
     KeyNavService keyboardService)
 {
     public void InitializePages()
@@ -66,7 +65,7 @@ public class PageStateHelper(
 
         if (buttonIndex >= buttons.Count) return;
         var selectedButton = buttons[buttonIndex];
-        buttonHelper.ApplyPressedState(selectedButton);
+        ButtonHelper.ApplyPressedState(selectedButton);
         var selectedOption = currentPage.Options[buttonIndex];
             
         if (selectedOption.Command?.CanExecute(selectedOption) == true) {
@@ -152,7 +151,7 @@ public class PageStateHelper(
         }
     }
     
-    public static int CalculateTargetSelection(PageConfiguration currentPage, int lastSelectionColumn, int currentPageIndex, int previousPageIndex)
+    private static int CalculateTargetSelection(PageConfiguration currentPage, int lastSelectionColumn, int currentPageIndex, int previousPageIndex)
     {
         if (lastSelectionColumn < 0) return -1;
         
@@ -176,7 +175,7 @@ public class PageStateHelper(
         return startOfRow + clampedColumn;
     }
     
-    public static bool ShouldPreserveSelection(int lastSelectionColumn)
+    private static bool ShouldPreserveSelection(int lastSelectionColumn)
     {
         return lastSelectionColumn >= 0;
     }

@@ -5,7 +5,7 @@ using R2CSharp.Views;
 
 namespace R2CSharp.Helpers;
 
-public class ButtonHelper
+public abstract class ButtonHelper
 {
     public static void UpdateVisualSelection(PageConfiguration page, RebootOptionPageView currentPageView)
     {
@@ -31,7 +31,7 @@ public class ButtonHelper
         }
     }
     
-    public void ApplyPressedState(Button button)
+    public static void ApplyPressedState(Button button)
     {
         button.Classes.Add("pressed");
     }

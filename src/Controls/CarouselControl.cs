@@ -28,8 +28,7 @@ public class CarouselControl : Panel
     {
         _pages.Add(page);
         
-        if (_currentPage == null && _pages.Count > 0)
-        {
+        if (_currentPage == null && _pages.Count > 0) {
             SetCurrentIndex(0);
         }
     }
@@ -121,8 +120,7 @@ public class CarouselControl : Panel
     protected override Size MeasureOverride(Size availableSize)
     {
         var maxSize = new Size();
-        foreach (var child in Children)
-        {
+        foreach (var child in Children) {
             child.Measure(availableSize);
             maxSize = new Size(
                 Math.Max(maxSize.Width, child.DesiredSize.Width),

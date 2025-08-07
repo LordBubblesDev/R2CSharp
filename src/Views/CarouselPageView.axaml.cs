@@ -28,10 +28,9 @@ public partial class CarouselPageView : UserControl
         var scrollService = new ScrollDetectionService();
         var touchService = new TouchDetectionService();
         _keyboardService = new KeyNavService();
-        var buttonSelectionService = new ButtonHelper();
         
         // Create state and event services
-        _pageStateHelper = new PageStateHelper(viewModel, MainCarousel, buttonSelectionService, _keyboardService);
+        _pageStateHelper = new PageStateHelper(viewModel, MainCarousel, _keyboardService);
         _eventService = new EventService(scrollService, touchService, _keyboardService, viewModel, MainCarousel);
         
         // Subscribe to events
