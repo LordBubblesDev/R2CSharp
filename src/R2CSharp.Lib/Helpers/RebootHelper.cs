@@ -14,14 +14,27 @@ public static class RebootHelper
 
             Console.WriteLine($"Reboot command: action={action}, param1={param1}, param2={param2}");
 
-            var startInfo = new ProcessStartInfo {
-                FileName = "sh",
-                Arguments = "-c \"reboot\"",
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
+            bool isTkmm = File.Exists("/usr/bin/tkmm-reboot");
 
-            using var process = Process.Start(startInfo);
+            if (isTkmm)
+            {
+                var startInfo = new ProcessStartInfo {
+                    FileName = "/usr/bin/tkmm-reboot",
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+                using var process = Process.Start(startInfo);
+            }
+            else
+            {
+                var startInfo = new ProcessStartInfo {
+                    FileName = "sh",
+                    Arguments = "-c \"reboot\"",
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+                using var process = Process.Start(startInfo);
+            }
         }
         catch (Exception ex) {
             Console.WriteLine($"Failed to execute reboot command: {ex.Message}");
@@ -31,14 +44,27 @@ public static class RebootHelper
     public static void Shutdown()
     {
         try {
-            var startInfo = new ProcessStartInfo {
-                FileName = "sh",
-                Arguments = "-c \"shutdown -P now\"",
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
+            bool isTkmm = File.Exists("/usr/bin/tkmm-shutdown");
 
-            using var process = Process.Start(startInfo);
+            if (isTkmm)
+            {
+                var startInfo = new ProcessStartInfo {
+                    FileName = "/usr/bin/tkmm-shutdown",
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+                using var process = Process.Start(startInfo);
+            }
+            else
+            {
+                var startInfo = new ProcessStartInfo {
+                    FileName = "sh",
+                    Arguments = "-c \"shutdown -P now\"",
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+                using var process = Process.Start(startInfo);
+            }
         }
         catch (Exception ex) {
             Console.WriteLine($"Failed to execute shutdown command: {ex.Message}");
