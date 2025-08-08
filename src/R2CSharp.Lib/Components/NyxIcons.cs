@@ -34,7 +34,7 @@ public class NyxIcons
 
     public Bitmap? FallbackIcon => ConvertBmpToBitmap("bootloader/res/icon_switch.bmp");
 
-    private bool ShouldApplyColor(string bmpPath)
+    private static bool ShouldApplyColor(string bmpPath)
     {
         return bmpPath.EndsWith("icon_switch.bmp", StringComparison.OrdinalIgnoreCase)
             || bmpPath.EndsWith("icon_payload.bmp", StringComparison.OrdinalIgnoreCase)

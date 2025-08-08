@@ -17,15 +17,10 @@ public partial class CarouselPageViewModel : ObservableObject
     [ObservableProperty] private bool _canGoPrevious;
     [ObservableProperty] private bool _canGoNext = true;
 
-    private readonly BootDiskService _bootDiskService;
+    private readonly BootDiskService _bootDiskService = new();
     private RebootOptionsProvider? _rebootOptionsService;
-    private PageFactory? _pageFactoryService;
+    private PageFactory? _pageFactory;
     private NyxIcons? _iconService;
-
-    public CarouselPageViewModel()
-    {
-        _bootDiskService = new BootDiskService();
-    }
 
     /// <summary>
     /// Explicitly loads the carousel data. Call this when you're ready to initialize.
@@ -40,7 +35,7 @@ public partial class CarouselPageViewModel : ObservableObject
             await Dispatcher.UIThread.InvokeAsync(() => { ThemeColor = _iconService.ThemeColor; });
             
             _rebootOptionsService = new RebootOptionsProvider(_bootDiskService.BootDiskPath, _iconService);
-            _pageFactoryService = new PageFactory(_iconService);
+            _pageFactory = new PageFactory(_iconService);
             
             await LoadRebootOptionsAsync();
             
@@ -65,47 +60,37 @@ public partial class CarouselPageViewModel : ObservableObject
     {
         Pages.Clear();
 
-        // Create Launch page
         var launchOptions = _rebootOptionsService!.LoadLaunchOptions();
+        var configOptions = _rebootOptionsService.LoadConfigOptions();
+        var umsOptions = RebootOptionsProvider.LoadUmsOptions();
         
         foreach (var option in launchOptions) {
             option.Command = SelectLaunchOptionCommand;
         }
-        
-        var launchPage = _pageFactoryService!.CreateLaunchPage(launchOptions);
-        Pages.Add(launchPage);
-
-        // Create Config page
-        var configOptions = _rebootOptionsService.LoadConfigOptions();
-        
         foreach (var option in configOptions) {
             option.Command = SelectConfigOptionCommand;
         }
-        
-        var configPage = _pageFactoryService.CreateConfigPage(configOptions);
-        Pages.Add(configPage);
-
-        // Create UMS page
-        var umsOptions = RebootOptionsProvider.LoadUmsOptions();
-        
         foreach (var option in umsOptions) {
             option.Command = SelectUmsOptionCommand;
         }
         
-        var umsPage = _pageFactoryService.CreateUmsPage(umsOptions);
-        Pages.Add(umsPage);
-
-        // Create System Options page
         var systemOptions = new List<RebootOption>
         {
             new() { Name = "Hekate Bootloader", Command = RebootToBootloaderCommand, FallbackIcon = "fa-solid fa-boot" },
             new() { Name = "Reboot", Command = NormalRebootCommand, FallbackIcon = "fa-solid fa-rotate" },
             new() { Name = "Shutdown", Command = ShutdownCommand, FallbackIcon = "fa-solid fa-power-off" }
         };
-        var systemPage = _pageFactoryService.CreateSystemPage(systemOptions);
+        
+        var launchPage = _pageFactory!.CreatePage("Launch", launchOptions);
+        var configPage = _pageFactory.CreatePage("More Configurations", configOptions);
+        var umsPage = _pageFactory.CreatePage("UMS (USB Mass Storage)", umsOptions);
+        var systemPage = _pageFactory.CreatePage("System Options", systemOptions);
+        
+        Pages.Add(launchPage);
+        Pages.Add(configPage);
+        Pages.Add(umsPage);
         Pages.Add(systemPage);
     }
-
 
     [RelayCommand]
     private void SelectLaunchOption(RebootOption option)
