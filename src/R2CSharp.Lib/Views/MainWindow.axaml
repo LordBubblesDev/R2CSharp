@@ -10,7 +10,7 @@
         ExtendClientAreaChromeHints="NoChrome">
     <Grid Background="Transparent">
         <!-- Main Content -->
-        <views:CarouselPageView Grid.Row="0" />
+        <views:CarouselPageView x:Name="CarouselView" Grid.Row="0" />
         
         <!-- Close Button Overlay -->
         <views:CloseButtonOverlay Grid.Row="0" ZIndex="1000" />

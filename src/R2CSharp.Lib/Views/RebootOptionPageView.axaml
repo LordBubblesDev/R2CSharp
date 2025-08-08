@@ -81,11 +81,11 @@
                      <avalonia:Icon Value="fa-solid fa-location-arrow" 
                                     Margin="20,0,15,15" 
                                     Foreground="{StaticResource PrimaryText}"
-                                    FontSize="50"
+                                    FontSize="65"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Bottom"/>
                      <TextBlock Text="{Binding SectionName}"
-                                FontSize="35"
+                                FontSize="45"
                                 FontWeight="SemiBold"
                                 Foreground="{StaticResource PrimaryText}"
                                 VerticalAlignment="Center"
@@ -104,7 +104,8 @@
                             IsVisible="{Binding IsSingleRow}" RowDefinitions="*,Auto,*">
                           <ItemsControl ItemsSource="{Binding Options}"
                                         Grid.Row="1"
-                                        HorizontalAlignment="Stretch">
+                                        HorizontalAlignment="Stretch"
+                                        MinHeight="785">
                                <ItemsControl.ItemsPanel>
                                    <ItemsPanelTemplate>
                                        <UniformGrid Columns="{Binding ActualColumns}" Rows="1" />

@@ -28,30 +28,10 @@ public class PageConfiguration
         var maxItems = maxColumns * 2;
 
         switch (itemCount) {
-            case <= 1:
-                ActualColumns = 1;
-                ActualRows = 1;
-                IsSingleRow = true;
-                break;
-            case <= 2:
-                ActualColumns = 2;
-                ActualRows = 1;
-                IsSingleRow = true;
-                break;
             case <= 3:
                 ActualColumns = 3;
                 ActualRows = 1;
                 IsSingleRow = true;
-                break;
-            case <= 4:
-                ActualColumns = 4;
-                ActualRows = 1;
-                IsSingleRow = true;
-                break;
-            case <= 6:
-                ActualColumns = 3;
-                ActualRows = 2;
-                IsSingleRow = false;
                 break;
             case <= 8:
                 ActualColumns = 4;
@@ -66,4 +46,4 @@ public class PageConfiguration
                 break;
         }
     }
-} 
+}

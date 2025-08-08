@@ -14,6 +14,8 @@ public class EventService(
     CarouselControl? carousel)
 {
     private readonly KeyNavService _keyboardService = keyboardService;
+    private CarouselPageViewModel? _viewModel = viewModel;
+    private CarouselControl? _carousel = carousel;
 
     public void SubscribeToEvents(Window window)
     {
@@ -23,12 +25,12 @@ public class EventService(
         window.PointerMoved += OnPointerMoved;
         window.KeyDown += OnKeyDown;
         
-        if (viewModel != null) {
-            viewModel.PropertyChanged += OnViewModelPropertyChanged;
+        if (_viewModel != null) {
+            _viewModel.PropertyChanged += OnViewModelPropertyChanged;
         }
         
-        if (carousel != null) {
-            carousel.PropertyChanged += OnCarouselPropertyChanged;
+        if (_carousel != null) {
+            _carousel.PropertyChanged += OnCarouselPropertyChanged;
         }
     }
     
@@ -40,18 +42,41 @@ public class EventService(
         window.PointerMoved -= OnPointerMoved;
         window.KeyDown -= OnKeyDown;
         
-        if (viewModel != null) {
-            viewModel.PropertyChanged -= OnViewModelPropertyChanged;
+        if (_viewModel != null) {
+            _viewModel.PropertyChanged -= OnViewModelPropertyChanged;
         }
         
-        if (carousel != null) {
-            carousel.PropertyChanged -= OnCarouselPropertyChanged;
+        if (_carousel != null) {
+            _carousel.PropertyChanged -= OnCarouselPropertyChanged;
         }
     }
 
     public event Action<CarouselPageViewModel>? ViewModelPropertyChanged;
     public event Action<AvaloniaPropertyChangedEventArgs>? CarouselPropertyChanged;
     public event Action<KeyEventArgs>? KeyDown;
+
+    public void UpdateViewModel(CarouselPageViewModel newViewModel)
+    {
+        if (_viewModel != null) {
+            _viewModel.PropertyChanged -= OnViewModelPropertyChanged;
+        }
+        
+        _viewModel = newViewModel;
+        
+        if (_viewModel != null) {
+            _viewModel.PropertyChanged += OnViewModelPropertyChanged;
+        }
+    }
+
+    public void SubscribeToControlEvents(UserControl control)
+    {
+        control.KeyDown += OnKeyDown;
+    }
+
+    public void UnsubscribeFromControlEvents(UserControl control)
+    {
+        control.KeyDown -= OnKeyDown;
+    }
     
     private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
     {

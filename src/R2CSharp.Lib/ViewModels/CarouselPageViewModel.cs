@@ -25,11 +25,15 @@ public partial class CarouselPageViewModel : ObservableObject
     public CarouselPageViewModel()
     {
         _bootDiskService = new BootDiskService();
-        _ = InitializeAsync();
     }
 
-    private async Task InitializeAsync()
+    /// <summary>
+    /// Explicitly loads the carousel data. Call this when you're ready to initialize.
+    /// </summary>
+    public async Task LoadAsync()
     {
+        if (!IsLoading) { return; }
+        
         try {
             await _bootDiskService.InitializeBootDiskAsync();
             _iconService = await Task.Run(() => new NyxIcons(_bootDiskService.BootDiskPath));
