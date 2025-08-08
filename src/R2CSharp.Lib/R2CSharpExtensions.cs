@@ -20,12 +20,24 @@ public static class R2CSharpExtensions
     public static AppBuilder UseR2CSharp(this AppBuilder appBuilder)
     {
         // Initialize FontAwesome icons (required for R2CSharp components)
-        IconProvider.Current
-            .Register(new FontAwesomeIconProvider(FontAwesomeJsonStreamProvider.Instance));
+        // Note: This won't override existing FontAwesome registration
+        try
+        {
+            IconProvider.Current
+                .Register(new FontAwesomeIconProvider(FontAwesomeJsonStreamProvider.Instance));
+        }
+        catch (InvalidOperationException)
+        {
+            // FontAwesome already registered, ignore
+        }
+        catch (ArgumentException)
+        {
+            // FontAwesome already registered with same prefix, ignore
+        }
 
         return appBuilder.AfterSetup(_ =>
         {
-            // Add R2CSharp theme resources to the application
+            // Ensure resources are loaded before any views are created
             if (Application.Current?.Resources is not null)
             {
                 var themeUri = new Uri("avares://R2CSharp.Lib/Themes/R2CSharpTheme.axaml");
@@ -61,5 +73,45 @@ public static class R2CSharpExtensions
                 Application.Current.Resources.MergedDictionaries.Add(themeResource);
             }
         });
+    }
+    
+    /// <summary>
+    /// Manually load R2CSharp theme resources into an application
+    /// Use this if the automatic loading doesn't work in your setup
+    /// </summary>
+    /// <param name="app">The Avalonia Application instance</param>
+    public static void LoadR2CSharpResources(this Application app)
+    {
+        if (app.Resources is not null)
+        {
+            var themeUri = new Uri("avares://R2CSharp.Lib/Themes/R2CSharpTheme.axaml");
+            var themeResource = new ResourceInclude(themeUri)
+            {
+                Source = themeUri
+            };
+            
+            app.Resources.MergedDictionaries.Add(themeResource);
+        }
+    }
+    
+    /// <summary>
+    /// Initialize FontAwesome icons for R2CSharp components
+    /// Use this if you need to initialize icons separately
+    /// </summary>
+    public static void InitializeR2CSharpIcons()
+    {
+        try
+        {
+            IconProvider.Current
+                .Register(new FontAwesomeIconProvider(FontAwesomeJsonStreamProvider.Instance));
+        }
+        catch (InvalidOperationException)
+        {
+            // FontAwesome already registered, ignore
+        }
+        catch (ArgumentException)
+        {
+            // FontAwesome already registered with same prefix, ignore
+        }
     }
 }
