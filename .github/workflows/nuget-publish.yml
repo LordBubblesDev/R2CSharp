@@ -3,7 +3,7 @@ name: Publish NuGet Package
 on:
   push:
     tags:
-      - 'lib-v*' 
+      - 'v*' 
   workflow_dispatch:
 
 jobs:
@@ -28,11 +28,11 @@ jobs:
     - name: Extract version from tag
       id: get_version
       run: |
-        if [[ "${{ github.ref }}" == refs/tags/lib-v* ]]; then
-          VERSION=${GITHUB_REF#refs/tags/lib-v}
+        if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+          VERSION=${GITHUB_REF#refs/tags/v}
         else
-          LATEST_TAG=$(git describe --tags --match "lib-v*" --abbrev=0 2>/dev/null || echo "lib-v1.0.0")
-          VERSION=${LATEST_TAG#lib-v}
+          LATEST_TAG=$(git describe --tags --match "v*" --abbrev=0 2>/dev/null || echo "v1.0.0")
+          VERSION=${LATEST_TAG#v}
         fi
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
         echo "Package version: $VERSION"
