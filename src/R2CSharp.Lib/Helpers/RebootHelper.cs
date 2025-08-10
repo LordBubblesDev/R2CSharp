@@ -4,6 +4,8 @@ namespace R2CSharp.Lib.Helpers;
 
 public static class RebootHelper
 {
+    private static readonly bool IsTkmm = File.Exists("/usr/bin/tkmm-reboot");
+
     public static void ExecuteReboot(string action, string param1, string param2)
     {
         try {
@@ -14,27 +16,7 @@ public static class RebootHelper
 
             Console.WriteLine($"Reboot command: action={action}, param1={param1}, param2={param2}");
 
-            bool isTkmm = File.Exists("/usr/bin/tkmm-reboot");
-
-            if (isTkmm)
-            {
-                var startInfo = new ProcessStartInfo {
-                    FileName = "/usr/bin/tkmm-reboot",
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
-                using var process = Process.Start(startInfo);
-            }
-            else
-            {
-                var startInfo = new ProcessStartInfo {
-                    FileName = "sh",
-                    Arguments = "-c \"reboot\"",
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
-                using var process = Process.Start(startInfo);
-            }
+            ExecuteProcess(IsTkmm ? "/usr/bin/tkmm-reboot" : "sh", "-c \"reboot\"");
         }
         catch (Exception ex) {
             Console.WriteLine($"Failed to execute reboot command: {ex.Message}");
@@ -44,30 +26,24 @@ public static class RebootHelper
     public static void Shutdown()
     {
         try {
-            bool isTkmm = File.Exists("/usr/bin/tkmm-shutdown");
-
-            if (isTkmm)
-            {
-                var startInfo = new ProcessStartInfo {
-                    FileName = "/usr/bin/tkmm-shutdown",
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
-                using var process = Process.Start(startInfo);
-            }
-            else
-            {
-                var startInfo = new ProcessStartInfo {
-                    FileName = "sh",
-                    Arguments = "-c \"shutdown -P now\"",
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
-                using var process = Process.Start(startInfo);
-            }
+            ExecuteProcess(IsTkmm ? "/usr/bin/tkmm-shutdown" : "sh", "-c \"shutdown -P now\"");
         }
         catch (Exception ex) {
             Console.WriteLine($"Failed to execute shutdown command: {ex.Message}");
         }
+    }
+    
+    private static Process? ExecuteProcess(string fileName, string? arguments)
+    {
+        if (!File.Exists(fileName)) return null;
+        
+        var startInfo = new ProcessStartInfo {
+            FileName = fileName,
+            Arguments = arguments ?? string.Empty,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+        
+        return Process.Start(startInfo);
     }
 }

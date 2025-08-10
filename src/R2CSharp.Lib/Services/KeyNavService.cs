@@ -20,30 +20,25 @@ public class KeyNavService
         var rows = currentPage.ActualRows;
         
         // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
+        e.Handled = true;
+        
         switch (e.Key) {
             case Key.Up:
-                e.Handled = true;
                 HandleUpKey(currentPage, currentSelection, columns, rows, canGoPrevious);
                 break;
-                
             case Key.Down:
-                e.Handled = true;
                 HandleDownKey(currentPage, currentSelection, columns, rows, canGoNext);
                 break;
-                
             case Key.Left:
-                e.Handled = true;
-                HandleLeftKey(currentPage, currentSelection);
+                HandleHorizontalKey(currentPage, currentSelection, -1);
                 break;
-                
             case Key.Right:
-                e.Handled = true;
-                HandleRightKey(currentPage, currentSelection, totalButtons);
+                HandleHorizontalKey(currentPage, currentSelection, 1, totalButtons);
                 break;
-                
             case Key.Enter:
-                e.Handled = true;
-                HandleEnterKey(currentSelection, totalButtons);
+                if (currentSelection >= 0 && currentSelection < totalButtons) {
+                    ButtonPressed?.Invoke(currentSelection);
+                }
                 break;
         }
     }
@@ -61,15 +56,11 @@ public class KeyNavService
         if (currentRow == 0) {
             if (!canGoPrevious) return;
             _lastSelectionColumn = currentColumn;
-            _previousPageIndex = GetCurrentPageIndex();
+            _previousPageIndex = _currentPageIndex;
             PageChangeRequested?.Invoke(-1);
         }
         else {
-            var targetIndex = currentSelection - columns;
-            var previousRowStart = (currentRow - 1) * columns;
-            var previousRowEnd = Math.Min(previousRowStart + columns - 1, currentPage.Options.Count - 1);
-            targetIndex = Math.Min(previousRowEnd, targetIndex);
-
+            var targetIndex = Math.Max(currentSelection - columns, 0);
             SetCurrentSelection(currentPage, targetIndex);
         }
     }
@@ -88,48 +79,32 @@ public class KeyNavService
         if (currentRow == rows - 1) {
             if (!canGoNext) return;
             _lastSelectionColumn = currentColumn;
-            _previousPageIndex = GetCurrentPageIndex();
+            _previousPageIndex = _currentPageIndex;
             PageChangeRequested?.Invoke(1);
         }
         else {
-            var targetIndex = currentSelection + columns;
-
-            if (targetIndex >= totalButtons) {
-                var lastIndexInRow = totalButtons - 1;
-                SetCurrentSelection(currentPage, lastIndexInRow);
-            }
-            else {
-                SetCurrentSelection(currentPage, targetIndex);
-            }
+            var targetIndex = Math.Min(currentSelection + columns, totalButtons - 1);
+            SetCurrentSelection(currentPage, targetIndex);
         }
     }
     
-    private void HandleLeftKey(PageConfiguration currentPage, int currentSelection)
-    {
-        switch (currentSelection) {
-            case -1:
-                SetCurrentSelection(currentPage, 0);
-                break;
-            case > 0:
-                SetCurrentSelection(currentPage, currentSelection - 1);
-                break;
-        }
-    }
-    
-    private void HandleRightKey(PageConfiguration currentPage, int currentSelection, int totalButtons)
+    private void HandleHorizontalKey(PageConfiguration currentPage, int currentSelection, int direction, int? totalButtons = null)
     {
         if (currentSelection == -1) {
             SetCurrentSelection(currentPage, 0);
+            return;
         }
-        else if (currentSelection < totalButtons - 1) {
-            SetCurrentSelection(currentPage, currentSelection + 1);
-        }
-    }
-    
-    private void HandleEnterKey(int currentSelection, int totalButtons)
-    {
-        if (currentSelection >= 0 && currentSelection < totalButtons) {
-            ButtonPressed?.Invoke(currentSelection);
+        
+        if (totalButtons.HasValue) {
+            var targetIndex = currentSelection + direction;
+            if (targetIndex >= 0 && targetIndex < totalButtons.Value) {
+                SetCurrentSelection(currentPage, targetIndex);
+            }
+        } else {
+            var targetIndex = currentSelection + direction;
+            if (targetIndex >= 0) {
+                SetCurrentSelection(currentPage, targetIndex);
+            }
         }
     }
     
@@ -140,7 +115,6 @@ public class KeyNavService
         SelectionChanged?.Invoke(index);
     }
     
-    private int GetCurrentPageIndex() => _currentPageIndex;
     public int GetLastSelectionColumn() => _lastSelectionColumn;
     public int GetPreviousPageIndex() => _previousPageIndex;
     

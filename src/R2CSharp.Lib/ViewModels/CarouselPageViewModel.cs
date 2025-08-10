@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -22,9 +23,6 @@ public partial class CarouselPageViewModel : ObservableObject
     private PageFactory? _pageFactory;
     private NyxIcons? _iconService;
 
-    /// <summary>
-    /// Explicitly loads the carousel data. Call this when you're ready to initialize.
-    /// </summary>
     public async Task LoadAsync()
     {
         if (!IsLoading) { return; }
@@ -38,11 +36,9 @@ public partial class CarouselPageViewModel : ObservableObject
             _pageFactory = new PageFactory(_iconService);
             
             await LoadRebootOptionsAsync();
-            
             await Dispatcher.UIThread.InvokeAsync(() => { OnPropertyChanged(nameof(Pages)); });
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             Console.WriteLine($"[CarouselPageViewModel] Error during initialization: {ex.Message}");
         }
         finally {
@@ -64,15 +60,9 @@ public partial class CarouselPageViewModel : ObservableObject
         var configOptions = _rebootOptionsService.LoadConfigOptions();
         var umsOptions = RebootOptionsProvider.LoadUmsOptions();
         
-        foreach (var option in launchOptions) {
-            option.Command = SelectLaunchOptionCommand;
-        }
-        foreach (var option in configOptions) {
-            option.Command = SelectConfigOptionCommand;
-        }
-        foreach (var option in umsOptions) {
-            option.Command = SelectUmsOptionCommand;
-        }
+        AssignCommands(launchOptions, SelectLaunchOptionCommand);
+        AssignCommands(configOptions, SelectConfigOptionCommand);
+        AssignCommands(umsOptions, SelectUmsOptionCommand);
         
         var systemOptions = new List<RebootOption>
         {
@@ -91,45 +81,30 @@ public partial class CarouselPageViewModel : ObservableObject
         Pages.Add(umsPage);
         Pages.Add(systemPage);
     }
-
-    [RelayCommand]
-    private void SelectLaunchOption(RebootOption option)
+    
+    private static void AssignCommands(List<RebootOption> options, ICommand command)
     {
-        RebootHelper.ExecuteReboot("self", option.Index.ToString(), "0");
+        foreach (var option in options) {
+            option.Command = command;
+        }
     }
 
-    [RelayCommand]
-    private void SelectConfigOption(RebootOption option)
-    {
-        RebootHelper.ExecuteReboot("self", option.Index.ToString(), "1");
-    }
+    public ICommand SelectLaunchOptionCommand { get; } = new RelayCommand<RebootOption>(option => 
+        RebootHelper.ExecuteReboot("self", option.Index.ToString(), "0"));
 
-    [RelayCommand]
-    private void SelectUmsOption(RebootOption option)
-    {
-        RebootHelper.ExecuteReboot("ums", option.Index.ToString(), "0");
-    }
+    public ICommand SelectConfigOptionCommand { get; } = new RelayCommand<RebootOption>(option => 
+        RebootHelper.ExecuteReboot("self", option.Index.ToString(), "1"));
 
-    [RelayCommand]
-    private void RebootToBootloader()
-    {
-        RebootHelper.ExecuteReboot("bootloader", "0", "0");
-    }
+    public ICommand SelectUmsOptionCommand { get; } = new RelayCommand<RebootOption>(option => 
+        RebootHelper.ExecuteReboot("ums", option.Index.ToString(), "0"));
 
-    [RelayCommand]
-    private void NormalReboot()
-    {
-        RebootHelper.ExecuteReboot("normal", "0", "0");
-    }
+    public ICommand RebootToBootloaderCommand { get; } = new RelayCommand(() => 
+        RebootHelper.ExecuteReboot("bootloader", "0", "0"));
 
-    [RelayCommand]
-    private void Shutdown()
-    {
-        RebootHelper.Shutdown();
-    }
+    public ICommand NormalRebootCommand { get; } = new RelayCommand(() => 
+        RebootHelper.ExecuteReboot("normal", "0", "0"));
 
-    public void Cleanup()
-    {
-        _bootDiskService.Cleanup();
-    }
+    public ICommand ShutdownCommand { get; } = new RelayCommand(() => RebootHelper.Shutdown());
+
+    public void Cleanup() => _bootDiskService.Cleanup();
 }

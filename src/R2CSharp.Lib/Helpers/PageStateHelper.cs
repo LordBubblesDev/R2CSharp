@@ -39,7 +39,7 @@ public class PageStateHelper(
         ButtonHelper.ClearAllSelections(currentPageView);
         
         var lastColumn = keyboardService.GetLastSelectionColumn();
-        if (!ShouldPreserveSelection(lastColumn)) return;
+        if (lastColumn < 0) return;
         
         var targetIndex = CalculateTargetSelection(
             currentPage, lastColumn, carousel?.CurrentIndex ?? 0, keyboardService.GetPreviousPageIndex());
@@ -79,56 +79,30 @@ public class PageStateHelper(
             });
         });
     }
-    
-    public void HandleKeyboardPageChange(int direction)
+
+    private void HandlePageChange(int direction)
     {
         if (carousel == null || viewModel == null) return;
         
         keyboardService.SetPageIndex(carousel.CurrentIndex);
         
-        switch (direction) {
-            case > 0 when viewModel.CanGoNext:
-                carousel.Next();
-                break;
-            case < 0 when viewModel.CanGoPrevious:
-                carousel.Previous();
-                break;
+        var canNavigate = direction > 0 ? viewModel.CanGoNext : viewModel.CanGoPrevious;
+        if (!canNavigate) return;
+        
+        if (direction > 0) {
+            carousel.Next();
+        } else {
+            carousel.Previous();
         }
         
         UpdateNavigationState();
     }
     
-    public void HandleScrollPageChange(int direction)
-    {
-        if (carousel == null || viewModel == null) return;
-        
-        switch (direction) {
-            case > 0 when viewModel.CanGoPrevious:
-                carousel.Previous();
-                break;
-            case < 0 when viewModel.CanGoNext:
-                carousel.Next();
-                break;
-        }
-        
-        UpdateNavigationState();
-    }
+    public void HandleScrollPageChange(int direction) => HandlePageChange(-direction);
+    public void HandleKeyboardPageChange(int direction) => HandlePageChange(direction);
     
-    public void NavigatePrevious()
-    {
-        if (carousel == null || viewModel == null) return;
-        if (!viewModel.CanGoPrevious) return;
-        carousel.Previous();
-        UpdateNavigationState();
-    }
-    
-    public void NavigateNext()
-    {
-        if (carousel == null || viewModel == null) return;
-        if (!viewModel.CanGoNext) return;
-        carousel.Next();
-        UpdateNavigationState();
-    }
+    public void NavigatePrevious() => HandlePageChange(-1);
+    public void NavigateNext() => HandlePageChange(1);
     
     private void UpdateNavigationState()
     {
@@ -161,23 +135,11 @@ public class PageStateHelper(
         
         if (columns == 0 || totalButtons == 0) return 0;
 
-        int targetRow;
-
-        if (currentPageIndex > previousPageIndex) {
-            targetRow = 0;
-        } else {
-            targetRow = (totalButtons - 1) / columns;
-        }
-
+        var targetRow = currentPageIndex > previousPageIndex ? 0 : (totalButtons - 1) / columns;
         var startOfRow = targetRow * columns;
         var endOfRow = Math.Min(startOfRow + columns, totalButtons);
 
         var clampedColumn = Math.Min(lastSelectionColumn, endOfRow - startOfRow - 1);
         return startOfRow + clampedColumn;
-    }
-    
-    private static bool ShouldPreserveSelection(int lastSelectionColumn)
-    {
-        return lastSelectionColumn >= 0;
     }
 } 

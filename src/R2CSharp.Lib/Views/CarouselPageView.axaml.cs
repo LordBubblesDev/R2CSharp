@@ -31,7 +31,7 @@ public partial class CarouselPageView : UserControl
         _keyboardService = new KeyNavService();
         
         // Create event service (will be updated when ViewModel is set)
-        _eventService = new EventService(scrollService, touchService, _keyboardService, tempViewModel, MainCarousel);
+        _eventService = new EventService(scrollService, touchService, tempViewModel, MainCarousel);
         
         // Subscribe to events
         scrollService.PageChangeRequested += OnPageChangeRequested;
@@ -82,7 +82,7 @@ public partial class CarouselPageView : UserControl
 
     protected override void OnKeyDown(KeyEventArgs e)
     {
-        if (Enumerable.FirstOrDefault<Control>((MainCarousel?.Children!)) is not RebootOptionPageView currentPageView) return;
+        if ((MainCarousel?.Children!).FirstOrDefault() is not RebootOptionPageView currentPageView) return;
         if (currentPageView.DataContext is not PageConfiguration currentPage) return;
         if (DataContext is not CarouselPageViewModel viewModel) return;
         

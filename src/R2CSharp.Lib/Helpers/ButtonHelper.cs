@@ -5,12 +5,11 @@ using R2CSharp.Lib.Views;
 
 namespace R2CSharp.Lib.Helpers;
 
-public abstract class ButtonHelper
+public static class ButtonHelper
 {
     public static void UpdateVisualSelection(PageConfiguration page, RebootOptionPageView currentPageView)
     {
-        var buttons = new List<Button>();
-        FindButtonsRecursively(currentPageView, buttons);
+        var buttons = FindButtonsInPage(currentPageView);
         
         foreach (var button in buttons) {
             button.Classes.Remove("selected");
@@ -23,23 +22,14 @@ public abstract class ButtonHelper
     
     public static void ClearAllSelections(RebootOptionPageView currentPageView)
     {
-        var buttons = new List<Button>();
-        FindButtonsRecursively(currentPageView, buttons);
-        
+        var buttons = FindButtonsInPage(currentPageView);
         foreach (var button in buttons) {
             button.Classes.Remove("selected");
         }
     }
     
-    public static void ApplyPressedState(Button button)
-    {
-        button.Classes.Add("pressed");
-    }
-    
-    public static void RemovePressedState(Button button)
-    {
-        button.Classes.Remove("pressed");
-    }
+    public static void ApplyPressedState(Button button) => button.Classes.Add("pressed");
+    public static void RemovePressedState(Button button) => button.Classes.Remove("pressed");
     
     public static List<Button> FindButtonsInPage(RebootOptionPageView currentPageView)
     {

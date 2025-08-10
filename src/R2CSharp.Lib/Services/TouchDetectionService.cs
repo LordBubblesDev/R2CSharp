@@ -5,16 +5,15 @@ namespace R2CSharp.Lib.Services;
 
 public class TouchDetectionService
 {
-    private const double DragThreshold = 42.0; // Minimum drag distance to trigger page change
+    private const double DragThreshold = 42.0;
     private Point? _startPoint;
     private bool _isTracking;
-    private bool _isProcessing;
     
     public event Action<int>? PageChangeRequested;
     
     public void HandlePointerPressed(PointerPressedEventArgs e)
     {
-        if (_isTracking || _isProcessing) return;
+        if (_isTracking) return;
         
         _startPoint = e.GetPosition(null);
         _isTracking = true;
@@ -22,20 +21,15 @@ public class TouchDetectionService
     
     public void HandlePointerReleased(PointerReleasedEventArgs e)
     {
-        if (!_isTracking || _isProcessing) return;
+        if (!_isTracking || _startPoint == null) return;
         
         var endPoint = e.GetPosition(null);
-        var dragDistance = _startPoint.HasValue ? CalculateDistance(_startPoint.Value, endPoint) : 0.0;
+        var dragDistance = CalculateDistance(_startPoint.Value, endPoint);
         
-        if (dragDistance >= DragThreshold)
-        {
-            _isProcessing = true;
+        if (dragDistance >= DragThreshold) {
+            var deltaX = endPoint.X - _startPoint.Value.X;
+            var deltaY = endPoint.Y - _startPoint.Value.Y;
             
-            // Calculate drag direction
-            var deltaX = endPoint.X - (_startPoint?.X ?? 0);
-            var deltaY = endPoint.Y - (_startPoint?.Y ?? 0);
-            
-            // Determine primary direction (horizontal or vertical)
             var direction = Math.Abs(deltaX) > Math.Abs(deltaY) 
                 ? (deltaX > 0 ? 1 : -1)  // Horizontal drag
                 : (deltaY > 0 ? 1 : -1); // Vertical drag
@@ -45,15 +39,11 @@ public class TouchDetectionService
         
         _startPoint = null;
         _isTracking = false;
-        _isProcessing = false;
     }
     
     public void HandlePointerMoved(PointerEventArgs e)
     {
-        if (!_isTracking || _isProcessing) return;
-        
-        var currentPoint = e.GetPosition(null);
-        _ = _startPoint.HasValue ? CalculateDistance(_startPoint.Value, currentPoint) : 0.0;
+        // No action needed for move events
     }
 
     private static double CalculateDistance(Point start, Point end)
