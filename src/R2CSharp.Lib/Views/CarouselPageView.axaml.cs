@@ -8,6 +8,7 @@ using R2CSharp.Lib.Helpers;
 using R2CSharp.Lib.Models;
 using R2CSharp.Lib.Services;
 using R2CSharp.Lib.ViewModels;
+using R2CSharp.Lib.Views;
 
 namespace R2CSharp.Lib.Views;
 
@@ -78,7 +79,8 @@ public partial class CarouselPageView : UserControl
         if (DataContext is not CarouselPageViewModel viewModel) return;
         
         var currentSelection = GetCurrentSelection(currentPage);
-        _pageStateHelper?.HandleKeyNavigation(e, currentPage, currentSelection, viewModel.CanGoPrevious, viewModel.CanGoNext);
+        var context = new NavigationContext(e, currentPage, currentPageView, currentSelection, viewModel.CanGoPrevious, viewModel.CanGoNext);
+        _pageStateHelper?.HandleKeyNavigation(context);
     }
     
     private void OnPageChangeRequested(int direction) => _pageStateHelper?.HandleScrollPageChange(direction);
