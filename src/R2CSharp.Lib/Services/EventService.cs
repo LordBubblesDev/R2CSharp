@@ -7,8 +7,7 @@ using R2CSharp.Lib.ViewModels;
 namespace R2CSharp.Lib.Services;
 
 public class EventService(
-    ScrollDetectionService scrollService,
-    TouchDetectionService touchService,
+    InputDetectionService inputService,
     CarouselPageViewModel? viewModel,
     CarouselControl? carousel)
 {
@@ -32,13 +31,8 @@ public class EventService(
         }
     }
     
-    public void UnsubscribeFromEvents(Window window)
-    {
-        window.PointerWheelChanged -= OnPointerWheelChanged;
-        window.PointerPressed -= OnPointerPressed;
-        window.PointerReleased -= OnPointerReleased;
-        window.KeyDown -= OnKeyDown;
-        
+    public void UnsubscribeFromEvents()
+    {   
         if (viewModel != null) {
             viewModel.PropertyChanged -= OnViewModelPropertyChanged;
         }
@@ -61,9 +55,9 @@ public class EventService(
     
     private void OnKeyDown(object? sender, KeyEventArgs e) => KeyDown?.Invoke(e);
     
-    private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e) => scrollService.HandlePointerWheelChanged(e);
-    private void OnPointerPressed(object? sender, PointerPressedEventArgs e) => touchService.HandlePointerPressed(e);
-    private void OnPointerReleased(object? sender, PointerReleasedEventArgs e) => touchService.HandlePointerReleased(e);
+    private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e) => inputService.HandlePointerWheelChanged(e);
+    private void OnPointerPressed(object? sender, PointerPressedEventArgs e) => inputService.HandlePointerPressed(e);
+    private void OnPointerReleased(object? sender, PointerReleasedEventArgs e) => inputService.HandlePointerReleased(e);
     
     private void OnViewModelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {

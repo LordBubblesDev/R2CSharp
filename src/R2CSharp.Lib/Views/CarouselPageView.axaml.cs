@@ -8,7 +8,6 @@ using R2CSharp.Lib.Helpers;
 using R2CSharp.Lib.Models;
 using R2CSharp.Lib.Services;
 using R2CSharp.Lib.ViewModels;
-using R2CSharp.Lib.Views;
 
 namespace R2CSharp.Lib.Views;
 
@@ -22,15 +21,13 @@ public partial class CarouselPageView : UserControl
         InitializeComponent();
         
         var tempViewModel = new CarouselPageViewModel();
-        var scrollService = new ScrollDetectionService();
-        var touchService = new TouchDetectionService();
+        var inputService = new InputDetectionService();
         
         DataContext = tempViewModel;
         
-        _eventService = new EventService(scrollService, touchService, tempViewModel, MainCarousel);
+        _eventService = new EventService(inputService, tempViewModel, MainCarousel);
         
-        scrollService.PageChangeRequested += OnPageChangeRequested;
-        touchService.PageChangeRequested += OnPageChangeRequested;
+        inputService.PageChangeRequested += OnPageChangeRequested;
         _eventService.ViewModelPropertyChanged += OnViewModelPropertyChanged;
         _eventService.CarouselPropertyChanged += OnCarouselPropertyChanged;
         _eventService.KeyDown += OnKeyDown;
@@ -94,7 +91,7 @@ public partial class CarouselPageView : UserControl
     {
         if (this.GetVisualRoot() is Window window)
         {
-            _eventService.UnsubscribeFromEvents(window);
+            _eventService.UnsubscribeFromEvents();
         }
         
         base.OnUnloaded(e);
