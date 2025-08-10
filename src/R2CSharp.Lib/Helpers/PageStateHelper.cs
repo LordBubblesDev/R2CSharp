@@ -1,6 +1,8 @@
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.VisualTree;
 using R2CSharp.Lib.Controls;
 using R2CSharp.Lib.Models;
-using R2CSharp.Lib.Services;
 using R2CSharp.Lib.ViewModels;
 using R2CSharp.Lib.Views;
 
@@ -8,9 +10,11 @@ namespace R2CSharp.Lib.Helpers;
 
 public class PageStateHelper(
     CarouselPageViewModel? viewModel,
-    CarouselControl? carousel,
-    KeyNavService keyboardService)
+    CarouselControl? carousel)
 {
+    private int _lastColumn = -1;
+    private int _previousPageIndex = -1;
+    
     public void InitializePages()
     {
         if (viewModel == null || carousel == null) return;
@@ -25,66 +29,122 @@ public class PageStateHelper(
         if (carousel.Children.FirstOrDefault() is not RebootOptionPageView { DataContext: PageConfiguration firstPage } firstPageView) return;
         
         firstPage.SelectedIndex = -1;
-        ButtonHelper.ClearAllSelections(firstPageView);
+        ClearAllSelections(firstPageView);
     }
     
-    public void HandlePageChange()
+    public void HandleCarouselChange()
     {
         UpdateNavigationState();
+        UpdateSelectionAfterPageChange();
+    }
+    
+    public void HandleKeyNavigation(KeyEventArgs e, PageConfiguration currentPage, int currentSelection, bool canGoPrevious, bool canGoNext)
+    {
+        var totalButtons = currentPage.Options.Count;
+        var columns = currentPage.ActualColumns;
+        var rows = currentPage.ActualRows;
         
-        var currentPageView = carousel?.Children.FirstOrDefault() as RebootOptionPageView;
-        if (currentPageView?.DataContext is not PageConfiguration currentPage) return;
+        e.Handled = true;
         
-        currentPage.SelectedIndex = -1;
-        ButtonHelper.ClearAllSelections(currentPageView);
-        
-        var lastColumn = keyboardService.GetLastSelectionColumn();
-        if (lastColumn < 0) return;
-        
-        var targetIndex = CalculateTargetSelection(
-            currentPage, lastColumn, carousel?.CurrentIndex ?? 0, keyboardService.GetPreviousPageIndex());
-            
-        if (targetIndex >= 0) {
-            SetCurrentSelection(currentPage, targetIndex);
+        switch (e.Key) {
+            case Key.Up:
+                HandleUpKey(currentPage, currentSelection, columns, rows, canGoPrevious);
+                break;
+            case Key.Down:
+                HandleDownKey(currentPage, currentSelection, columns, rows, canGoNext);
+                break;
+            case Key.Left:
+                HandleHorizontalKey(currentPage, currentSelection, -1, totalButtons);
+                break;
+            case Key.Right:
+                HandleHorizontalKey(currentPage, currentSelection, 1, totalButtons);
+                break;
+            case Key.Enter:
+                if (currentSelection >= 0 && currentSelection < totalButtons) {
+                    HandleButtonPress(currentSelection);
+                }
+                break;
+            default:
+                e.Handled = false;
+                break;
         }
     }
     
-    public void HandleSelectionChange()
+    private void HandleUpKey(PageConfiguration currentPage, int currentSelection, int columns, int rows, bool canGoPrevious)
     {
-        if (carousel?.Children.FirstOrDefault() is not RebootOptionPageView currentPageView) return;
-        if (currentPageView.DataContext is not PageConfiguration currentPage) return;
-        
-        ButtonHelper.UpdateVisualSelection(currentPage, currentPageView);
+        if (currentSelection == -1) {
+            SetSelection(currentPage, 0);
+            return;
+        }
+
+        var currentRow = currentSelection / columns;
+        var currentColumn = currentSelection % columns;
+
+        if (currentRow == 0) {
+            if (!canGoPrevious) return;
+            _lastColumn = currentColumn;
+            NavigateToPage(-1);
+        }
+        else {
+            var targetIndex = Math.Max(currentSelection - columns, 0);
+            SetSelection(currentPage, targetIndex);
+        }
     }
     
-    public void HandleButtonPress(int buttonIndex)
+    private void HandleDownKey(PageConfiguration currentPage, int currentSelection, int columns, int rows, bool canGoNext)
     {
-        if (carousel?.Children.FirstOrDefault() is not RebootOptionPageView currentPageView) return;
-        if (currentPageView.DataContext is not PageConfiguration currentPage) return;
-        
-        var buttons = ButtonHelper.FindButtonsInPage(currentPageView);
-
-        if (buttonIndex >= buttons.Count) return;
-        var selectedButton = buttons[buttonIndex];
-        ButtonHelper.ApplyPressedState(selectedButton);
-        var selectedOption = currentPage.Options[buttonIndex];
-            
-        if (selectedOption.Command?.CanExecute(selectedOption) == true) {
-            selectedOption.Command.Execute(selectedOption);
+        if (currentSelection == -1) {
+            SetSelection(currentPage, 0);
+            return;
         }
-            
-        Task.Delay(150).ContinueWith(_ => {
-            Avalonia.Threading.Dispatcher.UIThread.Post(() => {
-                ButtonHelper.RemovePressedState(selectedButton);
-            });
-        });
-    }
 
-    private void HandlePageChange(int direction)
+        var totalButtons = currentPage.Options.Count;
+        var currentRow = currentSelection / columns;
+        var currentColumn = currentSelection % columns;
+
+        if (currentRow == rows - 1) {
+            if (!canGoNext) return;
+            _lastColumn = currentColumn;
+            NavigateToPage(1);
+        }
+        else {
+            var targetIndex = Math.Min(currentSelection + columns, totalButtons - 1);
+            SetSelection(currentPage, targetIndex);
+        }
+    }
+    
+    private void HandleHorizontalKey(PageConfiguration currentPage, int currentSelection, int direction, int totalButtons)
+    {
+        if (currentSelection == -1) {
+            SetSelection(currentPage, 0);
+            return;
+        }
+        
+        var targetIndex = currentSelection + direction;
+        if (targetIndex >= 0 && targetIndex < totalButtons) {
+            SetSelection(currentPage, targetIndex);
+        }
+    }
+    
+    private void SetSelection(PageConfiguration page, int index)
+    {
+        if (page.SelectedIndex == index) return;
+        
+        page.SelectedIndex = index;
+        
+        var columns = page.ActualColumns;
+        if (columns > 0) {
+            _lastColumn = index % columns;
+        }
+        
+        if (carousel?.Children.FirstOrDefault() is RebootOptionPageView currentPageView) {
+            UpdateVisualSelection(page, currentPageView);
+        }
+    }
+    
+    private void NavigateToPage(int direction)
     {
         if (carousel == null || viewModel == null) return;
-        
-        keyboardService.SetPageIndex(carousel.CurrentIndex);
         
         var canNavigate = direction > 0 ? viewModel.CanGoNext : viewModel.CanGoPrevious;
         if (!canNavigate) return;
@@ -94,15 +154,115 @@ public class PageStateHelper(
         } else {
             carousel.Previous();
         }
-        
-        UpdateNavigationState();
     }
     
-    public void HandleScrollPageChange(int direction) => HandlePageChange(-direction);
-    public void HandleKeyboardPageChange(int direction) => HandlePageChange(direction);
+    private void UpdateSelectionAfterPageChange()
+    {
+        if (carousel?.Children.FirstOrDefault() is not RebootOptionPageView currentPageView) return;
+        if (currentPageView.DataContext is not PageConfiguration currentPage) return;
+        
+        var currentPageIndex = carousel?.CurrentIndex ?? 0;
+        
+        currentPage.SelectedIndex = -1;
+        ClearAllSelections(currentPageView);
+        
+        if (_lastColumn >= 0) {
+            var targetIndex = CalculateTargetSelection(currentPage, _lastColumn, currentPageIndex, _previousPageIndex);
+            if (targetIndex >= 0) {
+                currentPage.SelectedIndex = targetIndex;
+                UpdateVisualSelection(currentPage, currentPageView);
+            }
+        }
+        
+        _previousPageIndex = currentPageIndex;
+    }
     
-    public void NavigatePrevious() => HandlePageChange(-1);
-    public void NavigateNext() => HandlePageChange(1);
+    private static int CalculateTargetSelection(PageConfiguration currentPage, int lastColumn, int currentPageIndex, int previousPageIndex)
+    {
+        var columns = currentPage.ActualColumns;
+        var totalButtons = currentPage.Options.Count;
+        
+        if (columns == 0 || totalButtons == 0) return 0;
+        
+        int targetIndex;
+        
+        if (currentPageIndex > previousPageIndex) {
+            targetIndex = Math.Min(lastColumn, totalButtons - 1);
+        } else {
+            targetIndex = lastColumn + columns;
+            
+            if (targetIndex >= totalButtons) {
+                targetIndex = totalButtons - 1;
+            }
+        }
+        
+        return targetIndex;
+    }
+    
+    private static void UpdateVisualSelection(PageConfiguration page, RebootOptionPageView currentPageView)
+    {
+        var buttons = FindButtonsInPage(currentPageView);
+        
+        foreach (var button in buttons) {
+            button.Classes.Remove("selected");
+        }
+        
+        if (page.SelectedIndex >= 0 && page.SelectedIndex < buttons.Count) {
+            buttons[page.SelectedIndex].Classes.Add("selected");
+        }
+    }
+    
+    private static void ClearAllSelections(RebootOptionPageView currentPageView)
+    {
+        var buttons = FindButtonsInPage(currentPageView);
+        foreach (var button in buttons) {
+            button.Classes.Remove("selected");
+        }
+    }
+
+    private void HandleButtonPress(int buttonIndex)
+    {
+        if (carousel?.Children.FirstOrDefault() is not RebootOptionPageView currentPageView) return;
+        if (currentPageView.DataContext is not PageConfiguration currentPage) return;
+        
+        var buttons = FindButtonsInPage(currentPageView);
+        if (buttonIndex >= buttons.Count) return;
+        
+        var selectedButton = buttons[buttonIndex];
+        var selectedOption = currentPage.Options[buttonIndex];
+        
+        selectedButton.Classes.Add("pressed");
+        
+        if (selectedOption.Command?.CanExecute(selectedOption) == true) {
+            selectedOption.Command.Execute(selectedOption);
+        }
+        
+        Task.Delay(150).ContinueWith(_ => {
+            Avalonia.Threading.Dispatcher.UIThread.Post(() => {
+                selectedButton.Classes.Remove("pressed");
+            });
+        });
+    }
+    
+    private static List<Button> FindButtonsInPage(RebootOptionPageView currentPageView)
+    {
+        var buttons = new List<Button>();
+        FindButtonsRecursively(currentPageView, buttons);
+        return buttons;
+    }
+    
+    private static void FindButtonsRecursively(Control control, List<Button> buttons)
+    {
+        if (control is Button button && button.Name == "OptionButton") {
+            buttons.Add(button);
+        }
+        
+        foreach (var child in control.GetVisualChildren()) {
+            if (child is Control childControl) {
+                FindButtonsRecursively(childControl, buttons);
+            }
+        }
+    }
     
     private void UpdateNavigationState()
     {
@@ -115,31 +275,25 @@ public class PageStateHelper(
         viewModel.CanGoNext = currentIndex < totalPages - 1;
     }
     
-    private void SetCurrentSelection(PageConfiguration page, int index)
+    public void NavigatePrevious()
     {
-        if (page.SelectedIndex == index) return;
-        page.SelectedIndex = index;
+        if (carousel == null || viewModel == null) return;
+        if (!viewModel.CanGoPrevious) return;
         
-        if (carousel?.Children.FirstOrDefault() is RebootOptionPageView currentPageView)
-        {
-            ButtonHelper.UpdateVisualSelection(page, currentPageView);
-        }
+        carousel.Previous();
     }
     
-    private static int CalculateTargetSelection(PageConfiguration currentPage, int lastSelectionColumn, int currentPageIndex, int previousPageIndex)
+    public void NavigateNext()
     {
-        if (lastSelectionColumn < 0) return -1;
+        if (carousel == null || viewModel == null) return;
+        if (!viewModel.CanGoNext) return;
         
-        var columns = currentPage.ActualColumns;
-        var totalButtons = currentPage.Options.Count;
-        
-        if (columns == 0 || totalButtons == 0) return 0;
-
-        var targetRow = currentPageIndex > previousPageIndex ? 0 : (totalButtons - 1) / columns;
-        var startOfRow = targetRow * columns;
-        var endOfRow = Math.Min(startOfRow + columns, totalButtons);
-
-        var clampedColumn = Math.Min(lastSelectionColumn, endOfRow - startOfRow - 1);
-        return startOfRow + clampedColumn;
+        carousel.Next();
+    }
+    
+    public void HandleScrollPageChange(int direction)
+    {
+        if (direction > 0) NavigatePrevious();
+        else NavigateNext();
     }
 } 

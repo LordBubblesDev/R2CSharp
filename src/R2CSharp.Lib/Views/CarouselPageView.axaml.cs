@@ -15,30 +15,21 @@ public partial class CarouselPageView : UserControl
 {
     private readonly EventService _eventService;
     private PageStateHelper? _pageStateHelper;
-    private readonly KeyNavService _keyboardService;
 
     public CarouselPageView()
     {
         InitializeComponent();
         
-        // Create a temporary ViewModel for initial binding
         var tempViewModel = new CarouselPageViewModel();
-        DataContext = tempViewModel;
-        
-        // Initialize services
         var scrollService = new ScrollDetectionService();
         var touchService = new TouchDetectionService();
-        _keyboardService = new KeyNavService();
         
-        // Create event service (will be updated when ViewModel is set)
+        DataContext = tempViewModel;
+        
         _eventService = new EventService(scrollService, touchService, tempViewModel, MainCarousel);
         
-        // Subscribe to events
         scrollService.PageChangeRequested += OnPageChangeRequested;
         touchService.PageChangeRequested += OnPageChangeRequested;
-        _keyboardService.SelectionChanged += OnSelectionChanged;
-        _keyboardService.PageChangeRequested += OnKeyboardPageChangeRequested;
-        _keyboardService.ButtonPressed += OnButtonPressed;
         _eventService.ViewModelPropertyChanged += OnViewModelPropertyChanged;
         _eventService.CarouselPropertyChanged += OnCarouselPropertyChanged;
         _eventService.KeyDown += OnKeyDown;
@@ -52,7 +43,7 @@ public partial class CarouselPageView : UserControl
     /// <param name="viewModel">The ViewModel to use</param>
     public async Task SetViewModelAsync(CarouselPageViewModel viewModel)
     {
-        _pageStateHelper = new PageStateHelper(viewModel, MainCarousel, _keyboardService);
+        _pageStateHelper = new PageStateHelper(viewModel, MainCarousel);
         _eventService.UpdateViewModel(viewModel);
         DataContext = viewModel;
         await viewModel.LoadAsync();
@@ -76,7 +67,7 @@ public partial class CarouselPageView : UserControl
     {
         if (e.Property == CarouselControl.CurrentIndexProperty && _pageStateHelper != null)
         {
-            _pageStateHelper.HandlePageChange();
+            _pageStateHelper.HandleCarouselChange();
         }
     }
 
@@ -87,12 +78,9 @@ public partial class CarouselPageView : UserControl
         if (DataContext is not CarouselPageViewModel viewModel) return;
         
         var currentSelection = GetCurrentSelection(currentPage);
-        _keyboardService.HandleKeyPressed(e, currentPage, currentSelection, viewModel.CanGoPrevious, viewModel.CanGoNext);
+        _pageStateHelper?.HandleKeyNavigation(e, currentPage, currentSelection, viewModel.CanGoPrevious, viewModel.CanGoNext);
     }
     
-    private void OnSelectionChanged(int index) => _pageStateHelper?.HandleSelectionChange();
-    private void OnKeyboardPageChangeRequested(int direction) => _pageStateHelper?.HandleKeyboardPageChange(direction);
-    private void OnButtonPressed(int buttonIndex) => _pageStateHelper?.HandleButtonPress(buttonIndex);
     private void OnPageChangeRequested(int direction) => _pageStateHelper?.HandleScrollPageChange(direction);
     
     private void OnPreviousButtonClick(object? sender, RoutedEventArgs e) => _pageStateHelper?.NavigatePrevious();
