@@ -77,11 +77,13 @@ public class SelectionHelper(
         
         if (columns == 0 || totalButtons == 0) return 0;
         
-        var targetIndex = currentPageIndex > previousPageIndex 
-            ? Math.Min(lastColumn, totalButtons - 1)
-            : Math.Min(lastColumn + columns, totalButtons - 1);
-        
-        return targetIndex;
+        if (currentPageIndex > previousPageIndex) {
+            return Math.Min(lastColumn, columns - 1);
+        } else {
+            var lastRow = (totalButtons - 1) / columns;
+            var targetColumn = Math.Min(lastColumn, columns - 1);
+            return Math.Min(lastRow * columns + targetColumn, totalButtons - 1);
+        }
     }
     
     public void UpdateLastColumn(int index, int columns)
