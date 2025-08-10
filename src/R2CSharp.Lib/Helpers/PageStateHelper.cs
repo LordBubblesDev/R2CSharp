@@ -20,16 +20,15 @@ public class PageStateHelper(
         if (viewModel == null || carousel == null) return;
         
         foreach (var page in viewModel.Pages) {
-            var pageView = new RebootOptionPageView { DataContext = page };
-            carousel.AddPage(pageView);
+            carousel.AddPage(new RebootOptionPageView { DataContext = page });
         }
         
         UpdateNavigationState();
         
-        if (carousel.Children.FirstOrDefault() is not RebootOptionPageView { DataContext: PageConfiguration firstPage } firstPageView) return;
-        
-        firstPage.SelectedIndex = -1;
-        ClearAllSelections(firstPageView);
+        if (carousel.Children.FirstOrDefault() is RebootOptionPageView { DataContext: PageConfiguration firstPage } firstPageView) {
+            firstPage.SelectedIndex = -1;
+            ClearAllSelections(firstPageView);
+        }
     }
     
     public void HandleCarouselChange()
@@ -48,21 +47,29 @@ public class PageStateHelper(
         
         switch (e.Key) {
             case Key.Up:
-                HandleUpKey(currentPage, currentSelection, columns, rows, canGoPrevious);
+                if (currentSelection == -1) SetSelection(currentPage, 0);
+                else if (currentSelection / columns == 0) {
+                    if (canGoPrevious) { _lastColumn = currentSelection % columns; NavigateToPage(-1); }
+                } else {
+                    SetSelection(currentPage, Math.Max(currentSelection - columns, 0));
+                }
                 break;
             case Key.Down:
-                HandleDownKey(currentPage, currentSelection, columns, rows, canGoNext);
+                if (currentSelection == -1) SetSelection(currentPage, 0);
+                else if (currentSelection / columns == rows - 1) {
+                    if (canGoNext) { _lastColumn = currentSelection % columns; NavigateToPage(1); }
+                } else {
+                    SetSelection(currentPage, Math.Min(currentSelection + columns, totalButtons - 1));
+                }
                 break;
             case Key.Left:
-                HandleHorizontalKey(currentPage, currentSelection, -1, totalButtons);
+                if (currentSelection > 0) SetSelection(currentPage, currentSelection - 1);
                 break;
             case Key.Right:
-                HandleHorizontalKey(currentPage, currentSelection, 1, totalButtons);
+                if (currentSelection < totalButtons - 1) SetSelection(currentPage, currentSelection + 1);
                 break;
             case Key.Enter:
-                if (currentSelection >= 0 && currentSelection < totalButtons) {
-                    HandleButtonPress(currentSelection);
-                }
+                if (currentSelection >= 0 && currentSelection < totalButtons) HandleButtonPress(currentSelection);
                 break;
             default:
                 e.Handled = false;
@@ -70,72 +77,11 @@ public class PageStateHelper(
         }
     }
     
-    private void HandleUpKey(PageConfiguration currentPage, int currentSelection, int columns, int rows, bool canGoPrevious)
-    {
-        if (currentSelection == -1) {
-            SetSelection(currentPage, 0);
-            return;
-        }
-
-        var currentRow = currentSelection / columns;
-        var currentColumn = currentSelection % columns;
-
-        if (currentRow == 0) {
-            if (!canGoPrevious) return;
-            _lastColumn = currentColumn;
-            NavigateToPage(-1);
-        }
-        else {
-            var targetIndex = Math.Max(currentSelection - columns, 0);
-            SetSelection(currentPage, targetIndex);
-        }
-    }
-    
-    private void HandleDownKey(PageConfiguration currentPage, int currentSelection, int columns, int rows, bool canGoNext)
-    {
-        if (currentSelection == -1) {
-            SetSelection(currentPage, 0);
-            return;
-        }
-
-        var totalButtons = currentPage.Options.Count;
-        var currentRow = currentSelection / columns;
-        var currentColumn = currentSelection % columns;
-
-        if (currentRow == rows - 1) {
-            if (!canGoNext) return;
-            _lastColumn = currentColumn;
-            NavigateToPage(1);
-        }
-        else {
-            var targetIndex = Math.Min(currentSelection + columns, totalButtons - 1);
-            SetSelection(currentPage, targetIndex);
-        }
-    }
-    
-    private void HandleHorizontalKey(PageConfiguration currentPage, int currentSelection, int direction, int totalButtons)
-    {
-        if (currentSelection == -1) {
-            SetSelection(currentPage, 0);
-            return;
-        }
-        
-        var targetIndex = currentSelection + direction;
-        if (targetIndex >= 0 && targetIndex < totalButtons) {
-            SetSelection(currentPage, targetIndex);
-        }
-    }
-    
     private void SetSelection(PageConfiguration page, int index)
     {
         if (page.SelectedIndex == index) return;
-        
         page.SelectedIndex = index;
-        
-        var columns = page.ActualColumns;
-        if (columns > 0) {
-            _lastColumn = index % columns;
-        }
+        if (page.ActualColumns > 0) _lastColumn = index % page.ActualColumns;
         
         if (carousel?.Children.FirstOrDefault() is RebootOptionPageView currentPageView) {
             UpdateVisualSelection(page, currentPageView);
@@ -145,15 +91,10 @@ public class PageStateHelper(
     private void NavigateToPage(int direction)
     {
         if (carousel == null || viewModel == null) return;
+        if ((direction > 0 && !viewModel.CanGoNext) || (direction < 0 && !viewModel.CanGoPrevious)) return;
         
-        var canNavigate = direction > 0 ? viewModel.CanGoNext : viewModel.CanGoPrevious;
-        if (!canNavigate) return;
-        
-        if (direction > 0) {
-            carousel.Next();
-        } else {
-            carousel.Previous();
-        }
+        if (direction > 0) carousel.Next();
+        else carousel.Previous();
     }
     
     private void UpdateSelectionAfterPageChange()
@@ -162,7 +103,6 @@ public class PageStateHelper(
         if (currentPageView.DataContext is not PageConfiguration currentPage) return;
         
         var currentPageIndex = carousel?.CurrentIndex ?? 0;
-        
         currentPage.SelectedIndex = -1;
         ClearAllSelections(currentPageView);
         
@@ -184,17 +124,9 @@ public class PageStateHelper(
         
         if (columns == 0 || totalButtons == 0) return 0;
         
-        int targetIndex;
-        
-        if (currentPageIndex > previousPageIndex) {
-            targetIndex = Math.Min(lastColumn, totalButtons - 1);
-        } else {
-            targetIndex = lastColumn + columns;
-            
-            if (targetIndex >= totalButtons) {
-                targetIndex = totalButtons - 1;
-            }
-        }
+        var targetIndex = currentPageIndex > previousPageIndex 
+            ? Math.Min(lastColumn, totalButtons - 1)
+            : Math.Min(lastColumn + columns, totalButtons - 1);
         
         return targetIndex;
     }
@@ -202,11 +134,7 @@ public class PageStateHelper(
     private static void UpdateVisualSelection(PageConfiguration page, RebootOptionPageView currentPageView)
     {
         var buttons = FindButtonsInPage(currentPageView);
-        
-        foreach (var button in buttons) {
-            button.Classes.Remove("selected");
-        }
-        
+        foreach (var button in buttons) button.Classes.Remove("selected");
         if (page.SelectedIndex >= 0 && page.SelectedIndex < buttons.Count) {
             buttons[page.SelectedIndex].Classes.Add("selected");
         }
@@ -215,11 +143,9 @@ public class PageStateHelper(
     private static void ClearAllSelections(RebootOptionPageView currentPageView)
     {
         var buttons = FindButtonsInPage(currentPageView);
-        foreach (var button in buttons) {
-            button.Classes.Remove("selected");
-        }
+        foreach (var button in buttons) button.Classes.Remove("selected");
     }
-
+    
     private void HandleButtonPress(int buttonIndex)
     {
         if (carousel?.Children.FirstOrDefault() is not RebootOptionPageView currentPageView) return;
@@ -232,15 +158,12 @@ public class PageStateHelper(
         var selectedOption = currentPage.Options[buttonIndex];
         
         selectedButton.Classes.Add("pressed");
-        
         if (selectedOption.Command?.CanExecute(selectedOption) == true) {
             selectedOption.Command.Execute(selectedOption);
         }
         
         Task.Delay(150).ContinueWith(_ => {
-            Avalonia.Threading.Dispatcher.UIThread.Post(() => {
-                selectedButton.Classes.Remove("pressed");
-            });
+            Avalonia.Threading.Dispatcher.UIThread.Post(() => selectedButton.Classes.Remove("pressed"));
         });
     }
     
@@ -253,47 +176,22 @@ public class PageStateHelper(
     
     private static void FindButtonsRecursively(Control control, List<Button> buttons)
     {
-        if (control is Button button && button.Name == "OptionButton") {
-            buttons.Add(button);
-        }
-        
+        if (control is Button button && button.Name == "OptionButton") buttons.Add(button);
         foreach (var child in control.GetVisualChildren()) {
-            if (child is Control childControl) {
-                FindButtonsRecursively(childControl, buttons);
-            }
+            if (child is Control childControl) FindButtonsRecursively(childControl, buttons);
         }
     }
     
     private void UpdateNavigationState()
     {
         if (viewModel == null || carousel == null) return;
-        
         var currentIndex = carousel.CurrentIndex;
         var totalPages = viewModel.Pages.Count;
-        
         viewModel.CanGoPrevious = currentIndex > 0;
         viewModel.CanGoNext = currentIndex < totalPages - 1;
     }
     
-    public void NavigatePrevious()
-    {
-        if (carousel == null || viewModel == null) return;
-        if (!viewModel.CanGoPrevious) return;
-        
-        carousel.Previous();
-    }
-    
-    public void NavigateNext()
-    {
-        if (carousel == null || viewModel == null) return;
-        if (!viewModel.CanGoNext) return;
-        
-        carousel.Next();
-    }
-    
-    public void HandleScrollPageChange(int direction)
-    {
-        if (direction > 0) NavigatePrevious();
-        else NavigateNext();
-    }
+    public void NavigatePrevious() => NavigateToPage(-1);
+    public void NavigateNext() => NavigateToPage(1);
+    public void HandleScrollPageChange(int direction) => NavigateToPage(direction > 0 ? -1 : 1);
 } 
