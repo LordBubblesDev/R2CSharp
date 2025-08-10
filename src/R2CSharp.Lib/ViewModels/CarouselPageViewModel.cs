@@ -89,22 +89,20 @@ public partial class CarouselPageViewModel : ObservableObject
         }
     }
 
-    public ICommand SelectLaunchOptionCommand { get; } = new RelayCommand<RebootOption>(option => 
-        RebootHelper.ExecuteReboot("self", option.Index.ToString(), "0"));
+    private ICommand SelectLaunchOptionCommand { get; } = new RelayCommand<RebootOption>(option => 
+        RebootHelper.ExecuteReboot("self", option!.Index.ToString(), "0"));
 
-    public ICommand SelectConfigOptionCommand { get; } = new RelayCommand<RebootOption>(option => 
-        RebootHelper.ExecuteReboot("self", option.Index.ToString(), "1"));
+    private ICommand SelectConfigOptionCommand { get; } = new RelayCommand<RebootOption>(option => 
+        RebootHelper.ExecuteReboot("self", option!.Index.ToString(), "1"));
 
-    public ICommand SelectUmsOptionCommand { get; } = new RelayCommand<RebootOption>(option => 
-        RebootHelper.ExecuteReboot("ums", option.Index.ToString(), "0"));
+    private ICommand SelectUmsOptionCommand { get; } = new RelayCommand<RebootOption>(option => 
+        RebootHelper.ExecuteReboot("ums", option!.Index.ToString(), "0"));
 
-    public ICommand RebootToBootloaderCommand { get; } = new RelayCommand(() => 
+    private ICommand RebootToBootloaderCommand { get; } = new RelayCommand(() => 
         RebootHelper.ExecuteReboot("bootloader", "0", "0"));
 
-    public ICommand NormalRebootCommand { get; } = new RelayCommand(() => 
+    private ICommand NormalRebootCommand { get; } = new RelayCommand(() => 
         RebootHelper.ExecuteReboot("normal", "0", "0"));
 
-    public ICommand ShutdownCommand { get; } = new RelayCommand(() => RebootHelper.Shutdown());
-
-    public void Cleanup() => _bootDiskService.Cleanup();
+    private ICommand ShutdownCommand { get; } = new RelayCommand(RebootHelper.Shutdown);
 }
