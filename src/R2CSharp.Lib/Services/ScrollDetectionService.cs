@@ -25,13 +25,12 @@ public class ScrollDetectionService
         }
         
         _accumulatedScroll += delta;
+
+        if (!(Math.Abs(_accumulatedScroll) >= ScrollThreshold)) return;
         
-        if (Math.Abs(_accumulatedScroll) >= ScrollThreshold) {
-            var direction = _accumulatedScroll > 0 ? 1 : -1;
-            PageChangeRequested?.Invoke(direction);
+        PageChangeRequested?.Invoke(Math.Sign(_accumulatedScroll));
             
-            _accumulatedScroll = 0;
-            _trackingStartTime = DateTime.MinValue;
-        }
+        _accumulatedScroll = 0;
+        _trackingStartTime = DateTime.MinValue;
     }
 }

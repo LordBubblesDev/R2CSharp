@@ -20,18 +20,8 @@ public class RebootOptionsProvider(string bootDiskPath, NyxIcons nyxIcons)
             .OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase);
 
         var globalIndex = 1;
-        foreach (var iniFile in iniFiles) {
-            var sections = IniConfigReader.ParseIniSections(iniFile);
-            foreach (var section in sections) {
-                var icon = nyxIcons.ConvertBmpToBitmap(section.IconPath) ?? nyxIcons.FallbackIcon;
-                options.Add(new RebootOption {
-                    Name = section.Name,
-                    Index = globalIndex++,
-                    Icon = icon,
-                    FallbackIcon = "fa-solid fa-cog"
-                });
-            }
-        }
+        options.AddRange(iniFiles.SelectMany(IniConfigReader.ParseIniSections,
+            (_, section) => CreateRebootOption(section, globalIndex++, "fa-solid fa-cog")));
 
         return options;
     }
@@ -58,17 +48,20 @@ public class RebootOptionsProvider(string bootDiskPath, NyxIcons nyxIcons)
         
         var sections = IniConfigReader.ParseIniSections(iniPath);
         var index = 1;
-        
-        foreach (var section in sections) {
-            var icon = nyxIcons.ConvertBmpToBitmap(section.IconPath) ?? nyxIcons.FallbackIcon;
-            options.Add(new RebootOption {
-                Name = section.Name,
-                Index = index++,
-                Icon = icon,
-                FallbackIcon = fallbackIcon
-            });
-        }
+
+        options.AddRange(sections.Select(section => CreateRebootOption(section, index++, fallbackIcon)));
 
         return options;
+    }
+    
+    private RebootOption CreateRebootOption((string Name, string? IconPath) section, int index, string fallbackIcon)
+    {
+        var icon = nyxIcons.ConvertBmpToBitmap(section.IconPath) ?? nyxIcons.FallbackIcon;
+        return new RebootOption {
+            Name = section.Name,
+            Index = index,
+            Icon = icon,
+            FallbackIcon = fallbackIcon
+        };
     }
 }

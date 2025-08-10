@@ -51,12 +51,10 @@ public class NyxIcons
             using var image = Image.Load(fullBmpPath);
             
             if (ShouldApplyColor(bmpPath) && ThemeColor.StartsWith("#") && ThemeColor.Length == 7) {
-                var r = Convert.ToInt32(ThemeColor.Substring(1, 2), 16);
-                var g = Convert.ToInt32(ThemeColor.Substring(3, 2), 16);
-                var b = Convert.ToInt32(ThemeColor.Substring(5, 2), 16);
+                var (r, g, b) = ParseHexColor(ThemeColor);
                 
                 using var coloredImage = new Image<Rgba32>(image.Width, image.Height);
-                coloredImage.Mutate(x => x.Fill(new Color(new Rgba32((byte)r, (byte)g, (byte)b))));
+                coloredImage.Mutate(x => x.Fill(new Color(new Rgba32(r, g, b))));
                 
                 coloredImage.Mutate(x => x.DrawImage(image, new Point(0, 0), new GraphicsOptions
                 {
@@ -83,5 +81,13 @@ public class NyxIcons
             Console.WriteLine($"Failed to convert BMP {bmpPath}: {ex.Message}");
             return null;
         }
+    }
+    
+    private static (byte r, byte g, byte b) ParseHexColor(string hexColor)
+    {
+        var r = Convert.ToByte(hexColor.Substring(1, 2), 16);
+        var g = Convert.ToByte(hexColor.Substring(3, 2), 16);
+        var b = Convert.ToByte(hexColor.Substring(5, 2), 16);
+        return (r, g, b);
     }
 }

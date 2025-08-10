@@ -31,8 +31,8 @@ public class TouchDetectionService
             var deltaY = endPoint.Y - _startPoint.Value.Y;
             
             var direction = Math.Abs(deltaX) > Math.Abs(deltaY) 
-                ? (deltaX > 0 ? 1 : -1)  // Horizontal drag
-                : (deltaY > 0 ? 1 : -1); // Vertical drag
+                ? Math.Sign(deltaX)  // Horizontal drag
+                : Math.Sign(deltaY); // Vertical drag
             
             PageChangeRequested?.Invoke(direction);
         }
@@ -41,11 +41,6 @@ public class TouchDetectionService
         _isTracking = false;
     }
     
-    public void HandlePointerMoved(PointerEventArgs e)
-    {
-        // No action needed for move events
-    }
-
     private static double CalculateDistance(Point start, Point end)
     {
         var deltaX = end.X - start.X;
