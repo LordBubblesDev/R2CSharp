@@ -21,7 +21,7 @@ public class RebootOptionsProvider(string bootDiskPath, NyxIcons nyxIcons)
 
         var globalIndex = 1;
         options.AddRange(iniFiles.SelectMany(IniConfigReader.ParseIniSections,
-            (_, section) => CreateRebootOption(section, globalIndex++, "fa-solid fa-cog")));
+            (_, section) => CreateRebootOption(section, globalIndex++, "fa-solid fa-gear")));
 
         return options;
     }
@@ -36,9 +36,15 @@ public class RebootOptionsProvider(string bootDiskPath, NyxIcons nyxIcons)
         return umsOptions.Select((name, i) => new RebootOption {
             Name = name,
             Index = i,
-            FallbackIcon = "fa-solid fa-hdd"
+            FallbackIcon = GetIconForUmsOption(name)
         }).ToList();
     }
+    
+    private static string GetIconForUmsOption(string name) => name switch {
+        "SD Card" => "fa-solid fa-sd-card",
+        _ when name.StartsWith("eMMC") => "fa-solid fa-microchip",
+        _  => "fa-solid fa-hard-drive"
+    };
     
     private List<RebootOption> LoadOptionsFromIni(string iniPath, string fallbackIcon)
     {
