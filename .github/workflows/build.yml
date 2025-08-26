@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 jobs:
   build-and-release:
@@ -29,8 +30,17 @@ jobs:
       
     - name: Build and publish
       run: dotnet publish src/R2CSharp.App/R2CSharp.App.csproj -r linux-arm64 -c Release -o ./publish
-      
-    - name: Upload Release Asset
+
+    - name: Upload artifact or release asset
+      if: github.event_name == 'workflow_dispatch'
+      uses: actions/upload-artifact@v4
+      with:
+        name: r2csharp-linux-arm64
+        path: ./publish/r2csharp
+        retention-days: 30
+
+    - name: Create GitHub Release and Upload Asset
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
       uses: softprops/action-gh-release@v2
       with:
         files: ./publish/r2csharp
