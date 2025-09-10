@@ -17,7 +17,7 @@ public class RebootOptionsProvider(string bootDiskPath, NyxIcons nyxIcons)
         if (!Directory.Exists(iniDirectory)) return options;
         
         var iniFiles = Directory.GetFiles(iniDirectory, "*.ini")
-            .OrderBy(Path.GetFileName, IsHekateVersionForOrdinalSorting() ? StringComparer.OrdinalIgnoreCase : null);
+            .OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase);
 
         var globalIndex = 1;
         options.AddRange(iniFiles.SelectMany(IniConfigReader.ParseIniSections,
@@ -38,39 +38,6 @@ public class RebootOptionsProvider(string bootDiskPath, NyxIcons nyxIcons)
             Index = i,
             FallbackIcon = GetIconForUmsOption(name)
         }).ToList();
-    }
-
-    private bool IsHekateVersionForOrdinalSorting()
-    {
-        var updateBinPath = Path.Combine(bootDiskPath, "bootloader", "update.bin");
-        
-        if (!File.Exists(updateBinPath)) {
-            return false;
-        }
-
-        try {
-            using var fileStream = new FileStream(updateBinPath, FileMode.Open, FileAccess.Read);
-            
-            if (fileStream.Length < 0x11C + 3) {
-                return false;
-            }
-
-            fileStream.Seek(0x11C, SeekOrigin.Begin);
-            var versionBytes = new byte[3];
-            var bytesRead = fileStream.Read(versionBytes, 0, 3);
-            
-            if (bytesRead != 3) {
-                return false;
-            }
-
-            var version = System.Text.Encoding.ASCII.GetString(versionBytes);
-
-            return version is "630" or "631";
-        }
-        catch (Exception ex) {
-            Console.WriteLine($"Exception: {ex.Message}");
-            return false;
-        }
     }
     
     private static string GetIconForUmsOption(string name) => name switch {
