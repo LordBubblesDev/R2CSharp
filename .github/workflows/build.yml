@@ -31,7 +31,7 @@ jobs:
     - name: Build and publish
       run: dotnet publish src/R2CSharp.App/R2CSharp.App.csproj -r linux-arm64 -c Release -o ./publish
 
-    - name: Upload artifact or release asset
+    - name: Upload artifact
       if: github.event_name == 'workflow_dispatch'
       uses: actions/upload-artifact@v4
       with:

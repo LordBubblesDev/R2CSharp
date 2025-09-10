@@ -3,7 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using R2CSharp.Lib.Views;
 #if COLORTEST
-using R2CSharp.Tests;
+using R2CSharp.Lib.Tests;
 #endif
 
 namespace R2CSharp.Lib;
