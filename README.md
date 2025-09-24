@@ -4,7 +4,6 @@ A reimplementation of the R2C GUI script (Reboot 2 Config) for Switchroot Linux 
 
 <p align="center">
   <video src="https://github.com/LordBubblesDev/R2CSharp/raw/refs/heads/main/img/uidemo.mkv" controls width="650">
-    Your browser does not support the video tag.
   </video>
 </p>
 
