@@ -2,11 +2,7 @@
 
 A reimplementation of the R2C GUI script (Reboot 2 Config) for Switchroot Linux distros using C# and Avalonia UI, made to mimic and resemble [Hekate](https://github.com/CTCaer/hekate).
 
-<p align="center">
-  <video src="https://github.com/LordBubblesDev/R2CSharp/raw/refs/heads/main/img/uidemo.mp4" controls width="650">
-  </video>
-</p>
-
+https://github.com/user-attachments/assets/bcb291d8-cfc1-4ffa-a124-128e8d1c454c
 
 ## Overview
 
