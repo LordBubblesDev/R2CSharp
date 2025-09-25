@@ -1,16 +1,18 @@
 # R2CSharp
 
-A reimplementation of the R2C GUI script (Reboot 2 Config) for Switchroot Linux distros using C# and Avalonia UI, made to mimic and resemble [Hekate](https://github.com/CTCaer/hekate).
+A reimplementation of the R2C GUI script (Reboot2Config) for Switchroot Linux distros using C# and Avalonia UI, made to mimic and resemble [Hekate](https://github.com/CTCaer/hekate).
 
-https://github.com/user-attachments/assets/bcb291d8-cfc1-4ffa-a124-128e8d1c454c
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/bcb291d8-cfc1-4ffa-a124-128e8d1c454c"></video>
+</p>
 
 ## Overview
 
-R2CSharp is a modern, responsive and touch-friendly interface that provides an intuitive way to select reboot options on Switchroot Linux distros, built with C# and Avalonia UI.
+R2CSharp is a modern, responsive and touch-friendly interface that provides an intuitive way to select reboot options when using Linux on the Nintendo Switch.
 
 ### Requirements
 
-None, all required runtimes and libraries are embedded inside the binary.
+None, all runtimes and libraries are embedded inside the binary.
 
 ### Features
 
@@ -18,7 +20,9 @@ None, all required runtimes and libraries are embedded inside the binary.
 - **Theme Support**: Customizable theming (uses color from Nyx settings in Hekate)
 - **Adaptive Scaling**: Adapts to different resolutions (only 16:9 since that's the aspect ratio of the Switch)
 
-### Building
+## Building
+
+Note: **building requires [.NET SDK 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)**
 
 ```bash
 git clone https://github.com/LordBubblesDev/r2csharp
@@ -26,7 +30,7 @@ cd R2CSharp
 dotnet build
 ```
 
-### Running
+To run the app after building, use the following command:
 
 ```bash
 dotnet run --project src/R2CSharp.App
@@ -42,10 +46,15 @@ The application reads configuration from:
 
 ## Navigation
 
-### Keyboard/Mouse Controls
+Note: *it's possible to navigate using the D-Pad and the A button when setting the joy-cons to mouse mode. The right joystick will function the same as a scroll wheel and can be used to switch pages.*
+
+### Mouse Controls
 
 - **Scroll Wheel**: Navigate between pages
 - **Click**: Select option
+
+### Keyboard Controls
+
 - **Page Up/Down Keys**: Navigate between pages
 - **Arrow Keys**: Navigate between options
 - **Enter Key**: Select option
@@ -64,5 +73,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Help and encouragements from [CTCaer](https://github.com/CTCaer)
 - Original R2C script from [theofficialgman](https://github.com/theofficialgman)
 - Built with [Avalonia UI](https://avaloniaui.net/)
-- Image processing with [SixLabors.ImageSharp](https://sixlabors.com/products/imagesharp/)
 - Icons from [Font Awesome](https://fontawesome.com/)
+- Image processing with [SixLabors.ImageSharp](https://sixlabors.com/products/imagesharp/)
