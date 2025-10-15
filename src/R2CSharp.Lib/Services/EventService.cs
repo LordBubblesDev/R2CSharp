@@ -53,11 +53,33 @@ public class EventService(
         }
     }
     
-    private void OnKeyDown(object? sender, KeyEventArgs e) => KeyDown?.Invoke(e);
+    private bool IsInputAllowed()
+    {
+        if (carousel == null) return false;
+        return carousel.IsEnabled && carousel.IsHitTestVisible;
+    }
+
+    private void OnKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (!IsInputAllowed()) return;
+        KeyDown?.Invoke(e);
+    }
     
-    private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e) => inputService.HandlePointerWheelChanged(e);
-    private void OnPointerPressed(object? sender, PointerPressedEventArgs e) => inputService.HandlePointerPressed(e);
-    private void OnPointerReleased(object? sender, PointerReleasedEventArgs e) => inputService.HandlePointerReleased(e);
+    private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
+    {
+        if (!IsInputAllowed()) return;
+        inputService.HandlePointerWheelChanged(e);
+    }
+    private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (!IsInputAllowed()) return;
+        inputService.HandlePointerPressed(e);
+    }
+    private void OnPointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        if (!IsInputAllowed()) return;
+        inputService.HandlePointerReleased(e);
+    }
     
     private void OnViewModelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
