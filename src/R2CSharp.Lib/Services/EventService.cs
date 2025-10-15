@@ -17,28 +17,31 @@ public class EventService(
 
     public void SubscribeToEvents(Window window)
     {
-        window.PointerWheelChanged += OnPointerWheelChanged;
-        window.PointerPressed += OnPointerPressed;
-        window.PointerReleased += OnPointerReleased;
         window.KeyDown += OnKeyDown;
+        
+        if (carousel != null) {
+            carousel.PointerWheelChanged += OnPointerWheelChanged;
+            carousel.PointerPressed += OnPointerPressed;
+            carousel.PointerReleased += OnPointerReleased;
+            carousel.PropertyChanged += OnCarouselPropertyChanged;
+        }
         
         if (viewModel != null) {
             viewModel.PropertyChanged += OnViewModelPropertyChanged;
-        }
-        
-        if (carousel != null) {
-            carousel.PropertyChanged += OnCarouselPropertyChanged;
         }
     }
     
     public void UnsubscribeFromEvents()
     {   
-        if (viewModel != null) {
-            viewModel.PropertyChanged -= OnViewModelPropertyChanged;
+        if (carousel != null) {
+            carousel.PointerWheelChanged -= OnPointerWheelChanged;
+            carousel.PointerPressed -= OnPointerPressed;
+            carousel.PointerReleased -= OnPointerReleased;
+            carousel.PropertyChanged -= OnCarouselPropertyChanged;
         }
         
-        if (carousel != null) {
-            carousel.PropertyChanged -= OnCarouselPropertyChanged;
+        if (viewModel != null) {
+            viewModel.PropertyChanged -= OnViewModelPropertyChanged;
         }
     }
 

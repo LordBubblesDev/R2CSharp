@@ -36,8 +36,6 @@
         
         <Grid IsVisible="{Binding !IsLoading}">
             <controls:CarouselControl Name="MainCarousel" 
-                      IsEnabled="True"
-                      IsHitTestVisible="True"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
                       Focusable="False" />
