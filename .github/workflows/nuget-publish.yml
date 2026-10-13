@@ -12,12 +12,10 @@ jobs:
     permissions:
       contents: read
       packages: write
-    env:
-      SIXLABORS_LICENSE_KEY: ${{ secrets.SIXLABORS_LICENSE_KEY }}
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       
     - name: Optimize FontAwesome icons
       shell: pwsh
@@ -25,9 +23,9 @@ jobs:
         . ./optimize-icons.ps1
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v6
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: '10.0.x'
         
     - name: Restore dependencies
       run: dotnet restore src/R2CSharp.Lib/R2CSharp.Lib.csproj

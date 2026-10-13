@@ -68,10 +68,9 @@ Note: *it's possible to navigate using the D-Pad and the A button when setting t
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Acknowledgments
+## Credits
 
 - Help and encouragements from [CTCaer](https://github.com/CTCaer)
 - Original R2C script from [theofficialgman](https://github.com/theofficialgman)
 - Built with [Avalonia UI](https://avaloniaui.net/)
 - Icons from [Font Awesome](https://fontawesome.com/)
-- Image processing with [SixLabors.ImageSharp](https://sixlabors.com/products/imagesharp/)

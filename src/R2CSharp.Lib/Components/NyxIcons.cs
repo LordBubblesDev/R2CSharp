@@ -1,12 +1,9 @@
+using System.Runtime.InteropServices;
+using Avalonia;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using R2CSharp.Lib.Converters;
 using R2CSharp.Lib.Readers;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Drawing.Processing;
-using SixLabors.ImageSharp.Formats.Png;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
-using Point = SixLabors.ImageSharp.Point;
 
 namespace R2CSharp.Lib.Components;
 
@@ -19,82 +16,76 @@ public class NyxIcons
     public NyxIcons(string bootDiskPath)
     {
         _bootDiskPath = bootDiskPath;
+        var nyxIni = Path.Combine(bootDiskPath, "bootloader", "nyx.ini");
+        var theme = IniConfigReader.GetConfigProperty(nyxIni, "themecolor");
         
-        var nyxIniPath = Path.Combine(_bootDiskPath, "bootloader", "nyx.ini");
-        var themeColorValue = IniConfigReader.GetConfigProperty(nyxIniPath, "themecolor");
-
-        ThemeColor = themeColorValue != null && int.TryParse(themeColorValue, out var hue) && hue is >= 0 and <= 359
+        ThemeColor = theme != null && int.TryParse(theme, out var hue) && hue is >= 0 and <= 359
             ? ColorConverter.HsvToHex(hue, 100, 100)
             : ColorConverter.HsvToHex(167, 100, 100); // default nyx theme color
 
         // Allow displaying 5 button columns if this setting is set to 1
-        var entries5Col = IniConfigReader.GetConfigProperty(nyxIniPath, "entries5col") == "1";
-        UseFiveColumns = entries5Col;
+        UseFiveColumns = IniConfigReader.GetConfigProperty(nyxIni, "entries5col") == "1";
     }
 
     public Bitmap? FallbackIcon => ConvertBmpToBitmap("bootloader/res/icon_switch.bmp");
 
-    private static bool ShouldApplyColor(string bmpPath) =>
-        bmpPath.EndsWith("icon_switch.bmp", StringComparison.OrdinalIgnoreCase)
-        || bmpPath.EndsWith("icon_payload.bmp", StringComparison.OrdinalIgnoreCase)
-        || bmpPath.EndsWith("_hue_nobox.bmp", StringComparison.OrdinalIgnoreCase)
-        || bmpPath.EndsWith("_hue.bmp", StringComparison.OrdinalIgnoreCase);
-
     public Bitmap? ConvertBmpToBitmap(string? bmpPath)
     {
         if (string.IsNullOrEmpty(bmpPath)) return null;
-
-        var fullBmpPath = Path.Combine(_bootDiskPath, bmpPath);
-        if (!File.Exists(fullBmpPath)) return null;
+        var path = Path.Combine(_bootDiskPath, bmpPath);
+        if (!File.Exists(path)) return null;
 
         try {
-            using var image = Image.Load(fullBmpPath);
+            var data = File.ReadAllBytes(path);
+            var o = BitConverter.ToInt32(data, 10);
+            var w = BitConverter.ToInt32(data, 18);
+            var h = Math.Abs(BitConverter.ToInt32(data, 22));
+            var stride = w * 4;
+            var pixels = new byte[stride * h];
+
+            var tint = ThemeColor.Length == 7 && (
+                bmpPath.EndsWith("icon_switch.bmp", StringComparison.OrdinalIgnoreCase)
+                || bmpPath.EndsWith("icon_payload.bmp", StringComparison.OrdinalIgnoreCase)
+                || bmpPath.EndsWith("_hue_nobox.bmp", StringComparison.OrdinalIgnoreCase)
+                || bmpPath.EndsWith("_hue.bmp", StringComparison.OrdinalIgnoreCase));
             
-            if (ShouldApplyColor(bmpPath) && ThemeColor.StartsWith("#") && ThemeColor.Length == 7) {
-                var (r, g, b) = ParseHexColor(ThemeColor);
-                
-                using var coloredImage = new Image<Rgba32>(image.Width, image.Height);
-                var fillColor = Color.FromPixel(new Rgba32(r, g, b));
-                var destIn = new GraphicsOptions
-                {
-                    ColorBlendingMode = PixelColorBlendingMode.Normal,
-                    AlphaCompositionMode = PixelAlphaCompositionMode.DestIn
-                };
-                var srcOver = new GraphicsOptions
-                {
-                    ColorBlendingMode = PixelColorBlendingMode.Normal,
-                    AlphaCompositionMode = PixelAlphaCompositionMode.SrcOver
-                };
-
-                coloredImage.Mutate(ctx =>
-                {
-                    ctx.Paint(canvas => canvas.Fill(Brushes.Solid(fillColor)));
-                    ctx.DrawImage(image, new Point(0, 0), destIn);
-                });
-
-                image.Mutate(ctx =>
-                {
-                    ctx.Paint(canvas => canvas.Fill(Brushes.Solid(Color.Transparent)));
-                    ctx.DrawImage(coloredImage, new Point(0, 0), srcOver);
-                });
+            byte tr = 0, tg = 0, tb = 0;
+            if (tint) {
+                tr = Convert.ToByte(ThemeColor[1..3], 16);
+                tg = Convert.ToByte(ThemeColor[3..5], 16);
+                tb = Convert.ToByte(ThemeColor[5..7], 16);
             }
-            
-            using var stream = new MemoryStream();
-            image.Save(stream, new PngEncoder());
-            stream.Seek(0, SeekOrigin.Begin);
-            return new Bitmap(stream);
+
+            for (var y = 0; y < h; y++) {
+                var src = o + (h - 1 - y) * stride;
+                var dst = y * stride;
+
+                if (!tint) {
+                    Buffer.BlockCopy(data, src, pixels, dst, stride);
+                    continue;
+                }
+
+                for (var x = 0; x < w; x++, src += 4, dst += 4) {
+                    pixels[dst] = tb;
+                    pixels[dst + 1] = tg;
+                    pixels[dst + 2] = tr;
+                    pixels[dst + 3] = data[src + 3];
+                }
+            }
+
+            var handle = GCHandle.Alloc(pixels, GCHandleType.Pinned);
+
+            try {
+                return new WriteableBitmap(PixelFormat.Bgra8888, AlphaFormat.Unpremul,
+                    handle.AddrOfPinnedObject(), new PixelSize(w, h), new Vector(96, 96), stride);
+            }
+            finally {
+                handle.Free();
+            }
         }
         catch (Exception ex) {
             Console.WriteLine($"Failed to convert BMP {bmpPath}: {ex.Message}");
             return null;
         }
-    }
-    
-    private static (byte r, byte g, byte b) ParseHexColor(string hexColor)
-    {
-        var r = Convert.ToByte(hexColor.Substring(1, 2), 16);
-        var g = Convert.ToByte(hexColor.Substring(3, 2), 16);
-        var b = Convert.ToByte(hexColor.Substring(5, 2), 16);
-        return (r, g, b);
     }
 }
