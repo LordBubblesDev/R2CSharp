@@ -12,6 +12,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+    env:
+      SIXLABORS_LICENSE_KEY: ${{ secrets.SIXLABORS_LICENSE_KEY }}
     
     steps:
     - name: Checkout code

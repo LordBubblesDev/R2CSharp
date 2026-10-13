@@ -54,22 +54,29 @@ public class NyxIcons
                 var (r, g, b) = ParseHexColor(ThemeColor);
                 
                 using var coloredImage = new Image<Rgba32>(image.Width, image.Height);
-                coloredImage.Mutate(x => x.Fill(new Color(new Rgba32(r, g, b))));
-                
-                coloredImage.Mutate(x => x.DrawImage(image, new Point(0, 0), new GraphicsOptions
+                var fillColor = Color.FromPixel(new Rgba32(r, g, b));
+                var destIn = new GraphicsOptions
                 {
                     ColorBlendingMode = PixelColorBlendingMode.Normal,
                     AlphaCompositionMode = PixelAlphaCompositionMode.DestIn
-                }));
-                
-                image.Mutate(x => x
-                    .Fill(Color.Transparent)
-                    .DrawImage(coloredImage, new Point(0, 0), new GraphicsOptions
-                    {
-                        ColorBlendingMode = PixelColorBlendingMode.Normal,
-                        AlphaCompositionMode = PixelAlphaCompositionMode.SrcOver
-                    })
-                );
+                };
+                var srcOver = new GraphicsOptions
+                {
+                    ColorBlendingMode = PixelColorBlendingMode.Normal,
+                    AlphaCompositionMode = PixelAlphaCompositionMode.SrcOver
+                };
+
+                coloredImage.Mutate(ctx =>
+                {
+                    ctx.Paint(canvas => canvas.Fill(Brushes.Solid(fillColor)));
+                    ctx.DrawImage(image, new Point(0, 0), destIn);
+                });
+
+                image.Mutate(ctx =>
+                {
+                    ctx.Paint(canvas => canvas.Fill(Brushes.Solid(Color.Transparent)));
+                    ctx.DrawImage(coloredImage, new Point(0, 0), srcOver);
+                });
             }
             
             using var stream = new MemoryStream();

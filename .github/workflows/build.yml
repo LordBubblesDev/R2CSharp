@@ -10,6 +10,8 @@ jobs:
   build-and-release:
     runs-on: ubuntu-latest
     permissions: write-all
+    env:
+      SIXLABORS_LICENSE_KEY: ${{ secrets.SIXLABORS_LICENSE_KEY }}
     
     steps:
     - name: Checkout code

@@ -22,7 +22,7 @@ None, all runtimes and libraries are embedded inside the binary.
 
 ## Building
 
-Note: **building requires [.NET SDK 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)**
+Note: **building requires [.NET SDK 10.0](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)**
 
 ```bash
 git clone https://github.com/LordBubblesDev/r2csharp
