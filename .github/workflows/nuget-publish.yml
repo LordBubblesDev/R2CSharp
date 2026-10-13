@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
+      id-token: write
     
     steps:
     - name: Checkout code
@@ -51,11 +51,15 @@ jobs:
       
     - name: Create NuGet package
       run: dotnet pack src/R2CSharp.Lib/R2CSharp.Lib.csproj -c Release --no-build -o ./packages
+
+    - name: NuGet login (OIDC → temp API key)
+      uses: NuGet/login@v1
+      id: nuget_login
+      with:
+        user: ${{ secrets.NUGET_USER }}
       
     - name: Publish to NuGet.org
-      run: dotnet nuget push ./packages/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
-      env:
-        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      run: dotnet nuget push ./packages/*.nupkg -k ${{ steps.nuget_login.outputs.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
         
     - name: Upload package as artifact
       uses: actions/upload-artifact@v4
